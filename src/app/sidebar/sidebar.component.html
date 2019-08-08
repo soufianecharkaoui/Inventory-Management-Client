@@ -1,0 +1,116 @@
+<style>
+    button {
+        width: 100%;
+        margin-top: 10px;
+    };
+</style>
+<div class="sidebar-wrapper">
+    <div class="logo">
+        <a href="http://www.creative-tim.com">
+            <img src="https://www.waystocap.com/new-landingpages/img/icons/svg/logo.svg" style="width: 100%;"/>
+        </a>
+    </div>
+    <ul class="nav responsive-nav">
+        <li *ngIf="isMobileMenu()">
+            <a>
+                <p>Log out</p>
+            </a>
+        </li>
+        <mat-action-list>
+            <div mat-list-item clas>
+                <button mat-button fxLayout="column" fxLayoutAlign="space-between stretch">
+                    <a routerLink="/dashboard">
+                        <i class="material-icons">dashboard</i>
+                        <p>Dashboard</p>
+                    </a>
+                </button>
+            </div>
+            <div mat-list-item>
+                <mat-accordion fxLayout="column" fxLayoutAlign="space-between stretch">
+                    <mat-expansion-panel style="background-color: transparent; width: 100%;"> 
+                        <mat-expansion-panel-header>
+                            <button mat-button>
+                                <i class="material-icons">compare_arrows</i>
+                                <p>Transactions</p>
+                            </button>
+                        </mat-expansion-panel-header>
+                        <button mat-button>
+                            <a routerLink="/transactions">
+                                <i class="material-icons">list</i>
+                                <p>All Transactions</p>
+                                <p>My Transactions</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/make-transaction">
+                                <i class="material-icons">add_shopping_cart</i>
+                                <p>Make a Transaction</p>
+                            </a>
+                        </button>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+            <div mat-list-item>
+                <mat-accordion fxLayout="column" fxLayoutAlign="space-between stretch">
+                    <mat-expansion-panel style="background-color: transparent; width: 100%;"> 
+                        <mat-expansion-panel-header>
+                            <button mat-button>
+                                <i class="material-icons">settings</i>
+                                <p>Setup</p>
+                            </button>
+                        </mat-expansion-panel-header>
+                        <button mat-button>
+                            <a routerLink="/setup/currencies">
+                                <i class="material-icons">monetization_on</i>
+                                <p>Manage Currencies</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/setup/warehouses">
+                                <i class="material-icons">business</i>
+                                <p>Manage Warehouses</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/setup/brands">
+                                <i class="material-icons">local_offer</i>
+                                <p>Manage Brands</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/setup/product-categories">
+                                <i class="material-icons">category</i>
+                                <p>Manage Product Categories</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/setup/products">
+                                <i class="material-icons">store</i>
+                                <p>Manage Products</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/setup/users">
+                                <i class="material-icons">account_circle</i>
+                                <p>Manage Users</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/setup/agents">
+                                <i class="material-icons">account_circle</i>
+                                <p>Manage Agents</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/setup/payment-methods">
+                                <i class="material-icons">payment</i>
+                                <p>Manage Payment Methods</p>
+                            </a>
+                        </button>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+        </mat-action-list>
+
+    </ul>
+</div>
