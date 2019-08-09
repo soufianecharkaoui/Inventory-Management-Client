@@ -1,27 +1,20 @@
-<div *ngFor="let agent of agents">
-        <div *ngIf="!agent.isDeleted">
-            {{ agent.name }}
-            <button type="button" mat-raised-button color="warn" (click)="delete(agent)">Delete</button>
-        </div>
-    </div>
-    
-    <form #aform="ngForm" [formGroup]="agentForm" (ngSubmit)="save()" class="example-form">
-        <mat-form-field class="example-full-width">
-            <input matInput formControlName="name" type="text" placeholder="Name" required>
-            <mat-error *ngIf="name.invalid && (name.dirty || name.touched)">
-                <mat-error *ngIf="name.errors.required">Name is required.</mat-error>
-            </mat-error>
-        </mat-form-field>
-    
-        <mat-form-field class="example-full-width">
-            <input matInput formControlName="email" type="email" placeholder="Email" email required>
-            <mat-error *ngIf="email.invalid && (email.dirty || email.touched)">
-                <mat-error *ngIf="email.errors.required">Email is required.</mat-error>
-                <mat-error *ngIf="email.errors.email">Email is required.</mat-error>
-            </mat-error>
-        </mat-form-field>
-    
-        <button type="submit" mat-raised-button color="primary" [disabled]="agentForm.invalid">Submit</button>
-    </form>
+<form #aform="ngForm" [formGroup]="agentForm" (ngSubmit)="save()" class="example-form">
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="name" type="text" placeholder="Name" required>
+        <mat-error *ngIf="name.invalid && (name.dirty || name.touched)">
+            <mat-error *ngIf="name.errors.required">Name is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="email" type="email" placeholder="Email" email required>
+        <mat-error *ngIf="email.invalid && (email.dirty || email.touched)">
+            <mat-error *ngIf="email.errors.required">Email is required.</mat-error>
+            <mat-error *ngIf="email.errors.email">Email is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="primary" [disabled]="agentForm.invalid">Submit</button>
+</form>
       
     

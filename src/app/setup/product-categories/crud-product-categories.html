@@ -1,0 +1,33 @@
+<div *ngFor="let productCategory of productCategories">
+    <div *ngIf="!productCategory.isDeleted">
+        {{ productCategory.name }} ====> 
+        <button type="button" mat-raised-button color="warn" (click)="delete(productCategory)">Delete</button>
+        <div *ngFor="let brand of productCategory.brands">
+            {{ brand.name }}
+        </div>
+        <br>
+    </div>
+</div>
+
+<form #pcform="ngForm" [formGroup]="productCategoryForm" (ngSubmit)="save()" class="example-form">
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="name" type="text" placeholder="Name" required>
+        <mat-error *ngIf="name.invalid && (name.dirty || name.touched)">
+            <mat-error *ngIf="name.errors.required">Name is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Brands</mat-label>
+        <mat-select formControlName="brandIds" multiple>
+            <div *ngFor="let brand of brands">
+                <mat-option *ngIf="!brand.isDeleted" [value]="brand.id">
+                    {{ brand.name }}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="primary" [disabled]="productCategoryForm.invalid">Submit</button>
+</form>
+  

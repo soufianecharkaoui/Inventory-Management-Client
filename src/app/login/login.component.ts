@@ -4,8 +4,8 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Apollo } from 'apollo-angular';
 import {GC_AUTH_TOKEN, GC_USER_ID} from './constants';
 import { AuthService } from './auth.service';
-import { LOGIN } from '../graphql';
 import { map } from 'rxjs/operators';
+import { LOGIN } from 'app/services/users.graphql';
 
 @Component({
   selector: 'app-login',

@@ -1,0 +1,12 @@
+<form #cform="ngForm" [formGroup]="currencyForm" (ngSubmit)="save()" class="example-form">
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="name" type="text" placeholder="Name" required>
+        <mat-error *ngIf="name.invalid && (name.dirty || name.touched)">
+            <mat-error *ngIf="name.errors.required">Name is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="primary" [disabled]="currencyForm.invalid">Submit</button>
+</form>
+          
+        

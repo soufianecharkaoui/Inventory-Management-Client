@@ -1,4 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import { Product, ProductCategory, Warehouse } from 'app/types';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatSort } from '@angular/material/sort';
+import { Apollo } from 'apollo-angular';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { GET_PRODUCTS, REVOKE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT, ADD_PRODUCT } from 'app/services/products.graphql';
+import { map } from 'rxjs/operators';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { GET_PRODUCT_CATEGORIES, GET_PRODUCT_CATEGORY } from 'app/services/product-categories.graphql';
+import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 
 @Component({
   selector: 'app-products',
@@ -7,9 +18,175 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ProductsComponent implements OnInit {
 
-  constructor() { }
+  products: Product[];
+  product: Product;
+  
+  displayedColumns: string[] = ['name', 'warehouse', 'unit', 'stockQuantity', 'status', 'edit', 'changeStatus'];
+  dataSource: MatTableDataSource<Product>;
+
+  @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
+  @ViewChild(MatSort, {static: true}) sort: MatSort;
+
+  constructor(private apollo: Apollo,
+    public dialog: MatDialog) { 
+      this.dataSource = new MatTableDataSource(this.products);
+    }
 
   ngOnInit() {
+    this.apollo.watchQuery({
+      query: GET_PRODUCTS
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getProducts))
+    .subscribe(data => {
+      this.products = data;
+      this.dataSource = new MatTableDataSource(this.products);
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
+    });
   }
 
+  applyFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+
+    if (this.dataSource.paginator) {
+      this.dataSource.paginator.firstPage();
+    }
+  }
+
+  edit(product: Product) {
+    const dialogRef = this.dialog.open(CRUDProducts, {
+      width: '250px',
+      data: product
+    });
+  }
+
+  revoke(product: Product) {
+    this.apollo.mutate({
+      mutation: REVOKE_PRODUCT,
+      variables: {
+        id: product.id
+      }
+    })
+    .subscribe();
+  }
+
+  delete(product: Product) {
+    this.apollo.mutate({
+      mutation: DELETE_PRODUCT,
+      variables: {
+        id: product.id
+      }
+    })
+    .subscribe();
+  }
+
+  openDialog(): void {
+    const dialogRef = this.dialog.open(CRUDProducts, {
+      width: '250px'
+    });
+  }
+
+}
+
+@Component({
+  selector: 'crud-products',
+  templateUrl: 'crud-products.html',
+})
+export class CRUDProducts implements OnInit{
+
+  productForm: FormGroup;
+  product: Product;
+  productCategories: ProductCategory[];
+  productCategory: ProductCategory;
+  warehouses: Warehouse[];
+  
+  @ViewChild('pform', {static: true}) productFormDirective;
+
+  constructor(
+    public dialogRef: MatDialogRef<CRUDProducts>,
+    @Inject(MAT_DIALOG_DATA) public data: Product,
+    private fb: FormBuilder,
+    private apollo: Apollo) {}
+
+  createForm() {
+    this.productForm = this.fb.group({
+      productCategoryId: [this.data ? this.data.productCategory.id : '', Validators.required],
+      brandId: [this.data ? this.data.brand.id : '', Validators.required],
+      specs: [this.data ? this.data.specs : '', Validators.required],
+      warehouseId: [this.data ? this.data.warehouse.id : '', Validators.required],
+      unit: [this.data ? this.data.unit : '', Validators.required],
+    });
+  }
+
+  get productCategoryId() { return this.productForm.get('productCategoryId'); }
+  get brandId() { return this.productForm.get('brandId'); }
+  get specs() { return this.productForm.get('specs'); }
+  get warehouseId() { return this.productForm.get('warehouseId'); }
+  get unit() { return this.productForm.get('unit'); }
+
+  ngOnInit() {
+    this.createForm();
+
+    this.apollo.watchQuery({
+      query: GET_PRODUCT_CATEGORIES
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getProductCategories))
+    .subscribe(data => this.productCategories = data);
+
+    this.apollo.watchQuery({
+      query: GET_WAREHOUSES
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getWarehouses))
+    .subscribe(data => this.warehouses = data);
+  }
+
+  select(productCategoryId: String) {
+    this.apollo.watchQuery({
+      query: GET_PRODUCT_CATEGORY,
+      variables: {
+        id: productCategoryId
+      }
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getProductCategory))
+    .subscribe(data => this.productCategory = data);
+  }
+
+  save() {
+    if (this.data) {
+      this.apollo.mutate({
+        mutation: UPDATE_PRODUCT,
+        variables: {
+          id: this.data.id,
+          productCategoryId: this.productForm.value.productCategoryId,
+          brandId: this.productForm.value.brandId,
+          warehouseId: this.productForm.value.warehouseId,
+          specs: this.productForm.value.specs,
+          unit: this.productForm.value.unit,
+          stockQuantity: this.data.stockQuantity,
+          transactionQuantity: this.data.transactionQuantity,
+          buyingPrice: this.data.buyingPrice,
+          sellingPrice: this.data.sellingPrice,
+          amount: this.data.amount
+        },
+        refetchQueries: ['getProducts']
+      })
+      .subscribe();
+    } else {
+      this.apollo.mutate({
+        mutation: ADD_PRODUCT,
+        variables: {
+          productCategoryId: this.productForm.value.productCategoryId,
+          brandId: this.productForm.value.brandId,
+          specs: this.productForm.value.specs,
+          warehouseId: this.productForm.value.warehouseId,
+          stockQuantity: 0,
+          unit: this.productForm.value.unit
+        },
+        refetchQueries: ['getProducts']
+      })
+      .subscribe();
+    }
+    this.productFormDirective.resetForm();
+    this.dialogRef.close();
+  }
 }

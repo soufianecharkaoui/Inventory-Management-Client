@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Apollo } from 'apollo-angular';
-import { GET_AGENTS, ADD_AGENT, DELETE_AGENT } from 'app/graphql';
 import { map } from 'rxjs/operators';
 import { Agent } from 'app/types';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
+import { GET_AGENTS, DELETE_AGENT, ADD_AGENT, REVOKE_AGENT, UPDATE_AGENT } from 'app/services/agents.graphql';
 
 @Component({
   selector: 'app-agents',
@@ -19,7 +19,7 @@ export class AgentsComponent implements OnInit {
   agents: Agent[];
   agent: Agent;
   
-  displayedColumns: string[] = ['name', 'email', 'status', 'edit'];
+  displayedColumns: string[] = ['name', 'email', 'status', 'edit', 'changeStatus'];
   dataSource: MatTableDataSource<Agent>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -30,8 +30,6 @@ export class AgentsComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.agents);
     }
 
-  
-  
   ngOnInit() {
     this.apollo.watchQuery({
       query: GET_AGENTS
@@ -39,7 +37,7 @@ export class AgentsComponent implements OnInit {
     .valueChanges.pipe(map((result: any) => result.data.getAgents))
     .subscribe(data => {
       this.agents = data;
-      this.dataSource = new MatTableDataSource(data);
+      this.dataSource = new MatTableDataSource(this.agents);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
@@ -51,6 +49,23 @@ export class AgentsComponent implements OnInit {
     if (this.dataSource.paginator) {
       this.dataSource.paginator.firstPage();
     }
+  }
+
+  edit(agent: Agent) {
+    const dialogRef = this.dialog.open(CRUDAgents, {
+      width: '250px',
+      data: agent
+    });
+  }
+
+  revoke(agent: Agent) {
+    this.apollo.mutate({
+      mutation: REVOKE_AGENT,
+      variables: {
+        id: agent.id
+      }
+    })
+    .subscribe();
   }
 
   delete(agent: Agent) {
@@ -65,10 +80,7 @@ export class AgentsComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CRUDAgents, {
-      width: '250px' 
-    });
-    dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
+      width: '250px'
     });
   }
 
@@ -93,8 +105,8 @@ export class CRUDAgents implements OnInit{
 
   createForm() {
     this.agentForm = this.fb.group({
-      name: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      name: [this.data ? this.data.name : '', Validators.required],
+      email: [this.data ? this.data.email : '', [Validators.required, Validators.email]]
     });
   }
 
@@ -106,20 +118,29 @@ export class CRUDAgents implements OnInit{
   }
 
   save() {
-    this.agent = this.agentForm.value;
-    this.apollo.mutate({
-      mutation: ADD_AGENT,
-      variables: {
-        name: this.agent.name,
-        email: this.agent.email
-      },
-      refetchQueries: ['getAgents']
-    })
-    .subscribe();
+    if (this.data) {
+      this.apollo.mutate({
+        mutation: UPDATE_AGENT,
+        variables: {
+          id: this.data.id,
+          name: this.agentForm.value.name,
+          email: this.agentForm.value.email
+        },
+        refetchQueries: ['getAgents']
+      })
+      .subscribe();
+    } else {
+      this.apollo.mutate({
+        mutation: ADD_AGENT,
+        variables: {
+          name: this.agentForm.value.name,
+          email: this.agentForm.value.email
+        },
+        refetchQueries: ['getAgents']
+      })
+      .subscribe();
+    }
     this.agentFormDirective.resetForm();
-  }
-
-  onNoClick(): void {
     this.dialogRef.close();
   }
 

@@ -1,1 +1,65 @@
-<p>products works!</p>
+<section class="container">
+        <p style="margin-top: 10px;">
+            <button mat-raised-button color="primary" (click)="openDialog()">Add a Product</button>
+        </p>
+    
+        <mat-form-field>
+            <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Search ...">
+        </mat-form-field>
+                
+        <div class="mat-elevation-z8">
+            <table mat-table [dataSource]="dataSource" matSort>
+                
+                <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Product </th>
+                    <td mat-cell *matCellDef="let row"> {{row.productCategory.name}} - {{row.brand.name}} - {{row.specs}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="warehouse">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Warehouse </th>
+                    <td mat-cell *matCellDef="let row"> {{row.warehouse.name}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="unit">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Unit </th>
+                    <td mat-cell *matCellDef="let row"> {{row.unit}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="stockQuantity">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Stock Quantity </th>
+                    <td mat-cell *matCellDef="let row"> {{row.stockQuantity}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Status </th>
+                    <td mat-cell *matCellDef="let row"> {{row.isDeleted ? 'Deleted' : 'Active'}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="edit">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Edit </th>
+                    <td mat-cell *matCellDef="let row">
+                        <button mat-raised-button color="primary" (click)="edit(row)">Edit</button>
+                    </td>
+                </ng-container>
+    
+                <ng-container matColumnDef="changeStatus">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Change Status </th>
+                    <td mat-cell *matCellDef="let row">
+                        <div *ngIf="row.isDeleted">
+                            <button mat-button color="primary" (click)="revoke(row)">Revoke</button>
+                        </div>
+                        <div *ngIf="!row.isDeleted">
+                            <button mat-raised-button color="warn" (click)="delete(row)">Delete</button>
+                        </div>
+                    </td>
+                </ng-container>
+        
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        
+            <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]"></mat-paginator>
+        </div>
+    </section>
+    
+          

@@ -28,7 +28,19 @@
             <ng-container matColumnDef="edit">
                 <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Edit </th>
                 <td mat-cell *matCellDef="let row">
-                    <button mat-raised-button color="primary">Edit</button>
+                    <button mat-raised-button color="primary" (click)="edit(row)">Edit</button>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="changeStatus">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Change Status </th>
+                <td mat-cell *matCellDef="let row">
+                    <div *ngIf="row.isDeleted">
+                        <button mat-button color="primary" (click)="revoke(row)">Revoke</button>
+                    </div>
+                    <div *ngIf="!row.isDeleted">
+                        <button mat-raised-button color="warn" (click)="delete(row)">Delete</button>
+                    </div>
                 </td>
             </ng-container>
     

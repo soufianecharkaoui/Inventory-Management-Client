@@ -10,14 +10,14 @@ import { AdminLayoutRoutes } from './admin-layout.routing';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
 import { TransactionsComponent } from '../../transaction/transactions/transactions.component';
 import { MakeTransactionComponent } from '../../transaction/make-transaction/make-transaction.component';
-import { CurrenciesComponent } from '../../setup/currencies/currencies.component';
+import { CurrenciesComponent, CRUDCurrencies } from '../../setup/currencies/currencies.component';
 import { WarehousesComponent } from '../../setup/warehouses/warehouses.component';
-import { BrandsComponent } from '../../setup/brands/brands.component';
-import { ProductCategoriesComponent } from '../../setup/product-categories/product-categories.component';
-import { ProductsComponent } from '../../setup/products/products.component';
+import { BrandsComponent, CRUDBrands } from '../../setup/brands/brands.component';
+import { ProductCategoriesComponent, CRUDProductCategories } from '../../setup/product-categories/product-categories.component';
+import { ProductsComponent, CRUDProducts } from '../../setup/products/products.component';
 import { UsersComponent } from '../../setup/users/users.component';
 import { AgentsComponent, CRUDAgents } from '../../setup/agents/agents.component';
-import { PaymentMethodsComponent } from '../../setup/payment-methods/payment-methods.component';
+import { PaymentMethodsComponent, CRUDPaymentMethods } from '../../setup/payment-methods/payment-methods.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatRadioModule } from '@angular/material/radio';
@@ -28,6 +28,7 @@ import {MatMenuModule} from '@angular/material/menu';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatDialogModule} from '@angular/material/dialog';
+import {MatListModule} from '@angular/material/list';
 
 
 @NgModule({
@@ -47,7 +48,8 @@ import {MatDialogModule} from '@angular/material/dialog';
     MatMenuModule,
     MatPaginatorModule,
     MatSortModule,
-    MatDialogModule
+    MatDialogModule,
+    MatListModule
   ],
   declarations: [ 
     DashboardComponent, 
@@ -61,10 +63,20 @@ import {MatDialogModule} from '@angular/material/dialog';
     UsersComponent, 
     AgentsComponent, 
     PaymentMethodsComponent,
-    CRUDAgents
+    CRUDAgents,
+    CRUDBrands,
+    CRUDCurrencies,
+    CRUDPaymentMethods,
+    CRUDProductCategories,
+    CRUDProducts
   ],
   entryComponents: [
-    CRUDAgents
+    CRUDAgents,
+    CRUDBrands,
+    CRUDCurrencies,
+    CRUDPaymentMethods,
+    CRUDProductCategories,
+    CRUDProducts
   ],
 })
 

@@ -1,0 +1,62 @@
+<form #pform="ngForm" [formGroup]="productForm" (ngSubmit)="save()" class="example-form">
+    
+    <mat-form-field class="example-full-width">
+        <mat-label>Warehouses</mat-label>
+        <mat-select formControlName="warehouseId" single>
+            <div *ngFor="let warehouse of warehouses">
+                <mat-option *ngIf="!warehouse.isDeleted" [value]="warehouse.id">
+                    {{ warehouse.name }} - {{ warehouse.city }} - {{ warehouse.country }}
+                </mat-option>
+            </div>
+        </mat-select>
+        <mat-error *ngIf="warehouseId.invalid && (warehouseId.dirty || warehouseId.touched)">
+            <mat-error *ngIf="warehouseId.errors.required">Warehouse is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <mat-label>Product Categories</mat-label>
+        <mat-select formControlName="productCategoryId" single>
+            <div *ngFor="let productCategory of productCategories">
+                <mat-option *ngIf="!productCategory.isDeleted" [value]="productCategory.id" (click)="select(productCategory.id)">
+                    {{ productCategory.name }}
+                </mat-option>
+            </div>
+        </mat-select>
+        <mat-error *ngIf="productCategoryId.invalid && (productCategoryId.dirty || productCategoryId.touched)">
+            <mat-error *ngIf="productCategoryId.errors.required">Product Category is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field *ngIf="productCategory" class="example-full-width">
+        <mat-label>Brands</mat-label>
+        <mat-select formControlName="brandId" single>
+            <div *ngFor="let brand of productCategory.brands">
+                <mat-option *ngIf="!brand.isDeleted" [value]="brand.id">
+                    {{ brand.name }}
+                </mat-option>
+            </div>
+        </mat-select>
+        <mat-error *ngIf="brandId.invalid && (brandId.dirty || brandId.touched)">
+            <mat-error *ngIf="brandId.errors.required">Brand is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="specs" type="text" placeholder="Specs" required>
+        <mat-error *ngIf="specs.invalid && (specs.dirty || specs.touched)">
+            <mat-error *ngIf="specs.errors.required">Specs are required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="unit" type="text" placeholder="unit" required>
+        <mat-error *ngIf="unit.invalid && (unit.dirty || unit.touched)">
+            <mat-error *ngIf="unit.errors.required">unit is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="primary" [disabled]="productForm.invalid">Submit</button>
+</form>
+          
+        
