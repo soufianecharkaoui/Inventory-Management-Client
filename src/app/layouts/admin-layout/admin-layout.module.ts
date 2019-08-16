@@ -8,7 +8,6 @@ import {MatButtonModule} from '@angular/material/button';
 
 import { AdminLayoutRoutes } from './admin-layout.routing';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
-import { TransactionsComponent } from '../../transaction/transactions/transactions.component';
 import { MakeTransactionComponent } from '../../transaction/make-transaction/make-transaction.component';
 import { CurrenciesComponent, CRUDCurrencies } from '../../setup/currencies/currencies.component';
 import { WarehousesComponent, CRUDWarehouses } from '../../setup/warehouses/warehouses.component';
@@ -30,6 +29,8 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatListModule} from '@angular/material/list';
 import {MatStepperModule} from '@angular/material/stepper';
+import { MyTransactionsComponent } from '../../transaction/my-transactions/my-transactions.component';
+import { AllTransactionsComponent } from '../../transaction/all-transactions/all-transactions.component';
 
 
 @NgModule({
@@ -54,8 +55,7 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatStepperModule
   ],
   declarations: [ 
-    DashboardComponent, 
-    TransactionsComponent, 
+    DashboardComponent,
     MakeTransactionComponent, 
     CurrenciesComponent, 
     WarehousesComponent, 
@@ -72,7 +72,9 @@ import {MatStepperModule} from '@angular/material/stepper';
     CRUDProductCategories,
     CRUDProducts,
     CRUDUsers,
-    CRUDWarehouses
+    CRUDWarehouses,
+    MyTransactionsComponent,
+    AllTransactionsComponent
   ],
   entryComponents: [
     CRUDAgents,

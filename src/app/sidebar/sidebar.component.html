@@ -17,7 +17,7 @@
             </a>
         </li>
         <mat-action-list>
-            <div mat-list-item clas>
+            <div mat-list-item>
                 <button mat-button fxLayout="column" fxLayoutAlign="space-between stretch">
                     <a routerLink="/dashboard">
                         <i class="material-icons">dashboard</i>
@@ -35,9 +35,14 @@
                             </button>
                         </mat-expansion-panel-header>
                         <button mat-button>
-                            <a routerLink="/transactions">
+                            <a routerLink="/all-transactions">
                                 <i class="material-icons">list</i>
                                 <p>All Transactions</p>
+                            </a>
+                        </button>
+                        <button mat-button>
+                            <a routerLink="/my-transactions">
+                                <i class="material-icons">list</i>
                                 <p>My Transactions</p>
                             </a>
                         </button>
