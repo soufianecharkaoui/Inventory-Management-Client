@@ -55,7 +55,7 @@ export class ProductsComponent implements OnInit {
 
   edit(product: Product) {
     const dialogRef = this.dialog.open(CRUDProducts, {
-      width: '250px',
+      width: '300px',
       data: product
     });
   }
@@ -82,7 +82,7 @@ export class ProductsComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CRUDProducts, {
-      width: '250px'
+      width: '300px'
     });
   }
 
@@ -91,6 +91,7 @@ export class ProductsComponent implements OnInit {
 @Component({
   selector: 'crud-products',
   templateUrl: 'crud-products.html',
+  styleUrls: ['./products.component.scss']
 })
 export class CRUDProducts implements OnInit{
 

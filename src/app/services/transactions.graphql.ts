@@ -68,6 +68,7 @@ export const GET_TRANSACTIONS = gql`
                 email
             }
             cashed
+            code
             isDeleted
             createdAt
             updatedAt
@@ -80,12 +81,12 @@ export const ADD_TRANSACTION = gql`
             $clientName: String, $clientEmail: Boolean!, $clientPhone: String, 
             $clientAddress: String, $productIds: [ID!]!, $packaging: String, 
             $currency: String!, $totalAmount: Int!, $paymentMethod: String, 
-            $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean) {
+            $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!) {
         addTransaction(input: $input, userId: $userId, warehouseId: $warehouseId, type: $type, 
             clientName: $clientName, clientEmail: $clientEmail, clientPhone: $clientPhone, 
             clientAddress: $clientAddress, productIds: $productIds, packaging: $packaging, 
-            currency: $currency, totalAmount: $totalAmount, 
-            paymentMethod: $paymentMethod, otherPaymentMethod: $otherPaymentMethod, agentId: $agentId, cashed: $cashed) {
+            currency: $currency, totalAmount: $totalAmount, paymentMethod: $paymentMethod, 
+            otherPaymentMethod: $otherPaymentMethod, agentId: $agentId, cashed: $cashed, code: $code) {
             id
             input
             user {
@@ -151,6 +152,7 @@ export const ADD_TRANSACTION = gql`
                 email
             }
             cashed
+            code
             isDeleted
             createdAt
             updatedAt

@@ -99,6 +99,7 @@ export class Transaction {
     otherPaymentMethod: string;
     agent: Agent
     cashed: boolean;
+    code: string;
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;

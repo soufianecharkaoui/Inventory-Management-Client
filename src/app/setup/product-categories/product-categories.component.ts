@@ -54,7 +54,7 @@ export class ProductCategoriesComponent implements OnInit {
 
   edit(productCategory: ProductCategory) {
     const dialogRef = this.dialog.open(CRUDProductCategories, {
-      width: '250px',
+      width: '300px',
       data: productCategory
     });
   }
@@ -81,7 +81,7 @@ export class ProductCategoriesComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CRUDProductCategories, {
-      width: '250px'
+      width: '300px'
     });
   }
 
@@ -90,6 +90,7 @@ export class ProductCategoriesComponent implements OnInit {
 @Component({
   selector: 'crud-product-categories',
   templateUrl: 'crud-product-categories.html',
+  styleUrls: ['./product-categories.component.scss']
 })
 export class CRUDProductCategories implements OnInit{
 

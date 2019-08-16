@@ -36,6 +36,33 @@ export const ADD_WAREHOUSE = gql`
     }
 `;
 
+export const UPDATE_WAREHOUSE = gql`
+    mutation updateWarehouse($id: ID!, $name: String, $city: String, $country: String, $currencyId: ID) {
+        updateWarehouse(id: $id, name: $name, city: $city, country: $country, currencyId: $currencyId) {
+            id
+            name
+            city
+            country
+            currency {
+                id
+                name
+            }
+            isDeleted
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+export const REVOKE_WAREHOUSE = gql`
+    mutation revokeWarehouse($id: ID!) {
+        revokeWarehouse(id: $id) {
+            id
+            isDeleted
+        }
+    }
+`;
+
 export const DELETE_WAREHOUSE = gql`
     mutation deleteWarehouse($id: ID!) {
         deleteWarehouse(id: $id) {

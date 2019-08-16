@@ -53,7 +53,7 @@ export class AgentsComponent implements OnInit {
 
   edit(agent: Agent) {
     const dialogRef = this.dialog.open(CRUDAgents, {
-      width: '250px',
+      width: '300px',
       data: agent
     });
   }
@@ -80,7 +80,7 @@ export class AgentsComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CRUDAgents, {
-      width: '250px'
+      width: '300px'
     });
   }
 
@@ -89,6 +89,7 @@ export class AgentsComponent implements OnInit {
 @Component({
   selector: 'crud-agents',
   templateUrl: 'crud-agents.html',
+  styleUrls: ['./agents.component.scss']
 })
 export class CRUDAgents implements OnInit{
 

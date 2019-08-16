@@ -11,11 +11,11 @@ import { DashboardComponent } from '../../dashboard/dashboard.component';
 import { TransactionsComponent } from '../../transaction/transactions/transactions.component';
 import { MakeTransactionComponent } from '../../transaction/make-transaction/make-transaction.component';
 import { CurrenciesComponent, CRUDCurrencies } from '../../setup/currencies/currencies.component';
-import { WarehousesComponent } from '../../setup/warehouses/warehouses.component';
+import { WarehousesComponent, CRUDWarehouses } from '../../setup/warehouses/warehouses.component';
 import { BrandsComponent, CRUDBrands } from '../../setup/brands/brands.component';
 import { ProductCategoriesComponent, CRUDProductCategories } from '../../setup/product-categories/product-categories.component';
 import { ProductsComponent, CRUDProducts } from '../../setup/products/products.component';
-import { UsersComponent } from '../../setup/users/users.component';
+import { UsersComponent, CRUDUsers } from '../../setup/users/users.component';
 import { AgentsComponent, CRUDAgents } from '../../setup/agents/agents.component';
 import { PaymentMethodsComponent, CRUDPaymentMethods } from '../../setup/payment-methods/payment-methods.component';
 import { MatInputModule } from '@angular/material/input';
@@ -29,6 +29,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatSortModule} from '@angular/material/sort';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatListModule} from '@angular/material/list';
+import {MatStepperModule} from '@angular/material/stepper';
 
 
 @NgModule({
@@ -49,7 +50,8 @@ import {MatListModule} from '@angular/material/list';
     MatPaginatorModule,
     MatSortModule,
     MatDialogModule,
-    MatListModule
+    MatListModule,
+    MatStepperModule
   ],
   declarations: [ 
     DashboardComponent, 
@@ -68,7 +70,9 @@ import {MatListModule} from '@angular/material/list';
     CRUDCurrencies,
     CRUDPaymentMethods,
     CRUDProductCategories,
-    CRUDProducts
+    CRUDProducts,
+    CRUDUsers,
+    CRUDWarehouses
   ],
   entryComponents: [
     CRUDAgents,
@@ -76,7 +80,9 @@ import {MatListModule} from '@angular/material/list';
     CRUDCurrencies,
     CRUDPaymentMethods,
     CRUDProductCategories,
-    CRUDProducts
+    CRUDProducts,
+    CRUDUsers,
+    CRUDWarehouses
   ],
 })
 

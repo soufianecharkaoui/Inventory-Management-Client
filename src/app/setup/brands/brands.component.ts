@@ -53,7 +53,7 @@ export class BrandsComponent implements OnInit {
 
   edit(brand: Brand) {
     const dialogRef = this.dialog.open(CRUDBrands, {
-      width: '250px',
+      width: '300px',
       data: brand
     });
   }
@@ -80,7 +80,7 @@ export class BrandsComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CRUDBrands, {
-      width: '250px'
+      width: '300px'
     });
   }
 
@@ -89,6 +89,7 @@ export class BrandsComponent implements OnInit {
 @Component({
   selector: 'crud-brands',
   templateUrl: 'crud-brands.html',
+  styleUrls: ['./brands.component.scss']
 })
 export class CRUDBrands implements OnInit{
 

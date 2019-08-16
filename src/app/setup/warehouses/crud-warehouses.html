@@ -1,0 +1,37 @@
+<form #wform="ngForm" [formGroup]="warehouseForm" (ngSubmit)="save()" class="example-form">
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="name" type="text" placeholder="Name" required>
+        <mat-error *ngIf="name.invalid && (name.dirty || name.touched)">
+            <mat-error *ngIf="name.errors.required">Name is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+    
+
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="city" type="text" placeholder="City" required>
+        <mat-error *ngIf="city.invalid && (city.dirty || city.touched)">
+            <mat-error *ngIf="city.errors.required">City is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+    
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="country" type="text" placeholder="Country" required>
+        <mat-error *ngIf="country.invalid && (country.dirty || country.touched)">
+            <mat-error *ngIf="country.errors.required">Country is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Currency</mat-label>
+        <mat-select formControlName="currencyId" single>
+            <div *ngFor="let currency of currencies">
+                <mat-option *ngIf="!currency.isDeleted" [value]="currency.id">
+                    {{ currency.name }}
+                </mat-option>
+            </div>
+        </mat-select>
+    </mat-form-field>
+
+    <button type="submit" mat-raised-button color="primary" [disabled]="warehouseForm.invalid">Submit</button>
+</form>
+  

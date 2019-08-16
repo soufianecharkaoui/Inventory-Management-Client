@@ -1,0 +1,39 @@
+<form #uform="ngForm" [formGroup]="userForm" (ngSubmit)="save()" class="example-form">
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="name" type="text" placeholder="Name" required>
+        <mat-error *ngIf="name.invalid && (name.dirty || name.touched)">
+            <mat-error *ngIf="name.errors.required">Name is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="email" type="email" placeholder="email" email required>
+        <mat-error *ngIf="email.invalid && (email.dirty || email.touched)">
+            <mat-error *ngIf="email.errors.required">Email is required.</mat-error>
+            <mat-error *ngIf="email.errors.email">Email is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="password" type="password" placeholder="Password" required>
+        <mat-error *ngIf="password.invalid && (password.dirty || password.touched)">
+            <mat-error *ngIf="password.errors.required">Password is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <label id="isAdmin">Is he an Admin ?</label>
+    <mat-radio-group aria-labelledby="isAdmin" class="example-radio-group" formControlName="isAdmin">
+        <mat-radio-button class="example-radio-button" [value]="true">
+            Yes
+        </mat-radio-button>
+        <mat-radio-button class="example-radio-button" [value]="false">
+            No
+        </mat-radio-button>
+        <mat-error *ngIf="isAdmin.invalid && (isAdmin.dirty || isAdmin.touched)">
+            <mat-error *ngIf="isAdmin.errors.required">Choose one</mat-error>
+        </mat-error>
+    </mat-radio-group>
+    
+    <button type="submit" mat-raised-button color="primary" [disabled]="userForm.invalid">Submit</button>
+</form>
+  

@@ -53,7 +53,7 @@ export class PaymentMethodsComponent implements OnInit {
 
   edit(paymentMethod: PaymentMethod) {
     const dialogRef = this.dialog.open(CRUDPaymentMethods, {
-      width: '250px',
+      width: '300px',
       data: paymentMethod
     });
   }
@@ -80,7 +80,7 @@ export class PaymentMethodsComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CRUDPaymentMethods, {
-      width: '250px'
+      width: '300px'
     });
   }
 
@@ -89,6 +89,7 @@ export class PaymentMethodsComponent implements OnInit {
 @Component({
   selector: 'crud-payment-methods',
   templateUrl: 'crud-payment-methods.html',
+  styleUrls: ['./payment-methods.component.scss']
 })
 export class CRUDPaymentMethods implements OnInit{
 

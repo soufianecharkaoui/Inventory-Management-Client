@@ -53,7 +53,7 @@ export class CurrenciesComponent implements OnInit {
 
   edit(currency: Currency) {
     const dialogRef = this.dialog.open(CRUDCurrencies, {
-      width: '250px',
+      width: '300px',
       data: currency
     });
   }
@@ -80,7 +80,7 @@ export class CurrenciesComponent implements OnInit {
 
   openDialog(): void {
     const dialogRef = this.dialog.open(CRUDCurrencies, {
-      width: '250px'
+      width: '300px'
     });
   }
 
@@ -89,6 +89,7 @@ export class CurrenciesComponent implements OnInit {
 @Component({
   selector: 'crud-currencies',
   templateUrl: 'crud-currencies.html',
+  styleUrls: ['./currencies.component.scss']
 })
 export class CRUDCurrencies implements OnInit{
 

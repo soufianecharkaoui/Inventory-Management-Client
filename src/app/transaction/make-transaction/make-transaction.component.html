@@ -1,1 +1,241 @@
-<p>make-transaction works!</p>
+<mat-horizontal-stepper labelPosition="bottom" [linear]="true" #stepper>
+
+    <mat-step [stepControl]="firstTransactionForm">
+        <form #t1form="ngForm" [formGroup]="firstTransactionForm">
+            <label id="input">Select a Choice</label>
+            <mat-radio-group aria-labelledby="input" class="example-radio-group" formControlName="input">
+                <mat-radio-button class="example-radio-button" [value]="true">
+                    Input
+                </mat-radio-button>
+                <mat-radio-button class="example-radio-button" [value]="false">
+                    Output
+                </mat-radio-button>
+                <mat-error *ngIf="input.invalid && (input.dirty || input.touched)">
+                    <mat-error *ngIf="input.errors.required">Select a Choice</mat-error>
+                </mat-error>
+            </mat-radio-group>
+
+            <div>
+                <button mat-raised-button color="primary" matStepperNext [disabled]="firstTransactionForm.invalid">Next</button>
+            </div>
+        </form>
+    </mat-step>
+
+    <mat-step [stepControl]="secondTransactionForm">
+        <form #t2form="ngForm" [formGroup]="secondTransactionForm">
+            <mat-form-field class="example-full-width">
+                <mat-label>WaystoCap team member</mat-label>
+                <mat-select formControlName="userId" single>
+                    <div *ngFor="let user of users">
+                        <mat-option *ngIf="!user.isDeleted" [value]="user.id">
+                            {{ user.name }}
+                        </mat-option>
+                    </div>
+                </mat-select>
+                <mat-error *ngIf="userId.invalid && (userId.dirty || userId.touched)">
+                    <mat-error *ngIf="userId.errors.required">User is required.</mat-error>
+                </mat-error>
+            </mat-form-field>
+        
+            <mat-form-field class="example-full-width">
+                <mat-label>WaystoCap Warehouse</mat-label>
+                <mat-select formControlName="warehouseId" single>
+                    <div *ngFor="let warehouse of warehouses">
+                        <mat-option *ngIf="!warehouse.isDeleted" [value]="warehouse.id" (click)="selectWarehouse(warehouse)">
+                            {{ warehouse.name }} - {{ warehouse.city }} - {{ warehouse.country }}
+                        </mat-option>
+                    </div>
+                </mat-select>
+                <mat-error *ngIf="warehouseId.invalid && (warehouseId.dirty || warehouseId.touched)">
+                    <mat-error *ngIf="warehouseId.errors.required">Warehouse is required.</mat-error>
+                </mat-error>
+            </mat-form-field>
+        
+            <label *ngIf="!firstTransactionForm.value.input" id="type">Type</label>
+            <mat-radio-group *ngIf="!firstTransactionForm.value.input" aria-labelledby="type" class="example-radio-group" formControlName="type">
+                <mat-radio-button class="example-radio-button" [value]="'Vente'">
+                    Vente
+                </mat-radio-button>
+                <mat-radio-button class="example-radio-button" [value]="'Echantillon'">
+                    Echantillon
+                </mat-radio-button>
+            </mat-radio-group>
+        
+            <mat-form-field  *ngIf="!firstTransactionForm.value.input"class="example-full-width">
+                <input matInput formControlName="clientName" type="text" placeholder="Client Name">
+            </mat-form-field>
+        
+            <label id="clientEmail">Client Email</label>
+            <mat-radio-group aria-labelledby="clientEmail" class="example-radio-group" formControlName="clientEmail">
+                <mat-radio-button class="example-radio-button" [value]="true">
+                    Yes
+                </mat-radio-button>
+                <mat-radio-button class="example-radio-button" [value]="false">
+                    No
+                </mat-radio-button>
+                <mat-error *ngIf="clientEmail.invalid && (clientEmail.dirty || clientEmail.touched)">
+                    <mat-error *ngIf="clientEmail.errors.required">Choose one</mat-error>
+                </mat-error>
+            </mat-radio-group>
+        
+            <mat-form-field *ngIf="!firstTransactionForm.value.input" class="example-full-width">
+                <textarea matInput formControlName="clientAddress" placeholder="Client Address"></textarea>
+            </mat-form-field>
+
+            <div>
+                <button mat-button color="primary" matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext [disabled]="secondTransactionForm.invalid">Next</button>
+            </div>
+        </form>
+    </mat-step>
+
+    <mat-step [stepControl]="thirdTransactionForm">
+        <form #t3form="ngForm" [formGroup]="thirdTransactionForm">
+            <table *ngIf="products" mat-table [dataSource]="products" class="mat-elevation-z8">
+                <ng-container matColumnDef="product">
+                    <th mat-header-cell *matHeaderCellDef> Product </th>
+                    <td mat-cell *matCellDef="let element"> {{element.productCategory.name}} - {{element.brand.name}} - {{element.specs}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="stockQuantity">
+                    <th mat-header-cell *matHeaderCellDef> Stock Quantity </th>
+                    <td mat-cell *matCellDef="let element"> {{element.stockQuantity}} / {{element.unit}} </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="transactionQuantity">
+                    <th mat-header-cell *matHeaderCellDef> Transaction Quantity </th>
+                    <td mat-cell *matCellDef="let element">
+                        <input matInput type="number" formControlName="transactionQuantity">
+                        {{element.transactionQuantity}} / {{element.unit}}
+                    </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="buyingPrice">
+                    <th mat-header-cell *matHeaderCellDef> Price </th>
+                    <td mat-cell *matCellDef="let element">
+                        <input matInput type="number" formControlName="buyingPrice"> 
+                        {{element.buyingPrice}} {{element.warehouse.currency.name}}
+                    </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="sellingPrice">
+                    <th mat-header-cell *matHeaderCellDef> Price </th>
+                    <td mat-cell *matCellDef="let element">
+                        <input matInput type="number" formControlName="sellingPrice">
+                        {{element.sellingPrice}} {{element.warehouse.currency.name}}
+                    </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="select">
+                    <th mat-header-cell *matHeaderCellDef> </th>
+                    <td mat-cell *matCellDef="let element">
+                        <div *ngIf="!element.isSelected">
+                            <button type="button" mat-raised-button color="primary" (click)="selectProduct(element)">Select</button>
+                        </div>
+                        <div *ngIf="element.isSelected">
+                            <button type="button" mat-raised-button color="warn" (click)="deselectProduct(element)">Deselect</button>
+                        </div>
+                    </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="inputAmount">
+                    <th mat-header-cell *matHeaderCellDef> Amount </th>
+                    <td mat-cell *matCellDef="let element">
+                        <div *ngIf="element.amount">
+                            {{element.amount}}
+                        </div> {{element.warehouse.currency.name}}
+                    </td>
+                </ng-container>
+        
+                <ng-container matColumnDef="outputAmount">
+                    <th mat-header-cell *matHeaderCellDef> Amount </th>
+                    <td mat-cell *matCellDef="let element">
+                        <div *ngIf="element.amount">
+                            {{element.amount}}
+                        </div> {{element.warehouse.currency.name}}
+                    </td>
+                </ng-container>
+                
+                <div *ngIf="firstTransactionForm.value.input">
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsInput"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsInput;"></tr>
+                </div>
+        
+                <div *ngIf="!firstTransactionForm.value.input">
+                    <tr mat-header-row *matHeaderRowDef="displayedColumnsOutput"></tr>
+                    <tr mat-row *matRowDef="let row; columns: displayedColumnsOutput;"></tr>
+                </div>
+            </table>
+        
+            <mat-form-field class="example-full-width" style="margin-top: 30px;">
+                <mat-label>Total Amount</mat-label>
+                <input matInput value="{{totalAmount}}" placeholder="Total Amount" readonly>
+            </mat-form-field>
+        
+            <mat-form-field class="example-full-width">
+                <textarea matInput formControlName="packaging" placeholder="Packaging"></textarea>
+            </mat-form-field>
+
+            <div>
+                <button mat-button color="primary" matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext [disabled]="thirdTransactionForm.invalid">Next</button>
+            </div>
+        </form>
+    </mat-step>
+
+    <mat-step [stepControl]="fourthTransactionForm">
+        <form #t4form="ngForm" [formGroup]="fourthTransactionForm">
+            <mat-form-field *ngIf="!firstTransactionForm.value.input" class="example-full-width">
+                <mat-label>Payment Method</mat-label>
+                <mat-select formControlName="paymentMethod" single>
+                    <div *ngFor="let paymentMethod of paymentMethods">
+                        <mat-option *ngIf="!paymentMethod.isDeleted" [value]="paymentMethod.name">
+                            {{ paymentMethod.name }}
+                        </mat-option>
+                    </div>
+                </mat-select>
+            </mat-form-field>
+        
+            <mat-form-field *ngIf="!firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="otherPaymentMethod" type="text" placeholder="Other Payment Method">
+            </mat-form-field>
+        
+            <mat-form-field class="example-full-width">
+                <mat-label>Sales Agent</mat-label>
+                <mat-select formControlName="agentId" single>
+                    <div *ngFor="let agent of agents">
+                        <mat-option *ngIf="!agent.isDeleted" [value]="agent.id">
+                            {{ agent.name }}
+                        </mat-option>
+                    </div>
+                </mat-select>
+                <mat-error *ngIf="agentId.invalid && (agentId.dirty || agentId.touched)">
+                    <mat-error *ngIf="agentId.errors.required">Sales Agent is required.</mat-error>
+                </mat-error>
+            </mat-form-field>
+        
+            <label *ngIf="!firstTransactionForm.value.input" id="cashed">Cashed</label>
+            <mat-radio-group *ngIf="!firstTransactionForm.value.input" aria-labelledby="cashed" class="example-radio-group" formControlName="cashed">
+                <mat-radio-button class="example-radio-button" [value]="true">
+                    Yes
+                </mat-radio-button>
+                <mat-radio-button class="example-radio-button" [value]="false">
+                    No
+                </mat-radio-button>
+            </mat-radio-group>
+
+            <div>
+                <button mat-button color="primary" matStepperPrevious>Back</button>
+                <button mat-raised-button color="primary" matStepperNext [disabled]="fourthTransactionForm.invalid">Next</button>
+            </div>
+        </form>
+    </mat-step>
+
+    <mat-step>
+        <ng-template matStepLabel>Done</ng-template>
+        <div>
+            <button mat-button color="primary" matStepperPrevious>Back</button>
+            <button type="submit" mat-raised-button color="primary" (click)="save()">Submit</button>
+        </div>
+    </mat-step>
+</mat-horizontal-stepper>
