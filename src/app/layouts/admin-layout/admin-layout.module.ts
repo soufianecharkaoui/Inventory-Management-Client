@@ -31,6 +31,7 @@ import {MatListModule} from '@angular/material/list';
 import {MatStepperModule} from '@angular/material/stepper';
 import { MyTransactionsComponent } from '../../transaction/my-transactions/my-transactions.component';
 import { AllTransactionsComponent } from '../../transaction/all-transactions/all-transactions.component';
+import { FlexLayoutModule } from '@angular/flex-layout';
 
 
 @NgModule({
@@ -52,7 +53,8 @@ import { AllTransactionsComponent } from '../../transaction/all-transactions/all
     MatSortModule,
     MatDialogModule,
     MatListModule,
-    MatStepperModule
+    MatStepperModule,
+    FlexLayoutModule
   ],
   declarations: [ 
     DashboardComponent,

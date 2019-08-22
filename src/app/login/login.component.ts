@@ -2,10 +2,10 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { User } from '../types';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Apollo } from 'apollo-angular';
-import {GC_AUTH_TOKEN, GC_USER_ID} from './constants';
 import { AuthService } from './auth.service';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { LOGIN } from 'app/services/users.graphql';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,12 +16,14 @@ export class LoginComponent implements OnInit {
 
   user: User;
   loginForm: FormGroup;
+  error: string;
 
   @ViewChild('lform', {static: true}) loginFormDirective;
 
   constructor(private apollo: Apollo,
     private fb: FormBuilder,
-    private authService: AuthService) { }
+    private authService: AuthService,
+    private router: Router) { }
 
   createForm() {
     this.loginForm = this.fb.group({
@@ -46,13 +48,12 @@ export class LoginComponent implements OnInit {
       }
     })
     .valueChanges.pipe(map((result: any) => result.data.login))
-    .subscribe(data => this.saveUserData(data.userId, data.token));
-  }
-
-  saveUserData(userId, token) {
-    localStorage.setItem(GC_USER_ID, userId);
-    localStorage.setItem(GC_AUTH_TOKEN, token);
-    this.authService.setUserId(userId);
+    .subscribe(data => {
+        this.authService.saveUserData(data.userId, data.token);
+        this.router.navigate(['my-transactions']);
+      }
+    );
+    this.loginFormDirective.resetForm();
   }
 
 }

@@ -23,19 +23,6 @@
 
     <mat-step [stepControl]="secondTransactionForm">
         <form #t2form="ngForm" [formGroup]="secondTransactionForm">
-            <mat-form-field class="example-full-width">
-                <mat-label>WaystoCap team member</mat-label>
-                <mat-select formControlName="userId" single>
-                    <div *ngFor="let user of users">
-                        <mat-option *ngIf="!user.isDeleted" [value]="user.id">
-                            {{ user.name }}
-                        </mat-option>
-                    </div>
-                </mat-select>
-                <mat-error *ngIf="userId.invalid && (userId.dirty || userId.touched)">
-                    <mat-error *ngIf="userId.errors.required">User is required.</mat-error>
-                </mat-error>
-            </mat-form-field>
         
             <mat-form-field class="example-full-width">
                 <mat-label>WaystoCap Warehouse</mat-label>

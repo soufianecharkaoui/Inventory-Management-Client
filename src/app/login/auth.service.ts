@@ -37,6 +37,10 @@ export class AuthService {
     this._isAuthenticated.next(false);
   }
 
+  getUserId() {
+    return localStorage.getItem(GC_USER_ID);
+  }
+
   autoLogin() {
     const userId = localStorage.getItem(GC_USER_ID);
 

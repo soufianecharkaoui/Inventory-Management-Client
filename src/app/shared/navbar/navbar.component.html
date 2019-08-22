@@ -7,14 +7,12 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#" >{{getTitle()}}</a>
+            <p class="navbar-brand">{{getTitle()}}</p>
         </div>
         <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="#">
-                        <p>Log out</p>
-                    </a>
+                    <button mat-raised-button color="warn" (click)="logout()" style="margin-top: 10px">Log out</button>
                 </li>
                 <li class="separator hidden-lg hidden-md"></li>
             </ul>

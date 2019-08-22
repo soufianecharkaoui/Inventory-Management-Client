@@ -1,5 +1,5 @@
 <style>
-    button {
+    mat-action-list button {
         width: 100%;
         margin-top: 10px;
     };
@@ -11,13 +11,11 @@
         </a>
     </div>
     <ul class="nav responsive-nav">
-        <li *ngIf="isMobileMenu()">
-            <a>
-                <p>Log out</p>
-            </a>
+        <li *ngIf="isMobileMenu()" fxLayout="row" fxLayoutAlign="center center">
+            <button mat-raised-button color="warn" (click)="logout()">Log out</button>
         </li>
-        <mat-action-list>
-            <div mat-list-item>
+        <mat-action-list *ngIf="user">
+            <div *ngIf="user.isAdmin" mat-list-item>
                 <button mat-button fxLayout="column" fxLayoutAlign="space-between stretch">
                     <a routerLink="/dashboard">
                         <i class="material-icons">dashboard</i>
@@ -34,7 +32,7 @@
                                 <p>Transactions</p>
                             </button>
                         </mat-expansion-panel-header>
-                        <button mat-button>
+                        <button *ngIf="user.isAdmin" mat-button>
                             <a routerLink="/all-transactions">
                                 <i class="material-icons">list</i>
                                 <p>All Transactions</p>
@@ -55,7 +53,7 @@
                     </mat-expansion-panel>
                 </mat-accordion>
             </div>
-            <div mat-list-item>
+            <div *ngIf="user.isAdmin" mat-list-item>
                 <mat-accordion fxLayout="column" fxLayoutAlign="space-between stretch">
                     <mat-expansion-panel style="background-color: transparent; width: 100%;"> 
                         <mat-expansion-panel-header>

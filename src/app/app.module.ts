@@ -24,6 +24,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthService } from './login/auth.service';
 import { AuthGuardService } from './login/auth-guard.service';
 import { CRUDAgents } from './setup/agents/agents.component';
+import { ProcessHttpmsgService } from './services/process-httpmsg.service';
 
 @NgModule({
   imports: [
@@ -54,7 +55,8 @@ import { CRUDAgents } from './setup/agents/agents.component';
   ],
   providers: [
     AuthService,
-    AuthGuardService
+    AuthGuardService,
+    ProcessHttpmsgService
   ],
   bootstrap: [AppComponent]
 })

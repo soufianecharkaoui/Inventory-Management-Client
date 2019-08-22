@@ -14,6 +14,20 @@ export const GET_USERS = gql`
     }
 `;
 
+export const GET_USER = gql`
+    query getUser($id: ID!) {
+        getUser(id: $id) {
+            id
+            name
+            email
+            isAdmin
+            isDeleted
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
 export const ADD_USER = gql`
     mutation addUser($name: String!, $email: String!, $password: String!, $isAdmin: Boolean!) {
         addUser(name: $name, email: $email, password: $password, isAdmin: $isAdmin) {

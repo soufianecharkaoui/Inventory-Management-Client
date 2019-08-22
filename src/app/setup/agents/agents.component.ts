@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { Apollo } from 'apollo-angular';
 import { map } from 'rxjs/operators';
 import { Agent } from 'app/types';
@@ -22,12 +22,20 @@ export class AgentsComponent implements OnInit {
   displayedColumns: string[] = ['name', 'email', 'status', 'edit', 'changeStatus'];
   dataSource: MatTableDataSource<Agent>;
 
+  nameFilter = new FormControl();
+
+  filteredValues =
+  {
+    name: ''
+  };
+
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.agents);
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     }
 
   ngOnInit() {
@@ -41,14 +49,26 @@ export class AgentsComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
+
+    this.nameFilter.valueChanges.subscribe((nameFilterValue) =>
+    {
+      this.filteredValues['name'] = nameFilterValue;
+      this.dataSource.filter = JSON.stringify(this.filteredValues);
+    });
+
+    this.dataSource.filterPredicate = this.customFilterPredicate();
   }
 
-  applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  customFilterPredicate()
+  {
+    const myFilterPredicate = function(data: Agent, filter: string): boolean
+    {
+      let searchString = JSON.parse(filter);
 
-    if (this.dataSource.paginator) {
-      this.dataSource.paginator.firstPage();
+      return data.name.toString().trim().indexOf(searchString.name) !== -1;
     }
+
+    return myFilterPredicate;
   }
 
   edit(agent: Agent) {

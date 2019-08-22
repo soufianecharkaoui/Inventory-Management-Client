@@ -1,14 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Product, User, Warehouse, PaymentMethod, Transaction, Agent } from 'app/types';
+import { Product, Warehouse, PaymentMethod, Transaction, Agent } from 'app/types';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Apollo } from 'apollo-angular';
 import { GET_TRANSACTIONS, ADD_TRANSACTION } from 'app/services/transactions.graphql';
 import { map } from 'rxjs/operators';
-import { GET_USERS } from 'app/services/users.graphql';
 import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 import { GET_PAYMENT_METHODS } from 'app/services/payment-methods.graphql';
 import { GET_AGENTS } from 'app/services/agents.graphql';
 import { GET_PRODUCTS_BY_WAREHOUSE, UPDATE_PRODUCT } from 'app/services/products.graphql';
+import { AuthService } from 'app/login/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-make-transaction',
@@ -20,7 +21,6 @@ export class MakeTransactionComponent implements OnInit {
   transactions: Transaction[];
   transaction: Transaction;
   products: Product[];
-  users: User[];
   warehouses: Warehouse[];
   warehouse: Warehouse;
   paymentMethods: PaymentMethod[];
@@ -40,14 +40,15 @@ export class MakeTransactionComponent implements OnInit {
   @ViewChild('t4form', {static: true}) fourthTransactionFormDirective;
 
   constructor(private apollo: Apollo,
-    private fb: FormBuilder) { }
+    private fb: FormBuilder,
+    private authService: AuthService,
+    private router: Router) { }
 
   createForm() {
     this.firstTransactionForm = this.fb.group({
       input: ['', Validators.required]
     });
     this.secondTransactionForm = this.fb.group({
-      userId: ['', Validators.required],
       warehouseId: ['', Validators.required],
       type: [''],
       clientName: [''],
@@ -70,7 +71,6 @@ export class MakeTransactionComponent implements OnInit {
   }
 
   get input() { return this.firstTransactionForm.get('input'); }
-  get userId() { return this.secondTransactionForm.get('userId'); }
   get warehouseId() { return this.secondTransactionForm.get('warehouseId'); }
   get type() { return this.secondTransactionForm.get('type'); }
   get clientName() { return this.secondTransactionForm.get('clientName'); }
@@ -94,12 +94,6 @@ export class MakeTransactionComponent implements OnInit {
     })
     .valueChanges.pipe(map((result: any) => result.data.getTransactions))
     .subscribe(data => this.transactions = data);
-
-    this.apollo.watchQuery({
-      query: GET_USERS
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getUsers))
-    .subscribe(data => this.users = data);
 
     this.apollo.watchQuery({
       query: GET_WAREHOUSES
@@ -200,8 +194,7 @@ export class MakeTransactionComponent implements OnInit {
           buyingPrice: product.buyingPrice,
           sellingPrice: product.sellingPrice,
           amount: product.amount
-        },
-        refetchQueries: ['getProducts']
+        }
       })
       .subscribe();
     });
@@ -216,7 +209,7 @@ export class MakeTransactionComponent implements OnInit {
       mutation: ADD_TRANSACTION,
       variables: {
         input: this.firstTransactionForm.value.input,
-        userId: this.secondTransactionForm.value.userId,
+        userId: this.authService.getUserId(),
         warehouseId: this.secondTransactionForm.value.warehouseId,
         type: this.secondTransactionForm.value.type ? this.secondTransactionForm.value.type : '',
         clientName: this.secondTransactionForm.value.clientName ? this.secondTransactionForm.value.clientName : '',
@@ -232,8 +225,7 @@ export class MakeTransactionComponent implements OnInit {
         agentId: this.fourthTransactionForm.value.agentId,
         cashed: !this.firstTransactionForm.value.input ? this.fourthTransactionForm.value.cashed : false,
         code: code
-      },
-      refetchQueries: ['getTransactions']
+      }
     })
     .subscribe();
 
@@ -242,6 +234,8 @@ export class MakeTransactionComponent implements OnInit {
     this.secondTransactionFormDirective.resetForm();
     this.thirdTransactionFormDirective.resetForm();
     this.firstTransactionFormDirective.resetForm();
+
+    this.router.navigate(['my-transactions']);
   }
 
 }

@@ -4,14 +4,15 @@
             <mat-card class="example-card justify-content-center mat-elevation-z8">
     
                 <mat-card-header fxLayout="column" fxLayoutAlign="space-between center">
-                    <mat-card-title>Login</mat-card-title>
                     <img mat-card-image src="https://www.waystocap.com/new-landingpages/img/icons/svg/logo.svg" style="width: 100%;">
                 </mat-card-header>
-    
+                <hr>
+                <mat-card-title fxLayout="row" fxLayoutAlign="center center" style="color: #FF6D00;">Login</mat-card-title>
+                <hr>
                 <mat-card-content>
                     <form #lform="ngForm" [formGroup]="loginForm" (ngSubmit)="login()" class="example-form">
                         <mat-form-field class="example-full-width">
-                            <span matPrefix><i class="material-icons" style="color: #FF6D00">email</i> &nbsp;</span>
+                            <span matPrefix><i class="material-icons" style="color: #FF6D00;">email</i> &nbsp;</span>
                             <input matInput formControlName="email" type="email" placeholder="Email" email required>
                             <mat-error *ngIf="email.invalid && (email.dirty || email.touched)">
                                 <mat-error *ngIf="email.errors.required">Email is required.</mat-error>
@@ -20,7 +21,7 @@
                         </mat-form-field>
                     
                         <mat-form-field class="example-full-width">
-                            <span matPrefix><i class="material-icons" style="color: #FF6D00">vpn_key</i> &nbsp;</span>
+                            <span matPrefix><i class="material-icons" style="color: #FF6D00;">vpn_key</i> &nbsp;</span>
                             <input matInput formControlName="password" type="password" placeholder="Password" required>
                             <mat-error *ngIf="password.invalid && (password.dirty || password.touched)">
                                 <mat-error *ngIf="password.errors.required">Password is required.</mat-error>
