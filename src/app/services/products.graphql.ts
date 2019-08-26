@@ -25,6 +25,7 @@ export const GET_PRODUCTS = gql`
             }
             stockQuantity
             unit
+            code
             isDeleted
             createdAt
             updatedAt
@@ -57,6 +58,7 @@ export const GET_PRODUCTS_BY_WAREHOUSE = gql`
             }
             stockQuantity
             unit
+            code
             isDeleted
             createdAt
             updatedAt
@@ -66,9 +68,9 @@ export const GET_PRODUCTS_BY_WAREHOUSE = gql`
 
 export const ADD_PRODUCT = gql`
     mutation addProduct($productCategoryId: ID!, $brandId: ID!, $specs: String!, $warehouseId: ID!, 
-            $stockQuantity: Int!, $unit: String!) {
+            $stockQuantity: Int!, $unit: String!, $code: String!) {
         addProduct(productCategoryId: $productCategoryId, brandId: $brandId, specs: $specs, 
-            warehouseId: $warehouseId, stockQuantity: $stockQuantity, unit: $unit) {
+            warehouseId: $warehouseId, stockQuantity: $stockQuantity, unit: $unit, code: $code) {
             id
             productCategory {
                 id
@@ -91,6 +93,7 @@ export const ADD_PRODUCT = gql`
             }
             stockQuantity
             unit
+            code
             isDeleted
             createdAt
             updatedAt
@@ -131,6 +134,7 @@ export const UPDATE_PRODUCT = gql`
             sellingPrice
             amount
             unit
+            code
             isDeleted
             createdAt
             updatedAt

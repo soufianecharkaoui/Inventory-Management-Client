@@ -18,6 +18,24 @@ export const GET_WAREHOUSES = gql`
     }
 `;
 
+export const GET_WAREHOUSE = gql`
+    query getWarehouse($id: ID!) {
+        getWarehouse(id: $id) {
+            id
+            name
+            city
+            country
+            currency {
+                id
+                name
+            }
+            isDeleted
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
 export const ADD_WAREHOUSE = gql`
     mutation addWarehouse($name: String!, $city: String!, $country: String!, $currencyId: ID!) {
         addWarehouse(name: $name, city: $city, country: $country, currencyId: $currencyId) {

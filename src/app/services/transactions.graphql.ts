@@ -56,6 +56,7 @@ export const GET_TRANSACTIONS = gql`
                 buyingPrice
                 sellingPrice
                 amount
+                code
             }
             packaging
             currency
@@ -140,6 +141,7 @@ export const ADD_TRANSACTION = gql`
                 buyingPrice
                 sellingPrice
                 amount
+                code
             }
             packaging
             currency 

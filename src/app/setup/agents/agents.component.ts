@@ -48,15 +48,14 @@ export class AgentsComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.agents);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-    });
+      this.nameFilter.valueChanges.subscribe((nameFilterValue) =>
+        {
+          this.filteredValues['name'] = nameFilterValue;
+          this.dataSource.filter = JSON.stringify(this.filteredValues);
+        });
 
-    this.nameFilter.valueChanges.subscribe((nameFilterValue) =>
-    {
-      this.filteredValues['name'] = nameFilterValue;
-      this.dataSource.filter = JSON.stringify(this.filteredValues);
-    });
-
-    this.dataSource.filterPredicate = this.customFilterPredicate();
+        this.dataSource.filterPredicate = this.customFilterPredicate();
+      });
   }
 
   customFilterPredicate()

@@ -4,7 +4,7 @@
         <mat-label>Warehouses</mat-label>
         <mat-select formControlName="warehouseId" single>
             <div *ngFor="let warehouse of warehouses">
-                <mat-option *ngIf="!warehouse.isDeleted" [value]="warehouse.id">
+                <mat-option *ngIf="!warehouse.isDeleted" [value]="warehouse.id" (click)="selectWarehouse(warehouse.id)">
                     {{ warehouse.name }} - {{ warehouse.city }} - {{ warehouse.country }}
                 </mat-option>
             </div>
@@ -18,7 +18,7 @@
         <mat-label>Product Categories</mat-label>
         <mat-select formControlName="productCategoryId" single>
             <div *ngFor="let productCategory of productCategories">
-                <mat-option *ngIf="!productCategory.isDeleted" [value]="productCategory.id" (click)="select(productCategory.id)">
+                <mat-option *ngIf="!productCategory.isDeleted" [value]="productCategory.id" (click)="selectProductCategory(productCategory.id)">
                     {{ productCategory.name }}
                 </mat-option>
             </div>

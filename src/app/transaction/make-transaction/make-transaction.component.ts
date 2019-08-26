@@ -66,7 +66,7 @@ export class MakeTransactionComponent implements OnInit {
       paymentMethod: [''],
       otherPaymentMethod: [''],
       agentId: ['', Validators.required],
-      cashed: ['']
+      cashed: [false]
     });
   }
 
@@ -159,13 +159,14 @@ export class MakeTransactionComponent implements OnInit {
     })
     .valueChanges.pipe(map((result: any) => result.data.getProductsByWarehouse))
     .subscribe(data => { 
-      this.products = data;
+      this.products = data.filter(product => product.isDeleted === false);
       this.products.map(product => {
         product.transactionQuantity = 0;
         product.buyingPrice = 0;
       product.sellingPrice = 0;
       product.amount = 0;
       product.isSelected = false;
+      this.products.filter(product => product.isDeleted === false);
       });
     });
     this.warehouse = warehouse;
@@ -174,6 +175,32 @@ export class MakeTransactionComponent implements OnInit {
     this.thirdTransactionForm.controls['buyingPrice'].reset();
     this.thirdTransactionForm.controls['sellingPrice'].reset();
     this.selectedProducts = [];
+  }
+
+  updateStockQuantity(product: Product) {
+    this.apollo.watchQuery({
+      query: GET_TRANSACTIONS
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
+    .subscribe(data => { 
+      this.transactions = data;
+      this.transactions.map(transaction => {
+        if (transaction.input) {
+          transaction.products.map($product => {
+            if (product.id === $product.id) {
+              product.stockQuantity += $product.transactionQuantity;
+            }
+          });
+        } else {
+          transaction.products.map($product => {
+            if (product.id === $product.id) {
+              product.stockQuantity -= $product.transactionQuantity;
+            }
+          });
+        }
+      });
+      this.firstTransactionForm.value.input ? product.stockQuantity + product.transactionQuantity : product.stockQuantity - product.transactionQuantity;
+    });
   }
 
   save() {
@@ -203,7 +230,7 @@ export class MakeTransactionComponent implements OnInit {
     let city_inits = this.warehouse.city.split('', 2);
     let country_inits = this.warehouse.country.split('', 2);
 
-    let code = (country_inits[0] + country_inits[1] + city_inits[0] + city_inits[1] + warehouse_inits[0] + warehouse_inits[1] + (this.transactions.length + 1).toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping:false})).toUpperCase();
+    let code = 'T' + (country_inits[0] + country_inits[1] + city_inits[0] + city_inits[1] + warehouse_inits[0] + warehouse_inits[1] + (this.transactions.length + 1).toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping:false})).toUpperCase();
 
     this.apollo.mutate({
       mutation: ADD_TRANSACTION,
@@ -220,8 +247,8 @@ export class MakeTransactionComponent implements OnInit {
         packaging: this.thirdTransactionForm.value.packaging ? this.thirdTransactionForm.value.packaging : '',
         currency: this.warehouse.currency.name,
         totalAmount: this.totalAmount,
-        paymentMethod: this.fourthTransactionForm.value.paymentMethod  ? this.fourthTransactionForm.value.paymentMethod : '',
-        otherPaymentMethod: this.fourthTransactionForm.value.otherPaymentMethod  ? this.fourthTransactionForm.value.otherPaymentMethod : '',
+        paymentMethod: this.fourthTransactionForm.value.paymentMethod ? this.fourthTransactionForm.value.paymentMethod : '',
+        otherPaymentMethod: this.fourthTransactionForm.value.otherPaymentMethod ? this.fourthTransactionForm.value.otherPaymentMethod : '',
         agentId: this.fourthTransactionForm.value.agentId,
         cashed: !this.firstTransactionForm.value.input ? this.fourthTransactionForm.value.cashed : false,
         code: code

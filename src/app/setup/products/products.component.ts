@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
-import { Product, ProductCategory, Warehouse } from 'app/types';
+import { Product, ProductCategory, Warehouse, Transaction } from 'app/types';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
@@ -9,7 +9,8 @@ import { GET_PRODUCTS, REVOKE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT, ADD_PRODU
 import { map } from 'rxjs/operators';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { GET_PRODUCT_CATEGORIES, GET_PRODUCT_CATEGORY } from 'app/services/product-categories.graphql';
-import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
+import { GET_WAREHOUSES, GET_WAREHOUSE } from 'app/services/warehouses.graphql';
+import { GET_TRANSACTIONS } from 'app/services/transactions.graphql';
 
 @Component({
   selector: 'app-products',
@@ -20,8 +21,9 @@ export class ProductsComponent implements OnInit {
 
   products: Product[];
   product: Product;
+  transactions: Transaction[];
   
-  displayedColumns: string[] = ['name', 'warehouse', 'unit', 'stockQuantity', 'status', 'edit', 'changeStatus'];
+  displayedColumns: string[] = ['code', 'name', 'warehouse', 'unit', 'stockQuantity', 'status', 'edit', 'changeStatus', 'refresh'];
   dataSource: MatTableDataSource<Product>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -80,6 +82,34 @@ export class ProductsComponent implements OnInit {
     .subscribe();
   }
 
+  refresh(product: Product) {
+    let stockQuantity = 0;
+    this.apollo.watchQuery({
+      query: GET_TRANSACTIONS
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
+    .subscribe(data => { 
+      this.transactions = data;
+      console.log(this.transactions);
+      this.transactions.map(transaction => {
+        if (transaction.input) {
+          transaction.products.map($product => {
+            if (product.id === $product.id) {
+              stockQuantity += $product.transactionQuantity;
+            }
+          });
+        } else {
+          transaction.products.map($product => {
+            if (product.id === $product.id) {
+              stockQuantity -= $product.transactionQuantity;
+            }
+          });
+        }
+      });
+      console.log(stockQuantity);
+    });
+  }
+
   openDialog(): void {
     const dialogRef = this.dialog.open(CRUDProducts, {
       width: '300px'
@@ -100,6 +130,8 @@ export class CRUDProducts implements OnInit{
   productCategories: ProductCategory[];
   productCategory: ProductCategory;
   warehouses: Warehouse[];
+  warehouse: Warehouse;
+  products: Product[];
   
   @ViewChild('pform', {static: true}) productFormDirective;
 
@@ -129,6 +161,12 @@ export class CRUDProducts implements OnInit{
     this.createForm();
 
     this.apollo.watchQuery({
+      query: GET_PRODUCTS
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getProducts))
+    .subscribe(data => this.products = data);
+
+    this.apollo.watchQuery({
       query: GET_PRODUCT_CATEGORIES
     })
     .valueChanges.pipe(map((result: any) => result.data.getProductCategories))
@@ -141,7 +179,18 @@ export class CRUDProducts implements OnInit{
     .subscribe(data => this.warehouses = data);
   }
 
-  select(productCategoryId: String) {
+  selectWarehouse(warehouseId: String) {
+    this.apollo.watchQuery({
+      query: GET_WAREHOUSE,
+      variables: {
+        id: warehouseId
+      }
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getWarehouse))
+    .subscribe(data => this.warehouse = data);
+  }
+
+  selectProductCategory(productCategoryId: String) {
     this.apollo.watchQuery({
       query: GET_PRODUCT_CATEGORY,
       variables: {
@@ -173,6 +222,12 @@ export class CRUDProducts implements OnInit{
       })
       .subscribe();
     } else {
+      let warehouse_inits = this.warehouse.name.split('', 2);
+      let city_inits = this.warehouse.city.split('', 2);
+      let country_inits = this.warehouse.country.split('', 2);
+
+      let code = 'P' + (country_inits[0] + country_inits[1] + city_inits[0] + city_inits[1] + warehouse_inits[0] + warehouse_inits[1] + (this.products.length + 1).toLocaleString('en-US', {minimumIntegerDigits: 6, useGrouping:false})).toUpperCase();
+
       this.apollo.mutate({
         mutation: ADD_PRODUCT,
         variables: {
@@ -181,7 +236,8 @@ export class CRUDProducts implements OnInit{
           specs: this.productForm.value.specs,
           warehouseId: this.productForm.value.warehouseId,
           stockQuantity: 0,
-          unit: this.productForm.value.unit
+          unit: this.productForm.value.unit,
+          code: code
         },
         refetchQueries: ['getProducts']
       })

@@ -60,6 +60,7 @@ export class Product {
     sellingPrice: number;
     amount: number = 0;
     isSelected: boolean = false;
+    code: string;
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;
