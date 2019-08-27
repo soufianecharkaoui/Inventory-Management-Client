@@ -5,12 +5,11 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Apollo } from 'apollo-angular';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { GET_PRODUCTS, REVOKE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT, ADD_PRODUCT } from 'app/services/products.graphql';
+import { GET_PRODUCTS, REVOKE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT, ADD_PRODUCT, REFRESH_PRODUCT } from 'app/services/products.graphql';
 import { map } from 'rxjs/operators';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { GET_PRODUCT_CATEGORIES, GET_PRODUCT_CATEGORY } from 'app/services/product-categories.graphql';
 import { GET_WAREHOUSES, GET_WAREHOUSE } from 'app/services/warehouses.graphql';
-import { GET_TRANSACTIONS } from 'app/services/transactions.graphql';
 
 @Component({
   selector: 'app-products',
@@ -83,31 +82,13 @@ export class ProductsComponent implements OnInit {
   }
 
   refresh(product: Product) {
-    let stockQuantity = 0;
-    this.apollo.watchQuery({
-      query: GET_TRANSACTIONS
+    this.apollo.mutate({
+      mutation: REFRESH_PRODUCT,
+      variables: {
+        id: product.id,
+      },
     })
-    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
-    .subscribe(data => { 
-      this.transactions = data;
-      console.log(this.transactions);
-      this.transactions.map(transaction => {
-        if (transaction.input) {
-          transaction.products.map($product => {
-            if (product.id === $product.id) {
-              stockQuantity += $product.transactionQuantity;
-            }
-          });
-        } else {
-          transaction.products.map($product => {
-            if (product.id === $product.id) {
-              stockQuantity -= $product.transactionQuantity;
-            }
-          });
-        }
-      });
-      console.log(stockQuantity);
-    });
+    .subscribe();
   }
 
   openDialog(): void {

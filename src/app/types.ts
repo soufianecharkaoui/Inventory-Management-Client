@@ -89,7 +89,8 @@ export class Transaction {
     warehouse: Warehouse;
     type: string;
     clientName: string;
-    clientEmail: boolean;
+    hasClientEmail: boolean;
+    clientEmail: string;
     clientPhone: string;
     clientAddress: string;
     products: [Product];

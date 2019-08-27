@@ -159,3 +159,40 @@ export const DELETE_PRODUCT = gql`
         }
     }
 `;
+
+export const REFRESH_PRODUCT = gql`
+    mutation refreshProduct($id: ID!) {
+        refreshProduct(id: $id) {
+            id
+            productCategory {
+                id
+                name
+            }
+            brand {
+                id
+                name
+            }
+            specs
+            warehouse {
+                id
+                name
+                city
+                country
+                currency {
+                    id
+                    name
+                }
+            }
+            stockQuantity
+            transactionQuantity
+            buyingPrice
+            sellingPrice
+            amount
+            unit
+            code
+            isDeleted
+            createdAt
+            updatedAt
+        }
+    }
+`;

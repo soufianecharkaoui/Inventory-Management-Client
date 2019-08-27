@@ -7,7 +7,7 @@ import { map } from 'rxjs/operators';
 import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 import { GET_PAYMENT_METHODS } from 'app/services/payment-methods.graphql';
 import { GET_AGENTS } from 'app/services/agents.graphql';
-import { GET_PRODUCTS_BY_WAREHOUSE, UPDATE_PRODUCT } from 'app/services/products.graphql';
+import { GET_PRODUCTS_BY_WAREHOUSE, UPDATE_PRODUCT, REFRESH_PRODUCT } from 'app/services/products.graphql';
 import { AuthService } from 'app/login/auth.service';
 import { Router } from '@angular/router';
 
@@ -52,7 +52,8 @@ export class MakeTransactionComponent implements OnInit {
       warehouseId: ['', Validators.required],
       type: [''],
       clientName: [''],
-      clientEmail: ['', Validators.required],
+      hasClientEmail: ['', Validators.required],
+      clientEmail: [''],
       clientPhone: [''],
       clientAddress: ['']
     });
@@ -74,6 +75,7 @@ export class MakeTransactionComponent implements OnInit {
   get warehouseId() { return this.secondTransactionForm.get('warehouseId'); }
   get type() { return this.secondTransactionForm.get('type'); }
   get clientName() { return this.secondTransactionForm.get('clientName'); }
+  get hasClientEmail() { return this.secondTransactionForm.get('hasClientEmail'); }
   get clientEmail() { return this.secondTransactionForm.get('clientEmail'); }
   get clientPhone() { return this.secondTransactionForm.get('clientPhone'); }
   get clientAddress() { return this.secondTransactionForm.get('clientAddress'); }
@@ -177,32 +179,6 @@ export class MakeTransactionComponent implements OnInit {
     this.selectedProducts = [];
   }
 
-  updateStockQuantity(product: Product) {
-    this.apollo.watchQuery({
-      query: GET_TRANSACTIONS
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
-    .subscribe(data => { 
-      this.transactions = data;
-      this.transactions.map(transaction => {
-        if (transaction.input) {
-          transaction.products.map($product => {
-            if (product.id === $product.id) {
-              product.stockQuantity += $product.transactionQuantity;
-            }
-          });
-        } else {
-          transaction.products.map($product => {
-            if (product.id === $product.id) {
-              product.stockQuantity -= $product.transactionQuantity;
-            }
-          });
-        }
-      });
-      this.firstTransactionForm.value.input ? product.stockQuantity + product.transactionQuantity : product.stockQuantity - product.transactionQuantity;
-    });
-  }
-
   save() {
     let productIds = [];
     this.selectedProducts.map(product => { 
@@ -221,7 +197,8 @@ export class MakeTransactionComponent implements OnInit {
           buyingPrice: product.buyingPrice,
           sellingPrice: product.sellingPrice,
           amount: product.amount
-        }
+        },
+        refetchQueries: ['getProducts', 'getTransactions']
       })
       .subscribe();
     });
@@ -240,7 +217,8 @@ export class MakeTransactionComponent implements OnInit {
         warehouseId: this.secondTransactionForm.value.warehouseId,
         type: this.secondTransactionForm.value.type ? this.secondTransactionForm.value.type : '',
         clientName: this.secondTransactionForm.value.clientName ? this.secondTransactionForm.value.clientName : '',
-        clientEmail: this.secondTransactionForm.value.clientEmail,
+        hasClientEmail: this.secondTransactionForm.value.hasClientEmail,
+        clientEmail: this.secondTransactionForm.value.clientEmail ? this.secondTransactionForm.value.clientEmail : '',
         clientPhone: this.secondTransactionForm.value.clientPhone ? this.secondTransactionForm.value.clientPhone : '',
         clientAddress: this.secondTransactionForm.value.clientAddress ? this.secondTransactionForm.value.clientAddress : '',
         productIds: productIds,
@@ -252,7 +230,7 @@ export class MakeTransactionComponent implements OnInit {
         agentId: this.fourthTransactionForm.value.agentId,
         cashed: !this.firstTransactionForm.value.input ? this.fourthTransactionForm.value.cashed : false,
         code: code
-      }
+      }, refetchQueries: ['getTransactions', 'getProducts']
     })
     .subscribe();
 

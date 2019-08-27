@@ -4,7 +4,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { Apollo } from 'apollo-angular';
 import { AuthService } from './auth.service';
 import { map, catchError } from 'rxjs/operators';
-import { LOGIN } from 'app/services/users.graphql';
+import { LOGIN, GET_USER } from 'app/services/users.graphql';
 import { Router } from '@angular/router';
 
 @Component({
@@ -50,7 +50,21 @@ export class LoginComponent implements OnInit {
     .valueChanges.pipe(map((result: any) => result.data.login))
     .subscribe(data => {
         this.authService.saveUserData(data.userId, data.token);
-        this.router.navigate(['my-transactions']);
+        this.apollo.watchQuery({
+          query: GET_USER,
+          variables: {
+            id: data.userId
+          }
+        })
+        .valueChanges.pipe(map((result: any) => result.data.getUser))
+        .subscribe(data => {
+            if (data.isAdmin) {
+              this.router.navigate(['dashboard']);
+            } else {
+              this.router.navigate(['my-transactions']);
+            }
+          }
+        );
       }
     );
     this.loginFormDirective.resetForm();
