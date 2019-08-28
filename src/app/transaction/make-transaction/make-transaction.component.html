@@ -101,7 +101,7 @@
                             <span matSuffix>/ {{element.unit}}</span>
                         </mat-form-field>
                         <div *ngIf="element.isSelected">
-                            {{element.transactionQuantity}} / {{element.unit}}
+                            {{transactionQuantity}} / {{element.unit}}
                         </div>
                     </td>
                 </ng-container>
@@ -114,7 +114,7 @@
                             <span matSuffix>{{element.warehouse.currency.name}}</span>
                         </mat-form-field>
                         <div *ngIf="element.isSelected">
-                                {{element.buyingPrice}} {{element.warehouse.currency.name}}
+                                {{buyingPrice}} {{element.warehouse.currency.name}}
                         </div>
                     </td>
                 </ng-container>
@@ -127,7 +127,7 @@
                             <span matSuffix>{{element.warehouse.currency.name}}</span>
                         </mat-form-field>
                         <div *ngIf="element.isSelected">
-                                {{element.sellingPrice}} {{element.warehouse.currency.name}}
+                                {{sellingPrice}} {{element.warehouse.currency.name}}
                         </div>
                     </td>
                 </ng-container>
@@ -135,7 +135,7 @@
                 <ng-container matColumnDef="select">
                     <th mat-header-cell *matHeaderCellDef> </th>
                     <td mat-cell *matCellDef="let element">
-                        <div *ngIf="!element.isSelected">
+                        <div *ngIf="!element.isSelected && thirdTransactionForm.value.transactionQuantity">
                             <button type="button" mat-raised-button color="primary" (click)="selectProduct(element)">Select</button>
                         </div>
                         <div *ngIf="element.isSelected">
@@ -144,21 +144,15 @@
                     </td>
                 </ng-container>
         
-                <ng-container matColumnDef="inputAmount">
+                <ng-container matColumnDef="amount">
                     <th mat-header-cell *matHeaderCellDef> Amount </th>
                     <td mat-cell *matCellDef="let element">
-                        <div *ngIf="element.amount">
-                            {{element.amount}}
-                        </div> {{element.warehouse.currency.name}}
-                    </td>
-                </ng-container>
-        
-                <ng-container matColumnDef="outputAmount">
-                    <th mat-header-cell *matHeaderCellDef> Amount </th>
-                    <td mat-cell *matCellDef="let element">
-                        <div *ngIf="element.amount">
-                            {{element.amount}}
-                        </div> {{element.warehouse.currency.name}}
+                        <div *ngIf="element.isSelected">
+                            {{ amount }} {{element.warehouse.currency.name}}
+                        </div>
+                        <div *ngIf="!element.isSelected">
+                            0 {{element.warehouse.currency.name}}
+                        </div>   
                     </td>
                 </ng-container>
                 
@@ -173,11 +167,6 @@
                 </div>
             </table>
         
-            <mat-form-field class="example-full-width" style="margin-top: 30px;">
-                <mat-label>Total Amount</mat-label>
-                <input matInput value="{{totalAmount}}" placeholder="Total Amount" readonly>
-            </mat-form-field>
-        
             <mat-form-field class="example-full-width">
                 <textarea matInput formControlName="packaging" placeholder="Packaging"></textarea>
             </mat-form-field>
@@ -187,6 +176,11 @@
                 <button mat-raised-button color="primary" matStepperNext [disabled]="thirdTransactionForm.invalid">Next</button>
             </div>
         </form>
+        {{ thirdTransactionForm.value | json }} <hr>
+        {{buyingPrice}} <hr>
+        {{sellingPrice}} <hr>
+        {{transactionQuantity}} <hr>
+        {{amount}}
     </mat-step>
 
     <mat-step [stepControl]="fourthTransactionForm">

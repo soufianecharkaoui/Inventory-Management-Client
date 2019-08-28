@@ -40,8 +40,8 @@ export const AdminLayoutRoutes: Routes = [
         canActivate: [AuthGuard]
     }, {
         path: 'setup/users',
-          component: UsersComponent,
-          canActivate: [AuthGuard]
+        component: UsersComponent,
+        canActivate: [AuthGuard]
     }, {
         path: 'setup/brands',
         component: BrandsComponent,

@@ -55,10 +55,6 @@ export class Product {
     warehouse: Warehouse;
     stockQuantity: number;
     unit: string;
-    transactionQuantity: number;
-    buyingPrice: number;
-    sellingPrice: number;
-    amount: number = 0;
     isSelected: boolean = false;
     code: string;
     isDeleted: boolean;
@@ -93,10 +89,13 @@ export class Transaction {
     clientEmail: string;
     clientPhone: string;
     clientAddress: string;
-    products: [Product];
+    product: Product;
+    transactionQuantity: number;
+    buyingPrice: number;
+    sellingPrice: number;
+    amount: number = 0;
     packaging: string;
     currency: string;
-    totalAmount: number;
     paymentMethod: string;
     otherPaymentMethod: string;
     agent: Agent

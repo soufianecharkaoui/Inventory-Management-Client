@@ -193,11 +193,7 @@ export class CRUDProducts implements OnInit{
           warehouseId: this.productForm.value.warehouseId,
           specs: this.productForm.value.specs,
           unit: this.productForm.value.unit,
-          stockQuantity: this.data.stockQuantity,
-          transactionQuantity: this.data.transactionQuantity,
-          buyingPrice: this.data.buyingPrice,
-          sellingPrice: this.data.sellingPrice,
-          amount: this.data.amount
+          stockQuantity: this.data.stockQuantity
         },
         refetchQueries: ['getProducts']
       })

@@ -29,10 +29,13 @@ export class MakeTransactionComponent implements OnInit {
   secondTransactionForm: FormGroup;
   thirdTransactionForm: FormGroup;
   fourthTransactionForm: FormGroup;
-  displayedColumnsInput: string[] = ['product', 'stockQuantity', 'transactionQuantity', 'buyingPrice', 'select', 'inputAmount'];
-  displayedColumnsOutput: string[] = ['product', 'stockQuantity', 'transactionQuantity', 'sellingPrice', 'select', 'outputAmount'];
-  selectedProducts: Product[] = [];
-  totalAmount = 0;
+  displayedColumnsInput: string[] = ['product', 'stockQuantity', 'transactionQuantity', 'buyingPrice', 'select', 'amount'];
+  displayedColumnsOutput: string[] = ['product', 'stockQuantity', 'transactionQuantity', 'sellingPrice', 'select', 'amount'];
+  selectedProduct: Product;
+  transactionQuantity = 0;
+  buyingPrice = 0;
+  sellingPrice = 0;
+  amount = 0;
 
   @ViewChild('t1form', {static: true}) firstTransactionFormDirective;
   @ViewChild('t2form', {static: true}) secondTransactionFormDirective;
@@ -80,9 +83,9 @@ export class MakeTransactionComponent implements OnInit {
   get clientPhone() { return this.secondTransactionForm.get('clientPhone'); }
   get clientAddress() { return this.secondTransactionForm.get('clientAddress'); }
   get packaging() { return this.thirdTransactionForm.get('packaging'); }
-  get transactionQuantity() { return this.thirdTransactionForm.get('transactionQuantity'); }
-  get buyingPrice() { return this.thirdTransactionForm.get('buyingPrice'); }
-  get sellingPrice() { return this.thirdTransactionForm.get('sellingPrice'); }
+  get transactionQuantityControl() { return this.thirdTransactionForm.get('transactionQuantity'); }
+  get buyingPriceControl() { return this.thirdTransactionForm.get('buyingPrice'); }
+  get sellingPriceControl() { return this.thirdTransactionForm.get('sellingPrice'); }
   get paymentMethod() { return this.fourthTransactionForm.get('paymentMethod'); }
   get otherPaymentMethod() { return this.fourthTransactionForm.get('otherPaymentMethod'); }
   get agentId() { return this.fourthTransactionForm.get('agentId'); }
@@ -117,16 +120,16 @@ export class MakeTransactionComponent implements OnInit {
   }
 
   selectProduct(product: Product) {
-    this.selectedProducts.push(product);
-    product.transactionQuantity = this.thirdTransactionForm.value.transactionQuantity;
-    product.buyingPrice = this.thirdTransactionForm.value.buyingPrice;
-    product.sellingPrice = this.thirdTransactionForm.value.sellingPrice;
+    this.products.map(product => product.isSelected = false);
+    this.selectedProduct = product;
+    this.buyingPrice = this.thirdTransactionForm.value.buyingPrice;
+    this.sellingPrice = this.thirdTransactionForm.value.sellingPrice;
+    this.transactionQuantity = this.thirdTransactionForm.value.transactionQuantity;
     if (this.firstTransactionForm.value.input) {
-      product.amount = this.thirdTransactionForm.value.transactionQuantity * this.thirdTransactionForm.value.buyingPrice;
+      this.amount = this.transactionQuantity * this.buyingPrice;
     } else {
-      product.amount = this.thirdTransactionForm.value.transactionQuantity * this.thirdTransactionForm.value.sellingPrice;
+      this.amount = this.transactionQuantity * this.sellingPrice;
     }
-    this.totalAmount += product.amount;
     this.thirdTransactionForm.controls['transactionQuantity'].reset();
     this.thirdTransactionForm.controls['buyingPrice'].reset();
     this.thirdTransactionForm.controls['sellingPrice'].reset();
@@ -134,21 +137,15 @@ export class MakeTransactionComponent implements OnInit {
   }
 
   deselectProduct(product: Product) {
-    this.selectedProducts.map(prod => {
-      if (prod.id === product.id) {
-        if (this.selectedProducts.indexOf(prod) > -1) {
-          this.selectedProducts.splice(this.selectedProducts.indexOf(prod), 1);
-        }
-      }
-    });
-    this.totalAmount -= product.amount;
+    this.products.map(product => product.isSelected = false);
+    this.selectedProduct = null;
+    this.buyingPrice = 0;
+    this.sellingPrice = 0;
+    this.transactionQuantity = 0;
+    this.amount = 0;
     this.thirdTransactionForm.controls['transactionQuantity'].reset();
     this.thirdTransactionForm.controls['buyingPrice'].reset();
     this.thirdTransactionForm.controls['sellingPrice'].reset();
-    product.transactionQuantity = 0;
-    product.buyingPrice = 0;
-    product.sellingPrice = 0;
-    product.amount = 0;
     product.isSelected = false;
   }
 
@@ -163,45 +160,36 @@ export class MakeTransactionComponent implements OnInit {
     .subscribe(data => { 
       this.products = data.filter(product => product.isDeleted === false);
       this.products.map(product => {
-        product.transactionQuantity = 0;
-        product.buyingPrice = 0;
-      product.sellingPrice = 0;
-      product.amount = 0;
-      product.isSelected = false;
-      this.products.filter(product => product.isDeleted === false);
+        product.isSelected = false;
+        this.products.filter(product => product.isDeleted === false);
       });
     });
+    this.buyingPrice = 0;
+    this.sellingPrice = 0;
+    this.transactionQuantity = 0;
+    this.amount = 0;
     this.warehouse = warehouse;
-    this.totalAmount = 0;
     this.thirdTransactionForm.controls['transactionQuantity'].reset();
     this.thirdTransactionForm.controls['buyingPrice'].reset();
     this.thirdTransactionForm.controls['sellingPrice'].reset();
-    this.selectedProducts = [];
+    this.selectedProduct = null;
   }
 
   save() {
-    let productIds = [];
-    this.selectedProducts.map(product => { 
-      productIds.push(product.id);
-      this.apollo.mutate({
-        mutation: UPDATE_PRODUCT,
-        variables: {
-          id: product.id,
-          productCategoryId: product.productCategory.id,
-          brandId: product.brand.id,
-          warehouseId: product.warehouse.id,
-          specs: product.specs,
-          unit: product.unit,
-          stockQuantity: this.firstTransactionForm.value.input ? product.stockQuantity + product.transactionQuantity : product.stockQuantity - product.transactionQuantity,
-          transactionQuantity: product.transactionQuantity,
-          buyingPrice: product.buyingPrice,
-          sellingPrice: product.sellingPrice,
-          amount: product.amount
-        },
-        refetchQueries: ['getProducts', 'getTransactions']
-      })
-      .subscribe();
-    });
+    this.apollo.mutate({
+      mutation: UPDATE_PRODUCT,
+      variables: {
+        id: this.selectedProduct.id,
+        productCategoryId: this.selectedProduct.productCategory.id,
+        brandId: this.selectedProduct.brand.id,
+        warehouseId: this.selectedProduct.warehouse.id,
+        specs: this.selectedProduct.specs,
+        unit: this.selectedProduct.unit,
+        stockQuantity: this.firstTransactionForm.value.input ? this.selectedProduct.stockQuantity + this.transactionQuantity : this.selectedProduct.stockQuantity - this.transactionQuantity,
+      },
+      refetchQueries: ['getProducts']
+    })
+    .subscribe();
 
     let warehouse_inits = this.warehouse.name.split('', 2);
     let city_inits = this.warehouse.city.split('', 2);
@@ -221,10 +209,13 @@ export class MakeTransactionComponent implements OnInit {
         clientEmail: this.secondTransactionForm.value.clientEmail ? this.secondTransactionForm.value.clientEmail : '',
         clientPhone: this.secondTransactionForm.value.clientPhone ? this.secondTransactionForm.value.clientPhone : '',
         clientAddress: this.secondTransactionForm.value.clientAddress ? this.secondTransactionForm.value.clientAddress : '',
-        productIds: productIds,
+        productId: this.selectedProduct.id,
+        transactionQuantity: this.transactionQuantity,
+        buyingPrice: this.firstTransactionForm.value.input ? this.buyingPrice : 0,
+        sellingPrice: !this.firstTransactionForm.value.input ? this.sellingPrice : 0,
+        amount: this.amount,
         packaging: this.thirdTransactionForm.value.packaging ? this.thirdTransactionForm.value.packaging : '',
         currency: this.warehouse.currency.name,
-        totalAmount: this.totalAmount,
         paymentMethod: this.fourthTransactionForm.value.paymentMethod ? this.fourthTransactionForm.value.paymentMethod : '',
         otherPaymentMethod: this.fourthTransactionForm.value.otherPaymentMethod ? this.fourthTransactionForm.value.otherPaymentMethod : '',
         agentId: this.fourthTransactionForm.value.agentId,
@@ -234,7 +225,7 @@ export class MakeTransactionComponent implements OnInit {
     })
     .subscribe();
 
-    this.totalAmount = 0;
+    this.amount = 0;
     this.firstTransactionFormDirective.resetForm();
     this.secondTransactionFormDirective.resetForm();
     this.thirdTransactionFormDirective.resetForm();

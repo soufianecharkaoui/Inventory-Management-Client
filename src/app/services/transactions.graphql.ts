@@ -26,7 +26,7 @@ export const GET_TRANSACTIONS = gql`
             clientEmail
             clientPhone
             clientAddress
-            products {
+            product {
                 id
                 productCategory {
                     id
@@ -53,15 +53,14 @@ export const GET_TRANSACTIONS = gql`
                 }
                 stockQuantity
                 unit
-                transactionQuantity
-                buyingPrice
-                sellingPrice
-                amount
                 code
             }
+            transactionQuantity
+            buyingPrice
+            sellingPrice
+            amount
             packaging
             currency
-            totalAmount
             paymentMethod 
             otherPaymentMethod
             agent {
@@ -81,13 +80,14 @@ export const GET_TRANSACTIONS = gql`
 export const ADD_TRANSACTION = gql`
     mutation addTransaction($input: Boolean!, $userId: ID!, $warehouseId: ID!, $type: String, 
             $clientName: String, $hasClientEmail: Boolean!, $clientEmail: String, $clientPhone: String, 
-            $clientAddress: String, $productIds: [ID!]!, $packaging: String, 
-            $currency: String!, $totalAmount: Int!, $paymentMethod: String, 
+            $clientAddress: String, $productId: ID!, $transactionQuantity: Int!, $buyingPrice: Int,
+            $sellingPrice: Int, $amount: Int!, $packaging: String, $currency: String!, $paymentMethod: String, 
             $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!) {
         addTransaction(input: $input, userId: $userId, warehouseId: $warehouseId, type: $type, 
             clientName: $clientName, hasClientEmail: $hasClientEmail, clientEmail: $clientEmail, 
-            clientPhone: $clientPhone, clientAddress: $clientAddress, productIds: $productIds, 
-            packaging: $packaging, currency: $currency, totalAmount: $totalAmount, paymentMethod: $paymentMethod, 
+            clientPhone: $clientPhone, clientAddress: $clientAddress, productId: $productId,
+            transactionQuantity: $transactionQuantity, buyingPrice: $buyingPrice, sellingPrice: $sellingPrice,
+            amount: $amount, packaging: $packaging, currency: $currency, paymentMethod: $paymentMethod, 
             otherPaymentMethod: $otherPaymentMethod, agentId: $agentId, cashed: $cashed, code: $code) {
             id
             input
@@ -112,7 +112,7 @@ export const ADD_TRANSACTION = gql`
             clientEmail
             clientPhone
             clientAddress
-            products {
+            product {
                 id
                 productCategory {
                     id
@@ -139,15 +139,14 @@ export const ADD_TRANSACTION = gql`
                 }
                 stockQuantity
                 unit
-                transactionQuantity
-                buyingPrice
-                sellingPrice
-                amount
                 code
             }
+            transactionQuantity
+            buyingPrice
+            sellingPrice
+            amount
             packaging
-            currency 
-            totalAmount
+            currency
             paymentMethod
             otherPaymentMethod
             agent {
@@ -167,13 +166,14 @@ export const ADD_TRANSACTION = gql`
 export const UPDATE_TRANSACTION = gql`
     mutation updateTransaction($id: ID!, $input: Boolean!, $userId: ID!, $warehouseId: ID!, $type: String, 
             $clientName: String, $hasClientEmail: Boolean!, $clientEmail: String, $clientPhone: String, 
-            $clientAddress: String, $productIds: [ID!]!, $packaging: String, 
-            $currency: String!, $totalAmount: Int!, $paymentMethod: String, 
+            $clientAddress: String, $productId: ID!, $transactionQuantity: Int!, $buyingPrice: Int,
+            $sellingPrice: Int, $amount: Int!,, $packaging: String, $currency: String!, $paymentMethod: String, 
             $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!) {
         updateTransaction(id: $id, input: $input, userId: $userId, warehouseId: $warehouseId, type: $type, 
             clientName: $clientName, hasClientEmail: $hasClientEmail, clientEmail: $clientEmail, 
-            clientPhone: $clientPhone, clientAddress: $clientAddress, productIds: $productIds, 
-            packaging: $packaging, currency: $currency, totalAmount: $totalAmount, paymentMethod: $paymentMethod, 
+            clientPhone: $clientPhone, clientAddress: $clientAddress, productId: $productId,
+            transactionQuantity: $transactionQuantity, buyingPrice: $buyingPrice, sellingPrice: $sellingPrice,
+            amount: $amount, packaging: $packaging, currency: $currency, paymentMethod: $paymentMethod, 
             otherPaymentMethod: $otherPaymentMethod, agentId: $agentId, cashed: $cashed, code: $code) {
             id
             input
@@ -198,7 +198,7 @@ export const UPDATE_TRANSACTION = gql`
             clientEmail
             clientPhone
             clientAddress
-            products {
+            product {
                 id
                 productCategory {
                     id
@@ -225,15 +225,14 @@ export const UPDATE_TRANSACTION = gql`
                 }
                 stockQuantity
                 unit
-                transactionQuantity
-                buyingPrice
-                sellingPrice
-                amount
                 code
             }
+            transactionQuantity
+            buyingPrice
+            sellingPrice
+            amount
             packaging
             currency 
-            totalAmount
             paymentMethod
             otherPaymentMethod
             agent {

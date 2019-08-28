@@ -12,7 +12,7 @@ import { AuthService } from 'app/login/auth.service';
 import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 import { GET_PAYMENT_METHODS } from 'app/services/payment-methods.graphql';
 import { GET_AGENTS } from 'app/services/agents.graphql';
-import { GET_PRODUCTS_BY_WAREHOUSE, UPDATE_PRODUCT, REFRESH_PRODUCT } from 'app/services/products.graphql';
+import { GET_PRODUCTS_BY_WAREHOUSE, UPDATE_PRODUCT, REFRESH_PRODUCT, GET_PRODUCTS_BY_TRANSACTION } from 'app/services/products.graphql';
 
 @Component({
   selector: 'app-all-transactions',
@@ -23,6 +23,7 @@ export class AllTransactionsComponent implements OnInit {
 
   transactions: Transaction[];
   transaction: Transaction;
+  products: Product[];
   
   displayedColumns: string[] = ['code', 'type', 'owner', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'edit', 'changeStatus', 'print'];
   dataSource: MatTableDataSource<Transaction>;
@@ -37,16 +38,37 @@ export class AllTransactionsComponent implements OnInit {
 
   ngOnInit() {
     this.apollo.watchQuery({
-      query: GET_TRANSACTIONS
+      query: GET_TRANSACTIONS,
     })
     .valueChanges.pipe(map((result: any) => result.data.getTransactions))
     .subscribe(data => {
-      this.transactions = data;
       console.log(data);
+      this.transactions = data;
+      /*for (var i = 0; i < this.transactions.length; i++) {
+        this.apollo.watchQuery({
+          query: GET_PRODUCTS_BY_TRANSACTION,
+          variables: {
+            transactionId: this.transactions[i].id
+          }
+        })
+        .valueChanges.pipe(map((result: any) => result.data.getProductsByTransaction))
+        .subscribe(data2 => {
+          this.products = data2;
+        });
+      }*/
       this.dataSource = new MatTableDataSource(this.transactions);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
+
+    this.apollo.watchQuery({
+      query: GET_PRODUCTS_BY_TRANSACTION,
+      variables: {
+        transactionId: "5d66624e52b8272904a10787"
+      }
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getProductsByTransaction))
+    .subscribe(data => console.log(data));
   }
 
   applyFilter(filterValue: string) {

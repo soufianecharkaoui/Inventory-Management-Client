@@ -103,11 +103,9 @@ export const ADD_PRODUCT = gql`
 
 export const UPDATE_PRODUCT = gql`
     mutation updateProduct($id: ID!, $productCategoryId: ID, $brandId: ID, $specs: String, $warehouseId: ID, 
-            $stockQuantity: Int, $unit: String, $transactionQuantity: Int, $buyingPrice: Int, 
-            $sellingPrice: Int, $amount: Int) {
+            $stockQuantity: Int, $unit: String) {
         updateProduct(id: $id, productCategoryId: $productCategoryId, brandId: $brandId, specs: $specs, 
-            warehouseId: $warehouseId, stockQuantity: $stockQuantity, unit: $unit, transactionQuantity: $transactionQuantity, 
-            buyingPrice: $buyingPrice, sellingPrice: $sellingPrice, amount: $amount) {
+            warehouseId: $warehouseId, stockQuantity: $stockQuantity, unit: $unit) {
             id
             productCategory {
                 id
@@ -129,10 +127,6 @@ export const UPDATE_PRODUCT = gql`
                 }
             }
             stockQuantity
-            transactionQuantity
-            buyingPrice
-            sellingPrice
-            amount
             unit
             code
             isDeleted
@@ -184,10 +178,6 @@ export const REFRESH_PRODUCT = gql`
                 }
             }
             stockQuantity
-            transactionQuantity
-            buyingPrice
-            sellingPrice
-            amount
             unit
             code
             isDeleted
