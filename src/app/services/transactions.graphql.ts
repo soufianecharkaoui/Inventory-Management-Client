@@ -19,6 +19,9 @@ export const GET_TRANSACTIONS = gql`
                     id
                     name
                 }
+                address
+                phone
+                email
             }
             type
             clientName
@@ -50,6 +53,92 @@ export const GET_TRANSACTIONS = gql`
                         id
                         name
                     }
+                    address
+                    phone
+                    email
+                }
+                stockQuantity
+                unit
+                code
+            }
+            transactionQuantity
+            buyingPrice
+            sellingPrice
+            amount
+            packaging
+            currency
+            paymentMethod 
+            otherPaymentMethod
+            agent {
+                id
+                name
+                email
+            }
+            cashed
+            code
+            isDeleted
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+export const GET_TRANSACTION = gql`
+    query getTransaction($id: ID!) {
+        getTransaction(id: $id) {
+            id
+            input
+            user {
+                id
+                name
+                email
+            }
+            warehouse {
+                id
+                name
+                city
+                country
+                currency {
+                    id
+                    name
+                }
+                address
+                phone
+                email
+            }
+            type
+            clientName
+            hasClientEmail
+            clientEmail
+            clientPhone
+            clientAddress
+            product {
+                id
+                productCategory {
+                    id
+                    name
+                    brands {
+                        id
+                        name
+                    }
+                }
+                brand {
+                    id
+                    name
+                }
+                specs
+                warehouse {
+                    id
+                    name
+                    city
+                    country
+                    currency {
+                        id
+                        name
+                    }
+                    address
+                    phone
+                    email
                 }
                 stockQuantity
                 unit
@@ -105,6 +194,9 @@ export const ADD_TRANSACTION = gql`
                     id
                     name
                 }
+                address
+                phone
+                email
             }
             type
             clientName
@@ -136,6 +228,9 @@ export const ADD_TRANSACTION = gql`
                         id
                         name
                     }
+                    address
+                    phone
+                    email
                 }
                 stockQuantity
                 unit
@@ -191,6 +286,9 @@ export const UPDATE_TRANSACTION = gql`
                     id
                     name
                 }
+                address
+                phone
+                email
             }
             type
             clientName
@@ -222,6 +320,9 @@ export const UPDATE_TRANSACTION = gql`
                         id
                         name
                     }
+                    address
+                    phone
+                    email
                 }
                 stockQuantity
                 unit

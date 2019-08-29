@@ -23,8 +23,8 @@ import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.compon
 import { LoginComponent } from './login/login.component';
 import { AuthService } from './login/auth.service';
 import { AuthGuardService } from './login/auth-guard.service';
-import { CRUDAgents } from './setup/agents/agents.component';
 import { ProcessHttpmsgService } from './services/process-httpmsg.service';
+import { PrintTransactionComponent } from './transaction/print-transaction/print-transaction.component';
 
 @NgModule({
   imports: [
@@ -51,7 +51,8 @@ import { ProcessHttpmsgService } from './services/process-httpmsg.service';
   declarations: [
     AppComponent,
     AdminLayoutComponent,
-    LoginComponent
+    LoginComponent,
+    PrintTransactionComponent
   ],
   providers: [
     AuthService,

@@ -4,6 +4,9 @@ export class Warehouse {
     city: string;
     country: string;
     currency: Currency;
+    address: string;
+    phone: string;
+    email: string;
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;

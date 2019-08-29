@@ -32,6 +32,28 @@
         </mat-select>
     </mat-form-field>
 
+    <mat-form-field class="example-full-width">
+        <textarea matInput formControlName="address" placeholder="Address" required></textarea>
+        <mat-error *ngIf="address.invalid && (address.dirty || address.touched)">
+            <mat-error *ngIf="address.errors.required">Address is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="phone" type="text" placeholder="Phone" required>
+        <mat-error *ngIf="phone.invalid && (phone.dirty || phone.touched)">
+            <mat-error *ngIf="phone.errors.required">Phone is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="example-full-width">
+        <input matInput formControlName="email" type="email" placeholder="email" email required>
+        <mat-error *ngIf="email.invalid && (email.dirty || email.touched)">
+            <mat-error *ngIf="email.errors.required">Email is required.</mat-error>
+            <mat-error *ngIf="email.errors.email">Email is required.</mat-error>
+        </mat-error>
+    </mat-form-field>
+
     <button type="submit" mat-raised-button color="primary" [disabled]="warehouseForm.invalid">Submit</button>
 </form>
   

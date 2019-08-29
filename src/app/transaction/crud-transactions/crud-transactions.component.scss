@@ -8,7 +8,7 @@ table {
 }
   
 td, th {
-    width: 15%;
+    width: 25%;
 }
 
 .example-full-width {
@@ -17,6 +17,16 @@ td, th {
 
 .example-form {
     min-width: 150px;
-    max-width: 500px;
+    max-width: 100%;
     width: 100%;
+}
+
+.example-radio-group {
+    display: flex;
+    flex-direction: column;
+    margin: 15px 0;
+}
+
+.example-radio-button {
+    margin: 5px;
 }

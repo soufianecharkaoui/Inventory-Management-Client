@@ -5,7 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Apollo } from 'apollo-angular';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { GET_PRODUCTS, REVOKE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT, ADD_PRODUCT, REFRESH_PRODUCT } from 'app/services/products.graphql';
+import { GET_PRODUCTS, REVOKE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT, ADD_PRODUCT, REFRESH_PRODUCT, REFRESH_PRODUCTS } from 'app/services/products.graphql';
 import { map } from 'rxjs/operators';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { GET_PRODUCT_CATEGORIES, GET_PRODUCT_CATEGORY } from 'app/services/product-categories.graphql';
@@ -44,6 +44,12 @@ export class ProductsComponent implements OnInit {
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
+
+    this.apollo.mutate({
+      mutation: REFRESH_PRODUCTS, 
+      refetchQueries: ['getProducts']
+    })
+    .subscribe();
   }
 
   applyFilter(filterValue: string) {

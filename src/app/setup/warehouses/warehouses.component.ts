@@ -20,7 +20,7 @@ export class WarehousesComponent implements OnInit {
   warehouses: Warehouse[];
   warehouse: Warehouse;
   
-  displayedColumns: string[] = ['name', 'currency', 'status', 'edit', 'changeStatus'];
+  displayedColumns: string[] = ['name', 'currency', 'address', 'phone', 'email', 'status', 'edit', 'changeStatus'];
   dataSource: MatTableDataSource<Warehouse>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -111,7 +111,10 @@ export class CRUDWarehouses implements OnInit{
       name: [this.data ? this.data.name : '', Validators.required],
       city: [this.data ? this.data.city : '', Validators.required],
       country: [this.data ? this.data.country : '', Validators.required],
-      currencyId: [this.data ? this.data.currency.id : '', Validators.required]
+      currencyId: [this.data ? this.data.currency.id : '', Validators.required],
+      address: [this.data ? this.data.address : '', Validators.required],
+      phone: [this.data ? this.data.phone : '', Validators.required],
+      email: [this.data ? this.data.email : '', [Validators.required, Validators.email]]
     });
   }
 
@@ -119,6 +122,9 @@ export class CRUDWarehouses implements OnInit{
   get city() { return this.warehouseForm.get('city'); }
   get country() { return this.warehouseForm.get('country'); }
   get currencyId() { return this.warehouseForm.get('currencyId'); }
+  get address() { return this.warehouseForm.get('address'); }
+  get phone() { return this.warehouseForm.get('phone'); }
+  get email() { return this.warehouseForm.get('email'); }
 
   ngOnInit() {
     this.createForm();
@@ -139,7 +145,10 @@ export class CRUDWarehouses implements OnInit{
           name: this.warehouseForm.value.name,
           city: this.warehouseForm.value.city,
           country: this.warehouseForm.value.country,
-          currencyId: this.warehouseForm.value.currencyId
+          currencyId: this.warehouseForm.value.currencyId,
+          address: this.warehouseForm.value.address,
+          phone: this.warehouseForm.value.phone,
+          email: this.warehouseForm.value.email
         },
         refetchQueries: ['getWarehouses']
       })
@@ -151,7 +160,10 @@ export class CRUDWarehouses implements OnInit{
           name: this.warehouseForm.value.name,
           city: this.warehouseForm.value.city,
           country: this.warehouseForm.value.country,
-          currencyId: this.warehouseForm.value.currencyId
+          currencyId: this.warehouseForm.value.currencyId,
+          address: this.warehouseForm.value.address,
+          phone: this.warehouseForm.value.phone,
+          email: this.warehouseForm.value.email
         },
         refetchQueries: ['getWarehouses']
       })

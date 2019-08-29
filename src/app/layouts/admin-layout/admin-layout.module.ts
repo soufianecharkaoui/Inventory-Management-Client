@@ -30,8 +30,9 @@ import {MatDialogModule} from '@angular/material/dialog';
 import {MatListModule} from '@angular/material/list';
 import {MatStepperModule} from '@angular/material/stepper';
 import { MyTransactionsComponent } from '../../transaction/my-transactions/my-transactions.component';
-import { AllTransactionsComponent, CRUDTransactions } from '../../transaction/all-transactions/all-transactions.component';
+import { AllTransactionsComponent } from '../../transaction/all-transactions/all-transactions.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
+import { CRUDTransactionsComponent } from '../../transaction/crud-transactions/crud-transactions.component';
 
 
 @NgModule({
@@ -77,7 +78,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     CRUDWarehouses,
     MyTransactionsComponent,
     AllTransactionsComponent,
-    CRUDTransactions
+    CRUDTransactionsComponent,
   ],
   entryComponents: [
     CRUDAgents,
@@ -88,7 +89,7 @@ import { FlexLayoutModule } from '@angular/flex-layout';
     CRUDProducts,
     CRUDUsers,
     CRUDWarehouses,
-    CRUDTransactions
+    CRUDTransactionsComponent
   ],
 })
 

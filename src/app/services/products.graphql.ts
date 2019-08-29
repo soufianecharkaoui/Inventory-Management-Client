@@ -22,6 +22,9 @@ export const GET_PRODUCTS = gql`
                     id
                     name
                 }
+                address
+                phone
+                email
             }
             stockQuantity
             unit
@@ -55,6 +58,9 @@ export const GET_PRODUCTS_BY_WAREHOUSE = gql`
                     id
                     name
                 }
+                address
+                phone
+                email
             }
             stockQuantity
             unit
@@ -90,6 +96,9 @@ export const ADD_PRODUCT = gql`
                     id
                     name
                 }
+                address
+                phone
+                email
             }
             stockQuantity
             unit
@@ -125,6 +134,9 @@ export const UPDATE_PRODUCT = gql`
                     id
                     name
                 }
+                address
+                phone
+                email
             }
             stockQuantity
             unit
@@ -176,6 +188,45 @@ export const REFRESH_PRODUCT = gql`
                     id
                     name
                 }
+                address
+                phone
+                email
+            }
+            stockQuantity
+            unit
+            code
+            isDeleted
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
+export const REFRESH_PRODUCTS = gql`
+    mutation refreshProducts {
+        refreshProducts {
+            id
+            productCategory {
+                id
+                name
+            }
+            brand {
+                id
+                name
+            }
+            specs
+            warehouse {
+                id
+                name
+                city
+                country
+                currency {
+                    id
+                    name
+                }
+                address
+                phone
+                email
             }
             stockQuantity
             unit

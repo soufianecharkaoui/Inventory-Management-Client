@@ -176,11 +176,6 @@
                 <button mat-raised-button color="primary" matStepperNext [disabled]="thirdTransactionForm.invalid">Next</button>
             </div>
         </form>
-        {{ thirdTransactionForm.value | json }} <hr>
-        {{buyingPrice}} <hr>
-        {{sellingPrice}} <hr>
-        {{transactionQuantity}} <hr>
-        {{amount}}
     </mat-step>
 
     <mat-step [stepControl]="fourthTransactionForm">
