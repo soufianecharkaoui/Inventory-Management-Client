@@ -8,9 +8,9 @@ import { ProductCategoriesComponent } from 'app/setup/product-categories/product
 import { ProductsComponent } from 'app/setup/products/products.component';
 import { PaymentMethodsComponent } from 'app/setup/payment-methods/payment-methods.component';
 import { CurrenciesComponent } from 'app/setup/currencies/currencies.component';
-import { MakeTransactionComponent } from 'app/transaction/make-transaction/make-transaction.component';
-import { MyTransactionsComponent } from 'app/transaction/my-transactions/my-transactions.component';
-import { AllTransactionsComponent } from 'app/transaction/all-transactions/all-transactions.component';
+import { MakeTransactionComponent } from 'app/transactions/make-transaction/make-transaction.component';
+import { MyTransactionsComponent } from 'app/transactions/my-transactions/my-transactions.component';
+import { AllTransactionsComponent } from 'app/transactions/all-transactions/all-transactions.component';
 import { AuthGuardService as AuthGuard } from 'app/login/auth-guard.service';
 
 export const AdminLayoutRoutes: Routes = [

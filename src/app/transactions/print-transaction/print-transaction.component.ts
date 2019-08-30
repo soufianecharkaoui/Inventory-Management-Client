@@ -32,7 +32,7 @@ export class PrintTransactionComponent implements OnInit {
     });
     setTimeout(() => {
       window.print();
-    }, 1000);
+    }, 2000);
     /*window.onafterprint = () => {
       window.close();
     }*/

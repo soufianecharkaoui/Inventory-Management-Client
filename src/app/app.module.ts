@@ -24,7 +24,7 @@ import { LoginComponent } from './login/login.component';
 import { AuthService } from './login/auth.service';
 import { AuthGuardService } from './login/auth-guard.service';
 import { ProcessHttpmsgService } from './services/process-httpmsg.service';
-import { PrintTransactionComponent } from './transaction/print-transaction/print-transaction.component';
+import { PrintTransactionComponent } from './transactions/print-transaction/print-transaction.component';
 
 @NgModule({
   imports: [

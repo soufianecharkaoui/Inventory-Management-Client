@@ -166,6 +166,104 @@ export const GET_TRANSACTION = gql`
     }
 `;
 
+export const GET_TRANSACTIONS_BY_WAREHOUSES = gql`
+    query getTransactionsByWarehouses {
+        getTransactionsByWarehouses {
+            warehouse {
+                id
+                name
+                city
+                country
+                currency {
+                    id
+                    name
+                }
+                address
+                phone
+                email
+            }
+            transactions {
+                id
+                input
+                user {
+                    id
+                    name
+                    email
+                }
+                warehouse {
+                    id
+                    name
+                    city
+                    country
+                    currency {
+                        id
+                        name
+                    }
+                    address
+                    phone
+                    email
+                }
+                type
+                clientName
+                hasClientEmail
+                clientEmail
+                clientPhone
+                clientAddress
+                product {
+                    id
+                    productCategory {
+                        id
+                        name
+                        brands {
+                            id
+                            name
+                        }
+                    }
+                    brand {
+                        id
+                        name
+                    }
+                    specs
+                    warehouse {
+                        id
+                        name
+                        city
+                        country
+                        currency {
+                            id
+                            name
+                        }
+                        address
+                        phone
+                        email
+                    }
+                    stockQuantity
+                    unit
+                    code
+                }
+                transactionQuantity
+                buyingPrice
+                sellingPrice
+                amount
+                packaging
+                currency
+                paymentMethod 
+                otherPaymentMethod
+                agent {
+                    id
+                    name
+                    email
+                }
+                cashed
+                code
+                isDeleted
+                createdAt
+                updatedAt
+            }
+        }
+    }
+`;
+
 export const ADD_TRANSACTION = gql`
     mutation addTransaction($input: Boolean!, $userId: ID!, $warehouseId: ID!, $type: String, 
             $clientName: String, $hasClientEmail: Boolean!, $clientEmail: String, $clientPhone: String, 

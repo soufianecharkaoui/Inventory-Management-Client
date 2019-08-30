@@ -5,7 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 
 import { AdminLayoutComponent } from './layouts/admin-layout/admin-layout.component';
 import { LoginComponent } from './login/login.component';
-import { PrintTransactionComponent } from './transaction/print-transaction/print-transaction.component';
+import { PrintTransactionComponent } from './transactions/print-transaction/print-transaction.component';
 import { AuthGuardService as AuthGuard } from 'app/login/auth-guard.service';
 
 const routes: Routes =[

@@ -1,3 +1,33 @@
-<p>
-  dashboard works!
-</p>
+<main style="margin: 10px">
+  <section>
+    <h3 class="title">Transactions By Warehouses</h3>
+    <hr>
+    <div class="items" fxLayout="row" fxLayoutAlign="start stretch">
+      <mat-card *ngFor="let warehouse of warehousesTransactions" class="example-card" style="margin: 10px;">
+        <mat-card-header>
+          <mat-card-title> {{ warehouse.warehouse.name }} </mat-card-title>
+          <mat-card-subtitle> {{ warehouse.warehouse.city }} - {{ warehouse.warehouse.country }} </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <p> Number of Transactions : <strong>{{ warehouse.transactions.length }}</strong> </p>
+          <p> Number of Output Transactions : <strong>{{ getOutputTransactions(warehouse) }}</strong> </p>
+          <p> Overall Income : <strong>{{ getOverallIncome(warehouse) }}</strong> </p>
+          <p> Products : </p>
+          <div *ngFor="let product of getProducts(warehouse.transactions)">
+            <mat-accordion>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }}
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <p> Sold quantity : <strong>{{ getSoldQuantity(warehouse.transactions, product) }}</strong> </p>
+                <p> Bought quantity : <strong>{{ getBoughtQuantity(warehouse.transactions, product) }}</strong> </p>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>                                                                                                                                                                                                
+  </section>
+</main>

@@ -1,8 +1,7 @@
-
-<div *ngIf="transaction" id="container">
-  <div class="right-invoice">
-    <section id="memo">
-      <div class="company-info">
+<div *ngIf="transaction">
+  <div>
+    <section>
+      <div>
         <div>
             <img src="https://www.waystocap.com/new-landingpages/img/icons/svg/logo.svg">
         </div>
@@ -15,17 +14,17 @@
       </div>
     </section>
 
-    <section id="invoice-title-number">
+    <section>
 
-      <div class="title-top">
-        <span> {{transaction.createdAt | date: 'shortDate'}} </span> <span id="number"> #{{transaction.code}} </span>
+      <div>
+        <span> {{transaction.createdAt | date: 'shortDate'}} </span> <span> #{{transaction.code}} </span>
       </div>
     
-      <div id="title">BON DE COMMANDE</div>
+      <div>BON DE COMMANDE</div>
       
     </section>
 
-    <section id="client-info">
+    <section>
       <span>CLIENT</span>
       <div class="client-name">
         <span> {{transaction.clientName}} </span>
@@ -88,5 +87,5 @@
       <div> {{transaction.paymentMethod}} </div>
     </div>
   </div>
-</div>
+</div>-->
       

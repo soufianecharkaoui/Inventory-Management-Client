@@ -8,7 +8,7 @@ import {MatButtonModule} from '@angular/material/button';
 
 import { AdminLayoutRoutes } from './admin-layout.routing';
 import { DashboardComponent } from '../../dashboard/dashboard.component';
-import { MakeTransactionComponent } from '../../transaction/make-transaction/make-transaction.component';
+import { MakeTransactionComponent } from '../../transactions/make-transaction/make-transaction.component';
 import { CurrenciesComponent, CRUDCurrencies } from '../../setup/currencies/currencies.component';
 import { WarehousesComponent, CRUDWarehouses } from '../../setup/warehouses/warehouses.component';
 import { BrandsComponent, CRUDBrands } from '../../setup/brands/brands.component';
@@ -29,10 +29,12 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatListModule} from '@angular/material/list';
 import {MatStepperModule} from '@angular/material/stepper';
-import { MyTransactionsComponent } from '../../transaction/my-transactions/my-transactions.component';
-import { AllTransactionsComponent } from '../../transaction/all-transactions/all-transactions.component';
+import { MyTransactionsComponent } from '../../transactions/my-transactions/my-transactions.component';
+import { AllTransactionsComponent } from '../../transactions/all-transactions/all-transactions.component';
 import { FlexLayoutModule } from '@angular/flex-layout';
-import { CRUDTransactionsComponent } from '../../transaction/crud-transactions/crud-transactions.component';
+import { CRUDTransactionsComponent } from '../../transactions/crud-transactions/crud-transactions.component';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatExpansionModule} from '@angular/material/expansion';
 
 
 @NgModule({
@@ -55,7 +57,9 @@ import { CRUDTransactionsComponent } from '../../transaction/crud-transactions/c
     MatDialogModule,
     MatListModule,
     MatStepperModule,
-    FlexLayoutModule
+    FlexLayoutModule,
+    MatGridListModule,
+    MatExpansionModule
   ],
   declarations: [ 
     DashboardComponent,

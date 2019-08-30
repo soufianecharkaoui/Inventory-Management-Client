@@ -30,7 +30,7 @@ export class MakeTransactionComponent implements OnInit {
   thirdTransactionForm: FormGroup;
   fourthTransactionForm: FormGroup;
   displayedColumnsInput: string[] = ['product', 'stockQuantity', 'transactionQuantity', 'buyingPrice', 'select', 'amount'];
-  displayedColumnsOutput: string[] = ['product', 'stockQuantity', 'transactionQuantity', 'sellingPrice', 'select', 'amount'];
+  displayedColumnsOutput: string[] = ['product', 'stockQuantity', 'transactionQuantity', 'sellingPrice', 'select', 'amount', 'commercialAction'];
   selectedProduct: Product;
   transactionQuantity = 0;
   buyingPrice = 0;
@@ -64,7 +64,8 @@ export class MakeTransactionComponent implements OnInit {
       packaging: [''],
       transactionQuantity: [''],
       buyingPrice: [''],
-      sellingPrice: ['']
+      sellingPrice: [''],
+      commercialAction: [false],
     });
     this.fourthTransactionForm = this.fb.group({
       paymentMethod: [''],
@@ -86,6 +87,7 @@ export class MakeTransactionComponent implements OnInit {
   get transactionQuantityControl() { return this.thirdTransactionForm.get('transactionQuantity'); }
   get buyingPriceControl() { return this.thirdTransactionForm.get('buyingPrice'); }
   get sellingPriceControl() { return this.thirdTransactionForm.get('sellingPrice'); }
+  get commercialAction() { return this.thirdTransactionForm.get('commercialAction'); }
   get paymentMethod() { return this.fourthTransactionForm.get('paymentMethod'); }
   get otherPaymentMethod() { return this.fourthTransactionForm.get('otherPaymentMethod'); }
   get agentId() { return this.fourthTransactionForm.get('agentId'); }
@@ -212,7 +214,7 @@ export class MakeTransactionComponent implements OnInit {
         productId: this.selectedProduct.id,
         transactionQuantity: this.transactionQuantity,
         buyingPrice: this.firstTransactionForm.value.input ? this.buyingPrice : 0,
-        sellingPrice: !this.firstTransactionForm.value.input ? this.sellingPrice : 0,
+        sellingPrice: !this.firstTransactionForm.value.input && !this.thirdTransactionForm.value.commercialAction  ? this.sellingPrice : 0,
         amount: this.amount,
         packaging: this.thirdTransactionForm.value.packaging ? this.thirdTransactionForm.value.packaging : '',
         currency: this.warehouse.currency.name,
@@ -221,7 +223,7 @@ export class MakeTransactionComponent implements OnInit {
         agentId: this.fourthTransactionForm.value.agentId,
         cashed: !this.firstTransactionForm.value.input ? this.fourthTransactionForm.value.cashed : false,
         code: code
-      }, refetchQueries: ['getTransactions', 'getProducts']
+      }, refetchQueries: ['getTransactions', 'getProducts', 'getTransactionsByWarehouses']
     })
     .subscribe();
 

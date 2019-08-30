@@ -127,7 +127,7 @@
                             <span matSuffix>{{element.warehouse.currency.name}}</span>
                         </mat-form-field>
                         <div *ngIf="element.isSelected">
-                                {{sellingPrice}} {{element.warehouse.currency.name}}
+                                {{thirdTransactionForm.value.commercialAction ? 0 : sellingPrice}} {{element.warehouse.currency.name}}
                         </div>
                     </td>
                 </ng-container>
@@ -153,6 +153,13 @@
                         <div *ngIf="!element.isSelected">
                             0 {{element.warehouse.currency.name}}
                         </div>   
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="commercialAction">
+                    <th mat-header-cell *matHeaderCellDef> Is a Commercial Action ?</th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-checkbox formControlName="commercialAction"></mat-checkbox> 
                     </td>
                 </ng-container>
                 
@@ -221,7 +228,7 @@
         </form>
         <div>
             <button mat-button color="primary" matStepperPrevious>Back</button>
-            <button mat-raised-button color="primary" [disabled]="fourthTransactionForm.invalid" (click)="save()">Submit</button>
+            <button mat-raised-button color="primary" [disabled]="fourthTransactionForm.invalid || transactionQuantity === 0" (click)="save()">Submit</button>
         </div>
     </mat-step>
 </mat-horizontal-stepper>
