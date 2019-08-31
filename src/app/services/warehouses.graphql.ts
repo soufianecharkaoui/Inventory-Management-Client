@@ -17,6 +17,58 @@ export const GET_WAREHOUSES = gql`
             isDeleted
             createdAt
             updatedAt
+            transactions {
+                id
+                input
+                user {
+                    id
+                    name
+                    email
+                }
+                type
+                clientName
+                hasClientEmail
+                clientEmail
+                clientPhone
+                clientAddress
+                product {
+                    id
+                    productCategory {
+                        id
+                        name
+                        brands {
+                            id
+                            name
+                        }
+                    }
+                    brand {
+                        id
+                        name
+                    }
+                    specs
+                    stockQuantity
+                    unit
+                    code
+                }
+                transactionQuantity
+                buyingPrice
+                sellingPrice
+                amount
+                packaging
+                currency
+                paymentMethod 
+                otherPaymentMethod
+                agent {
+                    id
+                    name
+                    email
+                }
+                cashed
+                code
+                isDeleted
+                createdAt
+                updatedAt
+            }
         }
     }
 `;

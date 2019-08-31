@@ -7,6 +7,7 @@ export class Warehouse {
     address: string;
     phone: string;
     email: string;
+    transactions: Transaction[];
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -16,6 +17,7 @@ export class Agent {
     id: string;
     name: string;
     email: string;
+    transactions: Transaction[];
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;
