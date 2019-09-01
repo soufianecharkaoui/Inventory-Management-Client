@@ -1,5 +1,19 @@
 <main style="margin: 10px">
   <section>
+    <h5 class="title">Stats for the Month: </h5>
+    <mat-form-field>
+      <input matInput [matDatepicker]="dp" placeholder="Month and Year" [formControl]="date">
+      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+      <mat-datepicker #dp
+                      startView="multi-year"
+                      (yearSelected)="chosenYearHandler($event)"
+                      (monthSelected)="chosenMonthHandler($event, dp)"
+                      panelClass="example-month-picker">
+      </mat-datepicker>
+    </mat-form-field>
+  </section>
+
+  <section>
     <h3 class="title">Global Overview</h3>
     <hr>
     <mat-card *ngIf="transactions">
@@ -31,7 +45,7 @@
           <mat-card-header>
             <mat-card-subtitle> Sold Quantity </mat-card-subtitle>
           </mat-card-header>
-          <mat-card-content><h4> {{ getBestSellingProduct(transactions).soldQuantity }}</h4> </mat-card-content>
+          <mat-card-content><h4> {{ getBestSellingProduct(transactions).soldQuantity }} / {{ getLessSellingProduct(transactions).product.unit }} </h4> </mat-card-content>
         </div>
       </div>
     </mat-card>
@@ -48,10 +62,94 @@
           <mat-card-header>
             <mat-card-subtitle> Sold Quantity </mat-card-subtitle>
           </mat-card-header>
-          <mat-card-content><h4> {{ getLessSellingProduct(transactions).soldQuantity }}</h4> </mat-card-content>
+          <mat-card-content><h4> {{ getLessSellingProduct(transactions).soldQuantity }} / {{ getLessSellingProduct(transactions).product.unit }} </h4> </mat-card-content>
         </div>
       </div>
     </mat-card>
+  </section>
+  <hr>
+
+  <section *ngIf="transactions">
+    <h3 class="title">Top Sales</h3>
+    <hr>
+    <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-around center" style="flex-wrap: wrap;">
+      <mat-card style="width: 80%;">
+        <mat-card-header>
+          <mat-card-subtitle> Top 10 Products Ranked By Sold Quantity </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <table style="width: 100%;">
+            <tr>
+              <th>Product</th>
+              <th>Sold Quantity</th>
+            </tr>
+            <tr *ngFor="let product of getTop10ProductsBySoldQuantity(transactions)">
+              <td> {{ product.product.productCategory.name }} - {{ product.product.brand.name }} - {{ product.product.specs }} </td>
+              <td> {{ product.soldQuantity }} / {{ product.product.unit }} </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+      <mat-card style="width: 80%;">
+        <mat-card-header>
+          <mat-card-subtitle> Top 10 Products Ranked By Overall Income </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <table style="width: 100%;">
+            <tr>
+              <th>Product</th>
+              <th>Overall Income</th>
+            </tr>
+            <tr *ngFor="let product of getTop10ProductsByOverallIncome(transactions)">
+              <td> {{ product.product.productCategory.name }} - {{ product.product.brand.name }} - {{ product.product.specs }} </td>
+              <td> {{ product.overallIncome }} / {{ product.product.warehouse.currency.name }} </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div> 
+  </section>
+  <hr>
+
+  <section *ngIf="transactions">
+    <h3 class="title">Lowest Sales</h3>
+    <hr>
+    <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-around center" style="flex-wrap: wrap;">
+      <mat-card style="width: 80%;">
+        <mat-card-header>
+          <mat-card-subtitle> Bottom 10 Products Ranked By Sold Quantity </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <table style="width: 100%;">
+            <tr>
+              <th>Product</th>
+              <th>Sold Quantity</th>
+            </tr>
+            <tr *ngFor="let product of getBottom10ProductsBySoldQuantity(transactions)">
+              <td> {{ product.product.productCategory.name }} - {{ product.product.brand.name }} - {{ product.product.specs }} </td>
+              <td> {{ product.soldQuantity }} / {{ product.product.unit }} </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+      <mat-card style="width: 80%;">
+        <mat-card-header>
+          <mat-card-subtitle> Bottom 10 Products Ranked By Overall Income </mat-card-subtitle>
+        </mat-card-header>
+        <mat-card-content>
+          <table style="width: 100%;">
+            <tr>
+              <th>Product</th>
+              <th>Overall Income</th>
+            </tr>
+            <tr *ngFor="let product of getBottom10ProductsByOverallIncome(transactions)">
+              <td> {{ product.product.productCategory.name }} - {{ product.product.brand.name }} - {{ product.product.specs }} </td>
+              <td> {{ product.overallIncome }} / {{ product.product.warehouse.currency.name }} </td>
+            </tr>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </div> 
   </section>
   <hr>
 
@@ -80,6 +178,9 @@
                 <p> Sold quantity : <strong>{{ getSoldQuantity(warehouse.transactions, product) }} / {{ product.unit }}</strong> </p>
                 <p> Bought quantity : <strong>{{ getBoughtQuantity(warehouse.transactions, product) }} / {{ product.unit }}</strong> </p>
                 <p> Average Price : <strong>{{ getAveragePrice(warehouse.transactions, product) }} / {{ warehouse.currency.name }}</strong> </p>
+                <p> Remaining Stock : <strong> {{ product.stockQuantity }} </strong> </p>
+                <p> Value Of The Remaining Stock : <strong> {{ getValueOfStock(product) }} / {{ warehouse.currency.name }} </strong> </p>
+                <p> Overall Income : <strong>{{ getOverallIncomeByProduct(product, warehouse.transactions) }} / {{ warehouse.currency.name }}</strong> </p>
               </mat-expansion-panel>
             </mat-accordion>
           </div>
@@ -104,6 +205,24 @@
           <p> Overall Income : <strong> <ul *ngFor="let overallIncome of getOverallIncomeByAgent(agent)">
             <li> {{ overallIncome.overallIncome }} / {{ overallIncome.currency }} </li>
           </ul> </strong> </p>
+          <p> Products : </p>
+          <div *ngFor="let product of getProducts(agent.transactions)">
+            <mat-accordion>
+              <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                  <mat-panel-title>
+                    {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }}
+                  </mat-panel-title>
+                </mat-expansion-panel-header>
+                <p> Sold quantity : <strong>{{ getSoldQuantity(agent.transactions, product) }} / {{ product.unit }}</strong> </p>
+                <p> Bought quantity : <strong>{{ getBoughtQuantity(agent.transactions, product) }} / {{ product.unit }}</strong> </p>
+                <p> Average Price : <strong>{{ getAveragePrice(agent.transactions, product) }} / FCFA </strong> </p>
+                <p> Remaining Stock : <strong> {{ product.stockQuantity }} </strong> </p>
+                <p> Value Of The Remaining Stock : <strong> {{ getValueOfStock(product) }} / FCFA </strong> </p>
+                <p> Overall Income : <strong>{{ getOverallIncomeByProduct(product, agent.transactions) }} / FCFA </strong> </p>
+              </mat-expansion-panel>
+            </mat-accordion>
+          </div>
         </mat-card-content>
       </mat-card>
     </div>

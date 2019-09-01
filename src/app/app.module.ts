@@ -1,3 +1,5 @@
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -25,6 +27,7 @@ import { AuthService } from './login/auth.service';
 import { AuthGuardService } from './login/auth-guard.service';
 import { ProcessHttpmsgService } from './services/process-httpmsg.service';
 import { PrintTransactionComponent } from './transactions/print-transaction/print-transaction.component';
+import { MY_FORMATS } from './dashboard/dashboard.component';
 
 @NgModule({
   imports: [
@@ -57,7 +60,10 @@ import { PrintTransactionComponent } from './transactions/print-transaction/prin
   providers: [
     AuthService,
     AuthGuardService,
-    ProcessHttpmsgService
+    ProcessHttpmsgService,
+    {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+
+    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS}
   ],
   bootstrap: [AppComponent]
 })
