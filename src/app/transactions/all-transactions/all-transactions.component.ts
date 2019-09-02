@@ -5,7 +5,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { Apollo } from 'apollo-angular';
 import { MatDialog } from '@angular/material/dialog';
-import { GET_TRANSACTIONS, DELETE_TRANSACTION, REVOKE_TRANSACTION} from 'app/services/transactions.graphql';
+import { GET_TRANSACTIONS, DELETE_TRANSACTION, REVOKE_TRANSACTION, UPDATE_TRANSACTION} from 'app/services/transactions.graphql';
 import { map } from 'rxjs/operators';
 import { CRUDTransactionsComponent } from '../crud-transactions/crud-transactions.component';
 
@@ -18,8 +18,9 @@ export class AllTransactionsComponent implements OnInit {
 
   transactions: Transaction[];
   transaction: Transaction;
+  cashed: boolean;
   
-  displayedColumns: string[] = ['code', 'type', 'owner', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'edit', 'changeStatus', 'print'];
+  displayedColumns: string[] = ['code', 'type', 'owner', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'edit', 'changeStatus', 'print', 'cashed'];
   dataSource: MatTableDataSource<Transaction>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -74,6 +75,37 @@ export class AllTransactionsComponent implements OnInit {
       variables: {
         id: transaction.id
       }
+    })
+    .subscribe();
+  }
+
+  updateCashed(transaction: Transaction) {
+    this.apollo.mutate({
+      mutation: UPDATE_TRANSACTION,
+      variables: {
+        id: transaction.id,
+        input: transaction.input,
+        userId: transaction.user.id,
+        warehouseId: transaction.warehouse.id,
+        type: transaction.type ? transaction.type : '',
+        clientName: transaction.clientName ? transaction.clientName : '',
+        hasClientEmail: transaction.hasClientEmail,
+        clientEmail: transaction.clientEmail ? transaction.clientEmail : '',
+        clientPhone: transaction.clientPhone ? transaction.clientPhone : '',
+        clientAddress: transaction.clientAddress ? transaction.clientAddress : '',
+        productId: transaction.product.id,
+        transactionQuantity: transaction.transactionQuantity,
+        buyingPrice: transaction.input ? transaction.buyingPrice : 0,
+        sellingPrice: !transaction.input ? transaction.sellingPrice : 0,
+        amount: transaction.amount,
+        packaging: transaction.packaging ? transaction.packaging : '',
+        currency: transaction.currency,
+        paymentMethod: transaction.paymentMethod ? transaction.paymentMethod : '',
+        otherPaymentMethod: transaction.otherPaymentMethod ? transaction.otherPaymentMethod : '',
+        agentId: transaction.agent.id,
+        cashed: !transaction.cashed,
+        code: transaction.code
+      }, refetchQueries: ['getTransactions']
     })
     .subscribe();
   }

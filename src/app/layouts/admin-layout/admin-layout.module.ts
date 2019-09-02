@@ -36,6 +36,7 @@ import { CRUDTransactionsComponent } from '../../transactions/crud-transactions/
 import {MatGridListModule} from '@angular/material/grid-list';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatSlideToggleModule} from '@angular/material/slide-toggle';
 
 
 @NgModule({
@@ -61,7 +62,8 @@ import {MatDatepickerModule} from '@angular/material/datepicker';
     FlexLayoutModule,
     MatGridListModule,
     MatExpansionModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatSlideToggleModule
   ],
   declarations: [ 
     DashboardComponent,

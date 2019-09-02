@@ -48,12 +48,35 @@ export class DashboardComponent implements OnInit {
     ctrlValue.year(normalizedYear.year());
     this.date.setValue(ctrlValue);
     this.year = ctrlValue.year();
-    this.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year);
-    this.warehouses.map(warehouse => {
-      warehouse.transactions = warehouse.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year);
+    this.apollo.watchQuery({
+      query: GET_TRANSACTIONS
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
+    .subscribe(data => {
+      this.transactions = data.filter(transaction => transaction.isDeleted === false);
+      this.transactions = this.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year && new Date(Number(transaction.createdAt)).getMonth() === this.month);
     });
-    this.agents.map(agent => {
-      agent.transactions = agent.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year);
+
+    this.apollo.watchQuery({
+      query: GET_WAREHOUSES
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getWarehouses))
+    .subscribe(data => {
+      this.warehouses = data.filter(warehouse => warehouse.isDeleted === false);
+      this.warehouses.map(warehouse => {
+        warehouse.transactions = warehouse.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year && new Date(Number(transaction.createdAt)).getMonth() === this.month);
+      });
+    });
+
+    this.apollo.watchQuery({
+      query: GET_AGENTS
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getAgents))
+    .subscribe(data => {
+      this.agents = data.filter(agent => agent.isDeleted === false);
+      this.agents.map(agent => {
+        agent.transactions = agent.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year && new Date(Number(transaction.createdAt)).getMonth() === this.month);
+      });
     });
   }
 
@@ -63,14 +86,37 @@ export class DashboardComponent implements OnInit {
     this.date.setValue(ctrlValue);
     datepicker.close();
     this.month = ctrlValue.month();
-    this.transactions = this.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month);
-    this.warehouses.map(warehouse => {
-      warehouse.transactions = warehouse.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month);
+
+    this.apollo.watchQuery({
+      query: GET_TRANSACTIONS
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
+    .subscribe(data => {
+      this.transactions = data.filter(transaction => transaction.isDeleted === false);
+      this.transactions = this.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month && new Date(Number(transaction.createdAt)).getFullYear() === this.year);
     });
-    this.agents.map(agent => {
-      agent.transactions = agent.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month);
+
+    this.apollo.watchQuery({
+      query: GET_WAREHOUSES
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getWarehouses))
+    .subscribe(data => {
+      this.warehouses = data.filter(warehouse => warehouse.isDeleted === false);
+      this.warehouses.map(warehouse => {
+        warehouse.transactions = warehouse.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month && new Date(Number(transaction.createdAt)).getFullYear() === this.year);
+      });
     });
-    console.log(this.transactions);
+
+    this.apollo.watchQuery({
+      query: GET_AGENTS
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getAgents))
+    .subscribe(data => {
+      this.agents = data.filter(agent => agent.isDeleted === false);
+      this.agents.map(agent => {
+        agent.transactions = agent.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month && new Date(Number(transaction.createdAt)).getFullYear() === this.year);
+      });
+    });
   }
 
 
@@ -81,7 +127,7 @@ export class DashboardComponent implements OnInit {
       query: GET_TRANSACTIONS
     })
     .valueChanges.pipe(map((result: any) => result.data.getTransactions))
-    .subscribe(data => this.transactions = data);
+    .subscribe(data => this.transactions = data.filter(transaction => transaction.isDeleted === false));
 
     this.apollo.watchQuery({
       query: GET_PRODUCTS

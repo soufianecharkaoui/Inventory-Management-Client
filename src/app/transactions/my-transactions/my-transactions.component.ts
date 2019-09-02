@@ -20,7 +20,7 @@ export class MyTransactionsComponent implements OnInit {
   transactions: Transaction[];
   transaction: Transaction;
   
-  displayedColumns: string[] = ['code', 'type', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'edit', 'changeStatus', 'print'];
+  displayedColumns: string[] = ['code', 'type', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'edit', 'print'];
   dataSource: MatTableDataSource<Transaction>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
