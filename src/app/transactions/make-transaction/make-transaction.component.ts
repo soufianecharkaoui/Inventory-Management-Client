@@ -223,7 +223,7 @@ export class MakeTransactionComponent implements OnInit {
         agentId: this.fourthTransactionForm.value.agentId,
         cashed: !this.firstTransactionForm.value.input ? this.fourthTransactionForm.value.cashed : false,
         code: code
-      }, refetchQueries: ['getTransactions', 'getProducts', 'getTransactionsByWarehouses']
+      }, refetchQueries: ['getTransactions', 'getProducts', 'getWarehouses', 'getAgents']
     })
     .subscribe();
 

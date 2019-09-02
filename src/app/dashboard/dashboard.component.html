@@ -1,16 +1,24 @@
 <main style="margin: 10px">
   <section>
-    <h5 class="title">Stats for the Month: </h5>
-    <mat-form-field>
-      <input matInput [matDatepicker]="dp" placeholder="Month and Year" [formControl]="date">
-      <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
-      <mat-datepicker #dp
-                      startView="multi-year"
-                      (yearSelected)="chosenYearHandler($event)"
-                      (monthSelected)="chosenMonthHandler($event, dp)"
-                      panelClass="example-month-picker">
-      </mat-datepicker>
-    </mat-form-field>
+    <h5 class="title">Global Stats : </h5>
+    <mat-slide-toggle
+      (change)="getGlobalStats()"
+      [(ngModel)]="isGlobal"
+      [color]="'primary'">
+    </mat-slide-toggle>
+    <div *ngIf="!isGlobal">
+      <h5 class="title">Stats for the Month : </h5>
+      <mat-form-field>
+        <input matInput [matDatepicker]="dp" placeholder="Month and Year" [formControl]="date">
+        <mat-datepicker-toggle matSuffix [for]="dp"></mat-datepicker-toggle>
+        <mat-datepicker #dp
+                        startView="multi-year"
+                        (yearSelected)="chosenYearHandler($event)"
+                        (monthSelected)="chosenMonthHandler($event, dp)"
+                        panelClass="example-month-picker">
+        </mat-datepicker>
+      </mat-form-field>
+    </div>
   </section>
 
   <section>
@@ -165,22 +173,23 @@
         <mat-card-content>
           <p> Number of Transactions : <strong>{{ warehouse.transactions.length }}</strong> </p>
           <p> Number of Output Transactions : <strong>{{ getOutputTransactions(warehouse.transactions) }}</strong> </p>
-          <p> Overall Income : <strong>{{ getOverallIncomeByWarehouse(warehouse) }} / {{ warehouse.currency.name }} </strong> </p>
+          <p> Revenue : <strong>{{ getRevenue(warehouse) }} / {{ warehouse.currency.name }} </strong> </p>
+          <p> Actual Status : <strong>{{ getOverallIncome(warehouse) }} / {{ warehouse.currency.name }} </strong> </p>
           <p> Products : </p>
           <div *ngFor="let product of getProducts(warehouse.transactions)">
             <mat-accordion>
               <mat-expansion-panel>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                    {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }}
+                    {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }} - Remaining Stock : <strong> {{ product.stockQuantity }} / {{ product.unit }} </strong>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
-                <p> Sold quantity : <strong>{{ getSoldQuantity(warehouse.transactions, product) }} / {{ product.unit }}</strong> </p>
-                <p> Bought quantity : <strong>{{ getBoughtQuantity(warehouse.transactions, product) }} / {{ product.unit }}</strong> </p>
-                <p> Average Price : <strong>{{ getAveragePrice(warehouse.transactions, product) }} / {{ warehouse.currency.name }}</strong> </p>
-                <p> Remaining Stock : <strong> {{ product.stockQuantity }} </strong> </p>
+                <p> Quantity Sold : <strong>{{ getSoldQuantity(warehouse.transactions, product) }} / {{ product.unit }}</strong> </p>
+                <p> Quantity Bought : <strong>{{ getBoughtQuantity(warehouse.transactions, product) }} / {{ product.unit }}</strong> </p>
+                <p> Remaining Stock : <strong> {{ product.stockQuantity }} / {{ product.unit }} </strong> </p>
                 <p> Value Of The Remaining Stock : <strong> {{ getValueOfStock(product) }} / {{ warehouse.currency.name }} </strong> </p>
-                <p> Overall Income : <strong>{{ getOverallIncomeByProduct(product, warehouse.transactions) }} / {{ warehouse.currency.name }}</strong> </p>
+                <p> Average Price (Income) : <strong>{{ getAveragePrice(warehouse.transactions, product) }} / {{ warehouse.currency.name }} / {{ product.unit }}</strong> </p>
+                <p> Revenue : <strong>{{ getRevenueByProduct(product, warehouse.transactions) }} / {{ warehouse.currency.name }}</strong> </p>
               </mat-expansion-panel>
             </mat-accordion>
           </div>
@@ -202,29 +211,176 @@
         <mat-card-content>
           <p> Number of Transactions : <strong>{{ agent.transactions.length }}</strong> </p>
           <p> Number of Output Transactions : <strong>{{ getOutputTransactions(agent.transactions) }}</strong> </p>
-          <p> Overall Income : <strong> <ul *ngFor="let overallIncome of getOverallIncomeByAgent(agent)">
-            <li> {{ overallIncome.overallIncome }} / {{ overallIncome.currency }} </li>
-          </ul> </strong> </p>
+          <p> Revenue : <strong>{{ getRevenue(agent) }} / FCFA </strong> </p>
+          <p> Actual Status : <strong>{{ getOverallIncome(agent) }} / FCFA </strong> </p>
           <p> Products : </p>
           <div *ngFor="let product of getProducts(agent.transactions)">
             <mat-accordion>
               <mat-expansion-panel>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                    {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }}
+                    {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }} - Remaining Stock : <strong> {{ product.stockQuantity }} / {{ product.unit }} </strong>
                   </mat-panel-title>
                 </mat-expansion-panel-header>
-                <p> Sold quantity : <strong>{{ getSoldQuantity(agent.transactions, product) }} / {{ product.unit }}</strong> </p>
-                <p> Bought quantity : <strong>{{ getBoughtQuantity(agent.transactions, product) }} / {{ product.unit }}</strong> </p>
-                <p> Average Price : <strong>{{ getAveragePrice(agent.transactions, product) }} / FCFA </strong> </p>
-                <p> Remaining Stock : <strong> {{ product.stockQuantity }} </strong> </p>
+                <p> Quantity Sold : <strong>{{ getSoldQuantity(agent.transactions, product) }} / {{ product.unit }}</strong> </p>
+                <p> Quantity Bought : <strong>{{ getBoughtQuantity(agent.transactions, product) }} / {{ product.unit }}</strong> </p>
+                <p> Remaining Stock : <strong> {{ product.stockQuantity }} / {{ product.unit }} </strong> </p>
                 <p> Value Of The Remaining Stock : <strong> {{ getValueOfStock(product) }} / FCFA </strong> </p>
-                <p> Overall Income : <strong>{{ getOverallIncomeByProduct(product, agent.transactions) }} / FCFA </strong> </p>
+                <p> Average Price (Income) : <strong>{{ getAveragePrice(agent.transactions, product) }} / FCFA / {{ product.unit }}</strong> </p>
+                <p> Revenue : <strong>{{ getRevenueByProduct(product, agent.transactions) }} / FCFA</strong> </p>
               </mat-expansion-panel>
             </mat-accordion>
           </div>
         </mat-card-content>
       </mat-card>
     </div>
+  </section>
+  <hr>
+
+  <section>
+    <h3 class="title">Summary Of Warehouses</h3>
+    <hr>
+    <mat-card style="width: 100%;">
+      <mat-card-content>
+        <table style="width: 100%;">
+          <tr>
+            <th>Warehouse</th>
+            <th>Products</th>
+            <th>Quantity Sold</th>
+            <th>Quantity Bought</th>
+            <th>Remaining Stock</th>
+            <th>Value Of The Remaining Stock</th>
+            <th>Average Price (Income)</th>
+            <th>Revenue By Product</th>
+          </tr>
+          <tr *ngFor="let warehouse of warehouses">
+            <td> {{ warehouse.name }} - {{ warehouse.city }} - {{ warehouse.country }} </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(warehouse.transactions)">
+                  {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(warehouse.transactions)">
+                  {{ getSoldQuantity(warehouse.transactions, product) }} / {{ product.unit }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(warehouse.transactions)">
+                  {{ getBoughtQuantity(warehouse.transactions, product) }} / {{ product.unit }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(warehouse.transactions)">
+                  {{ product.stockQuantity }} / {{ product.unit }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(warehouse.transactions)">
+                  {{ getValueOfStock(product) }} / {{ warehouse.currency.name }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(warehouse.transactions)">
+                  {{ getAveragePrice(warehouse.transactions, product) }} / {{ warehouse.currency.name }} / {{ product.unit }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(warehouse.transactions)">
+                  {{ getRevenueByProduct(product, warehouse.transactions) }} / {{ warehouse.currency.name }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+          </tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </section>
+  <hr>
+
+  <section>
+    <h3 class="title">Summary Of Agents</h3>
+    <hr>
+    <mat-card style="width: 100%;">
+      <mat-card-content>
+        <table style="width: 100%;">
+          <tr>
+            <th>Agent</th>
+            <th>Products</th>
+            <th>Quantity Sold</th>
+            <th>Quantity Bought</th>
+            <th>Remaining Stock</th>
+            <th>Value Of The Remaining Stock</th>
+            <th>Average Price (Income)</th>
+            <th>Revenue By Product</th>
+          </tr>
+          <tr *ngFor="let agent of agents">
+            <td> {{ agent.name }} </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(agent.transactions)">
+                  {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(agent.transactions)">
+                  {{ getSoldQuantity(agent.transactions, product) }} / {{ product.unit }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(agent.transactions)">
+                  {{ getBoughtQuantity(agent.transactions, product) }} / {{ product.unit }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(agent.transactions)">
+                  {{ product.stockQuantity }} / {{ product.unit }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(agent.transactions)">
+                  {{ getValueOfStock(product) }} / FCFA
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(agent.transactions)">
+                  {{ getAveragePrice(agent.transactions, product) }} / FCFA / {{ product.unit }}
+                </mat-list-item>
+              </mat-list>
+            </td>
+            <td>
+              <mat-list role="list">
+                <mat-list-item role="listitem" *ngFor="let product of getProducts(agent.transactions)">
+                  {{ getRevenueByProduct(product, agent.transactions) }} / FCFA
+                </mat-list-item>
+              </mat-list>
+            </td>
+          </tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
   </section>
 </main>

@@ -47,9 +47,16 @@
                 </ng-container>
     
                 <ng-container matColumnDef="price_unit">
-                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Price/Currency </th>
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Price/Currency/Unit </th>
                     <td mat-cell *matCellDef="let row">
-                        {{row.input ? row.buyingPrice : row.sellingPrice}} / {{row.product.warehouse.currency.name}}
+                        {{row.input ? row.buyingPrice : row.sellingPrice}} / {{row.product.warehouse.currency.name}} / {{row.product.unit}}
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="amount">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Amount/Currency </th>
+                    <td mat-cell *matCellDef="let row">
+                        {{row.amount}} / {{row.product.warehouse.currency.name}}
                     </td>
                 </ng-container>
         
@@ -74,6 +81,16 @@
                                     <i class="material-icons">print</i>
                                 </a>
                             </button>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="cashed">
+                    <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Cashed </th>
+                    <td mat-cell *matCellDef="let row">
+                        <div *ngIf="!row.input">
+                            <mat-slide-toggle [(ngModel)]="row.cashed" (click)="updateCashed(row)" [color]="'primary'">
+                            </mat-slide-toggle>
                         </div>
                     </td>
                 </ng-container>

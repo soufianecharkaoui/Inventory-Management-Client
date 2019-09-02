@@ -20,7 +20,7 @@ export class AllTransactionsComponent implements OnInit {
   transaction: Transaction;
   cashed: boolean;
   
-  displayedColumns: string[] = ['code', 'type', 'owner', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'edit', 'changeStatus', 'print', 'cashed'];
+  displayedColumns: string[] = ['code', 'type', 'owner', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'amount', 'edit', 'changeStatus', 'print', 'cashed'];
   dataSource: MatTableDataSource<Transaction>;
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -64,7 +64,7 @@ export class AllTransactionsComponent implements OnInit {
       mutation: REVOKE_TRANSACTION,
       variables: {
         id: transaction.id
-      }
+      }, refetchQueries: ['getProducts']
     })
     .subscribe();
   }
@@ -74,7 +74,7 @@ export class AllTransactionsComponent implements OnInit {
       mutation: DELETE_TRANSACTION,
       variables: {
         id: transaction.id
-      }
+      }, refetchQueries: ['getProducts']
     })
     .subscribe();
   }
