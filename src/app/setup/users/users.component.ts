@@ -37,6 +37,7 @@ export class UsersComponent implements OnInit {
     .valueChanges.pipe(map((result: any) => result.data.getUsers))
     .subscribe(data => {
       this.users = data;
+      this.users.map(user => console.log(user));
       this.dataSource = new MatTableDataSource(this.users);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;

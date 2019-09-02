@@ -8,8 +8,6 @@ import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 import { GET_CURRENCIES } from 'app/services/currencies.graphql';
 import { GET_TRANSACTIONS } from 'app/services/transactions.graphql';
 import { GET_PRODUCTS } from 'app/services/products.graphql';
-import {MomentDateAdapter} from '@angular/material-moment-adapter';
-import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MatDatepicker} from '@angular/material/datepicker';
 import * as _moment from 'moment';
 import {default as _rollupMoment, Moment} from 'moment';
@@ -40,8 +38,8 @@ export class DashboardComponent implements OnInit {
   currencies: Currency[];
   transactions: Transaction[];
   products: Product[];
-  month: Date;
-  year: Date;
+  month = -1;
+  year = -1;
 
   date = new FormControl(moment());
 
@@ -50,6 +48,13 @@ export class DashboardComponent implements OnInit {
     ctrlValue.year(normalizedYear.year());
     this.date.setValue(ctrlValue);
     this.year = ctrlValue.year();
+    this.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year);
+    this.warehouses.map(warehouse => {
+      warehouse.transactions = warehouse.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year);
+    });
+    this.agents.map(agent => {
+      agent.transactions = agent.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year);
+    });
   }
 
   chosenMonthHandler(normalizedMonth: Moment, datepicker: MatDatepicker<Moment>) {
@@ -58,6 +63,14 @@ export class DashboardComponent implements OnInit {
     this.date.setValue(ctrlValue);
     datepicker.close();
     this.month = ctrlValue.month();
+    this.transactions = this.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month);
+    this.warehouses.map(warehouse => {
+      warehouse.transactions = warehouse.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month);
+    });
+    this.agents.map(agent => {
+      agent.transactions = agent.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month);
+    });
+    console.log(this.transactions);
   }
 
 
@@ -82,13 +95,13 @@ export class DashboardComponent implements OnInit {
       query: GET_WAREHOUSES
     })
     .valueChanges.pipe(map((result: any) => result.data.getWarehouses))
-    .subscribe(data => this.warehouses = data);
+    .subscribe(data => this.warehouses = data.filter(warehouse => warehouse.isDeleted === false));
 
     this.apollo.watchQuery({
       query: GET_AGENTS
     })
     .valueChanges.pipe(map((result: any) => result.data.getAgents))
-    .subscribe(data => this.agents = data);
+    .subscribe(data => this.agents = data.filter(agent => agent.isDeleted === false));
 
     this.apollo.watchQuery({
       query: GET_CURRENCIES
