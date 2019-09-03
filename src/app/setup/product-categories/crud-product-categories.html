@@ -1,14 +1,3 @@
-<div *ngFor="let productCategory of productCategories">
-    <div *ngIf="!productCategory.isDeleted">
-        {{ productCategory.name }} ====> 
-        <button type="button" mat-raised-button color="warn" (click)="delete(productCategory)">Delete</button>
-        <div *ngFor="let brand of productCategory.brands">
-            {{ brand.name }}
-        </div>
-        <br>
-    </div>
-</div>
-
 <form #pcform="ngForm" [formGroup]="productCategoryForm" (ngSubmit)="save()" class="example-form">
     <mat-form-field class="example-full-width">
         <input matInput formControlName="name" type="text" placeholder="Name" required>

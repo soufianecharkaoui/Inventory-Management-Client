@@ -13,6 +13,7 @@ import * as _moment from 'moment';
 import {default as _rollupMoment, Moment} from 'moment';
 const moment = _rollupMoment || _moment;
 import { FormControl } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 export const MY_FORMATS = {
   parse: {
@@ -33,14 +34,19 @@ export const MY_FORMATS = {
 })
 export class DashboardComponent implements OnInit {
 
+  $warehouses: Warehouse[];
   warehouses: Warehouse[];
+  $agents: Agent[];
   agents: Agent[];
   currencies: Currency[];
+  $transactions: Transaction[];
   transactions: Transaction[];
   products: Product[];
   month = -1;
   year = -1;
   isGlobal: boolean = true;
+  averagePrice: number = 0;
+  revenue: number = 0;
 
   date = new FormControl(moment());
 
@@ -50,35 +56,18 @@ export class DashboardComponent implements OnInit {
     this.date.setValue(ctrlValue);
     this.year = ctrlValue.year();
     
-    this.apollo.watchQuery({
-      query: GET_TRANSACTIONS
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
-    .subscribe(data => {
-      this.transactions = data.filter(transaction => transaction.isDeleted === false);
-      this.transactions = this.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year && new Date(Number(transaction.createdAt)).getMonth() === this.month);
+    this.transactions = this.$transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month && new Date(Number(transaction.createdAt)).getFullYear() === this.year && transaction.isDeleted === false);
+
+    this.warehouses = this.$warehouses.map($warehouse => {
+      const warehouse ={...$warehouse}
+      warehouse.transactions = $warehouse.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year && new Date(Number(transaction.createdAt)).getMonth() === this.month && transaction.isDeleted === false)
+      return warehouse
     });
 
-    this.apollo.watchQuery({
-      query: GET_WAREHOUSES
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getWarehouses))
-    .subscribe(data => {
-      this.warehouses = data.filter(warehouse => warehouse.isDeleted === false);
-      this.warehouses.map(warehouse => {
-        warehouse.transactions = this.transactions.filter(transaction => transaction.warehouse.id === warehouse.id && new Date(Number(transaction.createdAt)).getFullYear() === this.year && transaction.isDeleted === false);
-      });
-    });
-
-    this.apollo.watchQuery({
-      query: GET_AGENTS
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getAgents))
-    .subscribe(data => {
-      this.agents = data.filter(agent => agent.isDeleted === false);
-      this.agents.map(agent => {
-        agent.transactions = this.transactions.filter(transaction => transaction.agent.id === agent.id && new Date(Number(transaction.createdAt)).getFullYear() === this.year && transaction.isDeleted === false);
-      });
+    this.agents = this.$agents.map($agent => {
+      const agent ={...$agent}
+      agent.transactions = $agent.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year && new Date(Number(transaction.createdAt)).getMonth() === this.month && transaction.isDeleted === false)
+      return agent
     });
   }
 
@@ -89,110 +78,45 @@ export class DashboardComponent implements OnInit {
     datepicker.close();
     this.month = ctrlValue.month();
 
-    this.apollo.watchQuery({
-      query: GET_TRANSACTIONS
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
-    .subscribe(data => {
-      this.transactions = data.filter(transaction => transaction.isDeleted === false);
-      this.transactions = this.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month && new Date(Number(transaction.createdAt)).getFullYear() === this.year && transaction.isDeleted === false);
+    this.transactions = this.$transactions.filter(transaction => new Date(Number(transaction.createdAt)).getMonth() === this.month && new Date(Number(transaction.createdAt)).getFullYear() === this.year && transaction.isDeleted === false);
+
+    this.warehouses = this.$warehouses.map($warehouse => {
+      const warehouse ={...$warehouse}
+      warehouse.transactions = $warehouse.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year && new Date(Number(transaction.createdAt)).getMonth() === this.month && transaction.isDeleted === false)
+      return warehouse
     });
 
-    this.apollo.watchQuery({
-      query: GET_WAREHOUSES
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getWarehouses))
-    .subscribe(data => {
-      this.warehouses = data.filter(warehouse => warehouse.isDeleted === false);
-      this.warehouses.map(warehouse => {
-        warehouse.transactions = this.transactions.filter(transaction => transaction.warehouse.id === warehouse.id && new Date(Number(transaction.createdAt)).getMonth() === this.month && transaction.isDeleted === false)
-      })
-    });
-
-    this.apollo.watchQuery({
-      query: GET_AGENTS
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getAgents))
-    .subscribe(data => {
-      this.agents = data.filter(agent => agent.isDeleted === false);
-      this.agents.map(agent => {
-        agent.transactions = this.transactions.filter(transaction => transaction.agent.id === agent.id && new Date(Number(transaction.createdAt)).getMonth() === this.month && transaction.isDeleted === false)
-      });
+    this.agents = this.$agents.map($agent => {
+      const agent ={...$agent}
+      agent.transactions = $agent.transactions.filter(transaction => new Date(Number(transaction.createdAt)).getFullYear() === this.year && new Date(Number(transaction.createdAt)).getMonth() === this.month && transaction.isDeleted === false)
+      return agent
     });
   }
 
 
-  constructor(private apollo: Apollo) { 
+  constructor(private apollo: Apollo,
+    activatedRoute: ActivatedRoute) { 
+    this.$agents = activatedRoute.snapshot.data.data.agents;
+    this.$warehouses = activatedRoute.snapshot.data.data.warehouses;
+    this.$transactions = activatedRoute.snapshot.data.data.transactions;
     this.getGlobalStats();
   }
 
   getGlobalStats() {
     if (this.isGlobal) {
-      this.apollo.watchQuery({
-        query: GET_TRANSACTIONS
-      })
-      .valueChanges.pipe(map((result: any) => result.data.getTransactions))
-      .subscribe(data => this.transactions = data.filter(transaction => transaction.isDeleted === false));
-  
-      this.apollo.watchQuery({
-        query: GET_WAREHOUSES
-      })
-      .valueChanges.pipe(map((result: any) => result.data.getWarehouses))
-      .subscribe(data => {
-        this.warehouses = data.filter(warehouse => warehouse.isDeleted === false);
-        this.warehouses.map(warehouse => {
-          warehouse.transactions = this.transactions.filter(transaction => warehouse.id === transaction.warehouse.id && transaction.isDeleted === false);
-        });
-      });
-  
-      this.apollo.watchQuery({
-        query: GET_AGENTS
-      })
-      .valueChanges.pipe(map((result: any) => result.data.getAgents))
-      .subscribe(data => {
-        this.agents = data.filter(agent => agent.isDeleted === false);
-        this.agents.map(agent => {
-          agent.transactions = this.transactions.filter(transaction => agent.id === transaction.agent.id && transaction.isDeleted === false);
-        });
-      });
+      this.agents = this.$agents;
+      this.warehouses = this.$warehouses;
+      this.transactions = this.$transactions;
     } else {}
   }
 
   ngOnInit() {
-    this.apollo.watchQuery({
-      query: GET_TRANSACTIONS
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getTransactions))
-    .subscribe(data => this.transactions = data.filter(transaction => transaction.isDeleted === false));
-
     this.apollo.watchQuery({
       query: GET_PRODUCTS
     })
     .valueChanges.pipe(map((result: any) => result.data.getProducts))
     .subscribe(data => { 
       this.products = data;
-    });
-
-    this.apollo.watchQuery({
-      query: GET_WAREHOUSES
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getWarehouses))
-    .subscribe(data => {
-      this.warehouses = data.filter(warehouse => warehouse.isDeleted === false);
-      this.warehouses.map(warehouse => {
-        warehouse.transactions = warehouse.transactions.filter(transaction => transaction.isDeleted === false);
-      });
-    });
-
-    this.apollo.watchQuery({
-      query: GET_AGENTS
-    })
-    .valueChanges.pipe(map((result: any) => result.data.getAgents))
-    .subscribe(data => {
-      this.agents = data.filter(agent => agent.isDeleted === false);
-      this.agents.map(agent => {
-        agent.transactions = agent.transactions.filter(transaction => transaction.isDeleted === false);
-      });
     });
 
     this.apollo.mutate({
@@ -274,23 +198,24 @@ export class DashboardComponent implements OnInit {
     return $products.slice(0,10);
   }
 
-  getRevenue(warehouse: Warehouse) {
+  counter = 0;
+  getRevenue(transactions: Transaction[], products: Product[]) {
     let revenue = 0;
-    let $products = new Set(warehouse.transactions.map(transaction => transaction.product));
-    let products = Array.from($products);
     products.map(product => {
-      revenue += this.getRevenueByProduct(product, warehouse.transactions);
-    });
+      revenue += this.getRevenueByProduct(product, transactions);
+    })
     return revenue;
   }
 
   getRevenueByProduct(product: Product, transactions: Transaction[]) {
     let sumSoldAmount = 0;
+    this.revenue = 0;
     transactions = transactions.filter(transaction => transaction.product.id === product.id && transaction.input === false);
     transactions.map(transaction => {
       sumSoldAmount += transaction.amount;
     });
-    return sumSoldAmount - (this.getAveragePrice(transactions, product) * this.getSoldQuantity(transactions, product));
+    this.revenue = sumSoldAmount - ((isNaN(this.averagePrice) ? 0 : this.averagePrice) * this.getSoldQuantity(transactions, product));
+    return isNaN(this.revenue) ? 0 : this.revenue;
   }
 
   getOverallIncome(warehouse: Warehouse) {
@@ -342,14 +267,13 @@ export class DashboardComponent implements OnInit {
   getAveragePrice(transactions: Transaction[], product: Product) {
     let sumPrices = 0;
     let sumQuantities = 0;
-    let averagePrice = 0;
-    transactions = transactions.filter(transaction => transaction.input && transaction.product.id === product.id);
+    transactions = transactions.filter(transaction => transaction.input === true && transaction.product.id === product.id);
     transactions.map(transaction => {
       sumPrices += transaction.amount;
       sumQuantities += transaction.transactionQuantity;
     });
-    averagePrice = Number(((sumPrices / sumQuantities).toFixed(2)));
-    return isNaN(averagePrice) ? 0 : averagePrice;
+    this.averagePrice = Number(((sumPrices / sumQuantities).toFixed(2)));
+    return isNaN(this.averagePrice) ? 0 : this.averagePrice;
   }
 
   getValueOfStock(product: Product) {

@@ -12,11 +12,15 @@ import { MakeTransactionComponent } from 'app/transactions/make-transaction/make
 import { MyTransactionsComponent } from 'app/transactions/my-transactions/my-transactions.component';
 import { AllTransactionsComponent } from 'app/transactions/all-transactions/all-transactions.component';
 import { AuthGuardService as AuthGuard } from 'app/login/auth-guard.service';
+import { DashboardResolver } from 'app/dashboard/resolver';
 
 export const AdminLayoutRoutes: Routes = [
     {
         path: 'dashboard',
         component: DashboardComponent,
+        resolve: {
+            data: DashboardResolver
+        },
         canActivate: [AuthGuard]
     }, {
         path: 'make-transaction',

@@ -28,7 +28,7 @@
       <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-around center" style="flex-wrap: wrap;">
         <div>
           <mat-card-header>
-            <mat-card-subtitle> Total Number Of Transactions </mat-card-subtitle>
+            <mat-card-subtitle> Total Number Of  Transactions </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content><h4> {{ transactions.length }}</h4> </mat-card-content>
         </div>
@@ -173,7 +173,7 @@
         <mat-card-content>
           <p> Number of Transactions : <strong>{{ warehouse.transactions.length }}</strong> </p>
           <p> Number of Output Transactions : <strong>{{ getOutputTransactions(warehouse.transactions) }}</strong> </p>
-          <p> Revenue : <strong>{{ getRevenue(warehouse) }} / {{ warehouse.currency.name }} </strong> </p>
+          <p> Revenue : <strong>{{ getRevenue(warehouse.transactions, getProducts(warehouse.transactions)) }} / {{ warehouse.currency.name }} </strong> </p>
           <p> Actual Status : <strong>{{ getOverallIncome(warehouse) }} / {{ warehouse.currency.name }} </strong> </p>
           <p> Products : </p>
           <div *ngFor="let product of getProducts(warehouse.transactions)">
@@ -211,7 +211,7 @@
         <mat-card-content>
           <p> Number of Transactions : <strong>{{ agent.transactions.length }}</strong> </p>
           <p> Number of Output Transactions : <strong>{{ getOutputTransactions(agent.transactions) }}</strong> </p>
-          <p> Revenue : <strong>{{ getRevenue(agent) }} / FCFA </strong> </p>
+          <p> Revenue : <strong>{{ getRevenue(agent.transactions, getProducts(agent.transactions)) }} / FCFA </strong> </p>
           <p> Actual Status : <strong>{{ getOverallIncome(agent) }} / FCFA </strong> </p>
           <p> Products : </p>
           <div *ngFor="let product of getProducts(agent.transactions)">

@@ -37,6 +37,7 @@ import {MatGridListModule} from '@angular/material/grid-list';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatSlideToggleModule} from '@angular/material/slide-toggle';
+import { DashboardResolver } from 'app/dashboard/resolver';
 
 
 @NgModule({
@@ -99,6 +100,9 @@ import {MatSlideToggleModule} from '@angular/material/slide-toggle';
     CRUDWarehouses,
     CRUDTransactionsComponent
   ],
+  providers: [
+    DashboardResolver
+  ]
 })
 
 export class AdminLayoutModule {}
