@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { GET_TRANSACTIONS, DELETE_TRANSACTION, REVOKE_TRANSACTION, UPDATE_TRANSACTION} from 'app/services/transactions.graphql';
 import { map } from 'rxjs/operators';
 import { CRUDTransactionsComponent } from '../crud-transactions/crud-transactions.component';
+import { ngxCsv } from 'ngx-csv/ngx-csv';
 
 @Component({
   selector: 'app-all-transactions',
@@ -19,6 +20,7 @@ export class AllTransactionsComponent implements OnInit {
   transactions: Transaction[];
   transaction: Transaction;
   cashed: boolean;
+  renderedData: any;
   
   displayedColumns: string[] = ['code', 'type', 'owner', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'amount', 'edit', 'changeStatus', 'print', 'cashed'];
   dataSource: MatTableDataSource<Transaction>;
@@ -29,6 +31,7 @@ export class AllTransactionsComponent implements OnInit {
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.transactions);
+      this.dataSource.connect().subscribe(d => this.renderedData = d);
     }
 
   ngOnInit() {
@@ -39,6 +42,7 @@ export class AllTransactionsComponent implements OnInit {
     .subscribe(data => {
       this.transactions = data;
       this.dataSource = new MatTableDataSource(this.transactions);
+      this.dataSource.connect().subscribe(d => this.renderedData = d);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
@@ -110,5 +114,8 @@ export class AllTransactionsComponent implements OnInit {
     .subscribe();
   }
 
+  exportCsv(){
+    new ngxCsv(this.renderedData,'All Transactions');
+  }
 }
 

@@ -62,6 +62,7 @@ export class Product {
     unit: string;
     isSelected: boolean = false;
     code: string;
+    averagePrice: number;
     isDeleted: boolean;
     createdAt: Date;
     updatedAt: Date;

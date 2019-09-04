@@ -2,7 +2,7 @@ import { Currency } from './../types';
 import { GET_AGENTS } from './../services/agents.graphql';
 import { Component, OnInit } from '@angular/core';
 import { Warehouse, Transaction, Product, Agent } from 'app/types';
-import { map } from 'rxjs/operators';
+import { map, take } from 'rxjs/operators';
 import { Apollo } from 'apollo-angular';
 import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 import { GET_CURRENCIES } from 'app/services/currencies.graphql';
@@ -45,8 +45,10 @@ export class DashboardComponent implements OnInit {
   month = -1;
   year = -1;
   isGlobal: boolean = true;
-  averagePrice: number = 0;
   revenue: number = 0;
+
+  displayedColumnsAgents: string[] = ['agent', 'warehouses', 'products', 'quantitySold', 'valueSold', 'revenueByProduct'];
+  displayedColumnsWarehouses: string[] = ['warehouse', 'products', 'quantityBought', 'averagePrice', 'quantitySold', 'valueSold', 'stock', 'valueStock', 'revenueByProduct'];
 
   date = new FormControl(moment());
 
@@ -114,10 +116,8 @@ export class DashboardComponent implements OnInit {
     this.apollo.watchQuery({
       query: GET_PRODUCTS
     })
-    .valueChanges.pipe(map((result: any) => result.data.getProducts))
-    .subscribe(data => { 
-      this.products = data;
-    });
+    .valueChanges.pipe(map((result: any) => this.products = result.data.getProducts))
+    .subscribe(data => this.products = data);
 
     this.apollo.mutate({
       mutation: REFRESH_PRODUCTS, 
@@ -128,8 +128,7 @@ export class DashboardComponent implements OnInit {
     this.apollo.watchQuery({
       query: GET_CURRENCIES
     })
-    .valueChanges.pipe(map((result: any) => result.data.getCurrencies))
-    .subscribe(data => this.currencies = data);
+    .valueChanges.pipe(map((result: any) => {this.currencies = result.data.getCurrencies}), take(1))
   }
 
   getBestSellingProduct(transactions: Transaction[]) {
@@ -198,23 +197,26 @@ export class DashboardComponent implements OnInit {
     return $products.slice(0,10);
   }
 
-  counter = 0;
+  count = 0;
   getRevenue(transactions: Transaction[], products: Product[]) {
     let revenue = 0;
     products.map(product => {
-      revenue += this.getRevenueByProduct(product, transactions);
-    })
-    return revenue;
+      const rev = this.getRevenueByProduct(product, transactions);
+      revenue += rev;
+    });
+    revenue = Number(revenue.toFixed(2));
+    return isNaN(revenue) ? 0 : revenue;
   }
 
   getRevenueByProduct(product: Product, transactions: Transaction[]) {
     let sumSoldAmount = 0;
     this.revenue = 0;
-    transactions = transactions.filter(transaction => transaction.product.id === product.id && transaction.input === false);
-    transactions.map(transaction => {
+    const $transactions = transactions.filter(transaction => transaction.product.id === product.id && transaction.input === false);
+    $transactions.map(transaction => {
       sumSoldAmount += transaction.amount;
     });
-    this.revenue = sumSoldAmount - ((isNaN(this.averagePrice) ? 0 : this.averagePrice) * this.getSoldQuantity(transactions, product));
+    this.revenue = sumSoldAmount - ((isNaN(product.averagePrice) ? 0 : product.averagePrice) * this.getSoldQuantity($transactions, product));
+    this.revenue = Number(this.revenue.toFixed(2));
     return isNaN(this.revenue) ? 0 : this.revenue;
   }
 
@@ -235,15 +237,39 @@ export class DashboardComponent implements OnInit {
     return overallIncome;
   }
 
+  getInputTransactions(transactions: Transaction[]) {
+    let value = 0;
+    let inputTransactions = transactions.filter(transaction => transaction.input === true);
+    inputTransactions.map(transaction => {
+      value += transaction.amount;
+    });
+    return { length: inputTransactions.length, value: value };
+  }
+
   getOutputTransactions(transactions: Transaction[]) {
-    let outputTransactions = transactions.filter(transaction => transaction.input === false);
-    return outputTransactions.length;
+    let valueCashed = 0;
+    let valueUncashed = 0;
+    let outputTransactionsCashed = transactions.filter(transaction => transaction.input === false && transaction.cashed === true);
+    let outputTransactionsUncashed = transactions.filter(transaction => transaction.input === false && transaction.cashed === false); 
+    outputTransactionsCashed.map(transaction => {
+      valueCashed += transaction.amount;
+    });
+    outputTransactionsUncashed.map(transaction => {
+      valueUncashed += transaction.amount;
+    });
+    return { cashed: outputTransactionsCashed.length, valueCashed: valueCashed, uncashed: outputTransactionsUncashed.length, valueUncashed: valueUncashed };
   }
 
   getProducts(transactions: Transaction[]) {
     let $products = new Set(transactions.map(transaction => transaction.product));
     let products = Array.from($products);
     return products;
+  }
+
+  getWarehouses(transactions: Transaction[]) {
+    let $warehouses = new Set(transactions.map(transaction => transaction.warehouse));
+    let warehouses = Array.from($warehouses);
+    return warehouses;
   }
   
   getSoldQuantity(transactions: Transaction[], product: Product) {
@@ -255,6 +281,15 @@ export class DashboardComponent implements OnInit {
     return soldQuantity;
   }
 
+  getValueSold(transactions: Transaction[], product: Product) {
+    let valueSold = 0;
+    transactions = transactions.filter(transaction => transaction.input === false && transaction.product.id === product.id);
+    transactions.map(transaction => {
+      valueSold += transaction.amount;
+    });
+    return valueSold;
+  }
+
   getBoughtQuantity(transactions: Transaction[], product: Product) {
     let boughtQuantity = 0;
     transactions = transactions.filter(transaction => transaction.input === true && transaction.product.id === product.id);
@@ -262,6 +297,15 @@ export class DashboardComponent implements OnInit {
       boughtQuantity += transaction.transactionQuantity;
     });
     return boughtQuantity;
+  }
+
+  getValueBought(transactions: Transaction[], product: Product) {
+    let valueBought = 0;
+    transactions = transactions.filter(transaction => transaction.input === true && transaction.product.id === product.id);
+    transactions.map(transaction => {
+      valueBought += transaction.amount;
+    });
+    return valueBought;
   }
 
   getAveragePrice(transactions: Transaction[], product: Product) {
@@ -272,8 +316,8 @@ export class DashboardComponent implements OnInit {
       sumPrices += transaction.amount;
       sumQuantities += transaction.transactionQuantity;
     });
-    this.averagePrice = Number(((sumPrices / sumQuantities).toFixed(2)));
-    return isNaN(this.averagePrice) ? 0 : this.averagePrice;
+    product.averagePrice = Number(((sumPrices / sumQuantities).toFixed(2)));
+    return isNaN(product.averagePrice) ? 0 : product.averagePrice;
   }
 
   getValueOfStock(product: Product) {
