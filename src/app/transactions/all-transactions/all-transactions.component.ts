@@ -42,7 +42,6 @@ export class AllTransactionsComponent implements OnInit {
     .subscribe(data => {
       this.transactions = data;
       this.dataSource = new MatTableDataSource(this.transactions);
-      this.dataSource.connect().subscribe(d => this.renderedData = d);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
     });
@@ -115,7 +114,7 @@ export class AllTransactionsComponent implements OnInit {
   }
 
   exportCsv(){
-    new ngxCsv(this.renderedData,'All Transactions');
+    new ngxCsv(this.transactions,'All Transactions');
   }
 }
 

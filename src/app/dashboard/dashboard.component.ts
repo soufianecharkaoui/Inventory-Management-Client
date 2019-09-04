@@ -215,7 +215,7 @@ export class DashboardComponent implements OnInit {
     $transactions.map(transaction => {
       sumSoldAmount += transaction.amount;
     });
-    this.revenue = sumSoldAmount - ((isNaN(product.averagePrice) ? 0 : product.averagePrice) * this.getSoldQuantity($transactions, product));
+    this.revenue = sumSoldAmount - ((isNaN(this.getAveragePrice(transactions, product)) ? 0 : this.getAveragePrice(transactions, product)) * this.getSoldQuantity($transactions, product));
     this.revenue = Number(this.revenue.toFixed(2));
     return isNaN(this.revenue) ? 0 : this.revenue;
   }
@@ -266,6 +266,13 @@ export class DashboardComponent implements OnInit {
     return products;
   }
 
+  getProductsByAgents(transactions: Transaction[]) {
+    transactions = transactions.filter(transaction => transaction.input === false);
+    let $products = new Set(transactions.map(transaction => transaction.product));
+    let products = Array.from($products);
+    return products;
+  }
+
   getWarehouses(transactions: Transaction[]) {
     let $warehouses = new Set(transactions.map(transaction => transaction.warehouse));
     let warehouses = Array.from($warehouses);
@@ -311,7 +318,7 @@ export class DashboardComponent implements OnInit {
   getAveragePrice(transactions: Transaction[], product: Product) {
     let sumPrices = 0;
     let sumQuantities = 0;
-    transactions = transactions.filter(transaction => transaction.input === true && transaction.product.id === product.id);
+    transactions = this.$transactions.filter(transaction => transaction.input === true && transaction.product.id === product.id);
     transactions.map(transaction => {
       sumPrices += transaction.amount;
       sumQuantities += transaction.transactionQuantity;

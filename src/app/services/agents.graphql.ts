@@ -50,6 +50,19 @@ export const GET_AGENTS = gql`
                         id
                         name
                     }
+                    warehouse {
+                        id
+                        name
+                        city
+                        country
+                        currency {
+                            id
+                            name
+                        }
+                        address
+                        phone
+                        email
+                    }
                     specs
                     stockQuantity
                     unit
