@@ -20,7 +20,55 @@ export class AllTransactionsComponent implements OnInit {
   transactions: Transaction[];
   transaction: Transaction;
   cashed: boolean;
-  renderedData: any;
+  $transaction: {
+    input: boolean,
+    user: string, 
+    warehouse: string, 
+    type: string, 
+    clientName: string, 
+    hasClientEmail: boolean, 
+    clientEmail: string, 
+    clientPhone: string, 
+    clientAddress: string, 
+    product: string, 
+    transactionQuantity: number, 
+    buyingPrice: number, 
+    sellingPrice: number, 
+    amount: number, 
+    packaging: string, 
+    currency: string, 
+    paymentMethod: string, 
+    otherPaymentMethod: string, 
+    agent: string, 
+    cashed: boolean, 
+    code: string, 
+    createdAt: Date, 
+    updatedAt: Date
+  } = {
+    input: false,
+    user: '', 
+    warehouse: '', 
+    type: '', 
+    clientName: '', 
+    hasClientEmail: false, 
+    clientEmail: '', 
+    clientPhone: '', 
+    clientAddress: '', 
+    product: '', 
+    transactionQuantity: 0, 
+    buyingPrice: 0, 
+    sellingPrice: 0, 
+    amount: 0, 
+    packaging: '', 
+    currency: '', 
+    paymentMethod: '', 
+    otherPaymentMethod: '', 
+    agent: '', 
+    cashed: false, 
+    code: '', 
+    createdAt: new Date(), 
+    updatedAt: new Date()
+  };
   
   displayedColumns: string[] = ['code', 'type', 'owner', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'amount', 'edit', 'changeStatus', 'print', 'cashed'];
   dataSource: MatTableDataSource<Transaction>;
@@ -31,7 +79,6 @@ export class AllTransactionsComponent implements OnInit {
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.transactions);
-      this.dataSource.connect().subscribe(d => this.renderedData = d);
     }
 
   ngOnInit() {
@@ -114,7 +161,65 @@ export class AllTransactionsComponent implements OnInit {
   }
 
   exportCsv(){
-    new ngxCsv(this.transactions,'All Transactions');
+    let $transactions = [];
+
+    this.transactions.map(transaction => {
+      let $transaction = {...this.$transaction};
+      $transaction.input = transaction.input;
+      $transaction.user = transaction.user.name;
+      $transaction.warehouse = transaction.warehouse.name + ' ' + transaction.warehouse.city + ' ' + transaction.warehouse.country;
+      $transaction.type = transaction.type;
+      $transaction.clientName = transaction.clientName;
+      $transaction.hasClientEmail = transaction.hasClientEmail;
+      $transaction.clientEmail = transaction.clientEmail;
+      $transaction.clientPhone = transaction.clientPhone;
+      $transaction.clientAddress = transaction.clientAddress;
+      $transaction.product = transaction.product.productCategory.name + ' ' + transaction.product.brand.name + ' ' + transaction.product.specs;
+      $transaction.transactionQuantity = transaction.transactionQuantity;
+      $transaction.buyingPrice = transaction.buyingPrice;
+      $transaction.sellingPrice = transaction.sellingPrice;
+      $transaction.amount = transaction.amount;
+      $transaction.packaging = transaction.packaging;
+      $transaction.currency = transaction.currency;
+      $transaction.paymentMethod = transaction.paymentMethod;
+      $transaction.otherPaymentMethod = transaction.otherPaymentMethod;
+      $transaction.agent = transaction.agent.name;
+      $transaction.cashed = transaction.cashed;
+      $transaction.code = transaction.code;
+      $transaction.createdAt = new Date(parseInt(transaction.createdAt.toString()));
+      $transaction.updatedAt = new Date(parseInt(transaction.updatedAt.toString()));
+      $transactions.push($transaction);
+    });
+
+    var options = {
+      fieldSeparator: ',',
+      showLabels: true,
+      headers: ['input', 
+      'user', 
+      'warehouse', 
+      'type', 
+      'clientName', 
+      'hasClientEmail', 
+      'clientEmail', 
+      'clientPhone', 
+      'clientAddress', 
+      'product', 
+      'transactionQuantity', 
+      'buyingPrice', 
+      'sellingPrice', 
+      'amount', 
+      'packaging', 
+      'currency', 
+      'paymentMethod', 
+      'otherPaymentMethod', 
+      'agent', 
+      'cashed', 
+      'code', 
+      'createdAt', 
+      'updatedAt']
+    }
+
+    new ngxCsv($transactions,'all-transactions', options);
   }
 }
 

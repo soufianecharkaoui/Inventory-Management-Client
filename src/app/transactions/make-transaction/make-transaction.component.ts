@@ -189,7 +189,7 @@ export class MakeTransactionComponent implements OnInit {
         unit: this.selectedProduct.unit,
         stockQuantity: this.firstTransactionForm.value.input ? this.selectedProduct.stockQuantity + this.transactionQuantity : this.selectedProduct.stockQuantity - this.transactionQuantity,
       },
-      refetchQueries: ['getProducts']
+      refetchQueries: ['getTransactions', 'getProducts', 'getWarehouses', 'getAgents']
     })
     .subscribe();
 

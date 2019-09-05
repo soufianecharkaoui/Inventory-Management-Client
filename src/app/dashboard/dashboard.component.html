@@ -68,45 +68,41 @@
     </mat-card>
     <hr>
     <mat-card *ngIf="transactions">
-      <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-around center" style="flex-wrap: wrap;">
+      <div fxLayout="row" fxLayout.xs="column" fxLayoutAlign="space-around start" style="flex-wrap: wrap;">
         <div>
           <mat-card-header>
             <mat-card-subtitle> Total Value Of Transactions </mat-card-subtitle>
           </mat-card-header>
-          <mat-card-content><h4> {{ getInputTransactions(transactions).value + getOutputTransactions(transactions).valueCashed + getOutputTransactions(transactions).valueUncashed }} / FCFA</h4> </mat-card-content>
+          <mat-card-content><h4> {{ getTotalValueOfTransactions(transactions)[1] }} / FCFA</h4> </mat-card-content>
         </div>
         <div>
           <mat-card-header>
-            <mat-card-subtitle> Value Of Input Transactions (Cashed) </mat-card-subtitle>
+            <mat-card-subtitle> Value Of Input Transactions </mat-card-subtitle>
           </mat-card-header>
-          <mat-card-content><h4> {{ getInputTransactions(transactions).value }} / FCFA</h4> </mat-card-content>
+          <mat-card-content><h4> {{ getInputTransactions(transactions).value[1] }} / FCFA</h4> </mat-card-content>
         </div>
         <div>
           <mat-card-header>
             <mat-card-subtitle> Value Of Output Transactions </mat-card-subtitle>
           </mat-card-header>
           <mat-card-content>
-            <h4> {{ getOutputTransactions(transactions).valueCashed + getOutputTransactions(transactions).valueUncashed }} / FCFA</h4> 
-            <mat-accordion style="text-align: center">
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                      Cashed
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <h4>{{ getOutputTransactions(transactions).valueCashed }} / FCFA</h4>
-              </mat-expansion-panel>
-            </mat-accordion>
-            <mat-accordion style="text-align: center">
-              <mat-expansion-panel>
-                <mat-expansion-panel-header>
-                  <mat-panel-title>
-                      Uncashed
-                  </mat-panel-title>
-                </mat-expansion-panel-header>
-                <h4>{{ getOutputTransactions(transactions).valueUncashed }} / FCFA</h4>
-              </mat-expansion-panel>
-            </mat-accordion>
+            <h4> {{ getMoneyFormat(getOutputTransactions(transactions).valueCashed[0] + getOutputTransactions(transactions).valueUncashed[0]) }} / FCFA</h4> 
+            <mat-card>
+              <mat-card-content>
+                <mat-card-subtitle fxLayout="row">
+                  <div style="width: 100%;">Cashed</div >
+                  <div style="width: 100%;" fxLayoutAlign="end">{{ getOutputTransactions(transactions).valueCashed[1] }} / FCFA</div >
+                </mat-card-subtitle>
+              </mat-card-content>
+            </mat-card>
+            <mat-card>
+              <mat-card-content>
+                <mat-card-subtitle fxLayout="row">
+                  <div style="width: 100%;">Uncashed</div>
+                  <div style="width: 100%;" fxLayoutAlign="end">{{ getOutputTransactions(transactions).valueUncashed[1] }} / FCFA</div>
+                </mat-card-subtitle>
+              </mat-card-content>
+            </mat-card>
           </mat-card-content>
         </div>
       </div>
@@ -154,7 +150,7 @@
             <td mat-cell *matCellDef="let element">
               <mat-list role="list">
                 <mat-list-item role="listitem" *ngFor="let product of getProducts(element.transactions)">
-                    {{ getAveragePrice(element.transactions, product) }} / {{ element.currency.name }} / {{ product.unit }}
+                    {{ getAveragePrice(element.transactions, product)[1] }} / {{ element.currency.name }} / {{ product.unit }}
                 </mat-list-item>
               </mat-list>
             </td>
@@ -176,7 +172,7 @@
             <td mat-cell *matCellDef="let element">
               <mat-list role="list">
                 <mat-list-item role="listitem" *ngFor="let product of getProducts(element.transactions)">
-                    {{ getValueSold(element.transactions, product) }} / {{ element.currency.name }}
+                    {{ getValueSold(element.transactions, product)[1] }} / {{ element.currency.name }}
                 </mat-list-item>
               </mat-list>
             </td>
@@ -198,7 +194,7 @@
             <td mat-cell *matCellDef="let element">
               <mat-list role="list">
                 <mat-list-item role="listitem" *ngFor="let product of getProducts(element.transactions)">
-                    {{ getValueOfStock(product) }} / {{ element.currency.name }}
+                    {{ getValueOfStock(product)[1] }} / {{ element.currency.name }}
                 </mat-list-item>
               </mat-list>
             </td>
@@ -209,7 +205,7 @@
             <td mat-cell *matCellDef="let element">
               <mat-list role="list">
                 <mat-list-item role="listitem" *ngFor="let product of getProducts(element.transactions)">
-                    {{ getRevenueByProduct(product, element.transactions) }} / {{ element.currency.name }}
+                    {{ getRevenueByProduct(product, element.transactions)[1] }} / {{ element.currency.name }}
                 </mat-list-item>
               </mat-list>
             </td>
@@ -223,9 +219,9 @@
   </section>
   <hr>
 
-  <!-- Stock Overview Of Agents -->
+  <!-- Agents Transactions -->
   <section>
-    <h3 class="title">Stock Overview Of Agents</h3>
+    <h3 class="title">Agents Transactions</h3>
     <hr>
     <mat-card style="width: 100%;">
     <mat-card-content>
@@ -274,7 +270,7 @@
             <td mat-cell *matCellDef="let element">
               <mat-list role="list">
                 <mat-list-item role="listitem" *ngFor="let product of getProductsByAgents(element.transactions)">
-                    {{ getValueSold(element.transactions, product) }} / FCFA
+                    {{ getValueSold(element.transactions, product)[1] }} / FCFA
                 </mat-list-item>
               </mat-list>
             </td>
@@ -285,7 +281,7 @@
             <td mat-cell *matCellDef="let element">
               <mat-list role="list">
                 <mat-list-item role="listitem" *ngFor="let product of getProductsByAgents(element.transactions)">
-                    {{ getRevenueByProduct(product, element.transactions) }} / FCFA
+                    {{ getRevenueByProduct(product, element.transactions)[1] }} / FCFA
                 </mat-list-item>
               </mat-list>
             </td>
@@ -330,9 +326,9 @@
               <th>Product</th>
               <th>Overall Income</th>
             </tr>
-            <tr *ngFor="let product of getTop10ProductsByOverallIncome(transactions)">
+            <tr *ngFor="let product of getTop10ProductsByRevenue(transactions)">
               <td> {{ product.product.productCategory.name }} - {{ product.product.brand.name }} - {{ product.product.specs }} </td>
-              <td> {{ product.overallIncome }} / {{ product.product.warehouse.currency.name }} </td>
+              <td> {{ getMoneyFormat(product.revenue) }} / {{ product.product.warehouse.currency.name }} </td>
             </tr>
           </table>
         </mat-card-content>
@@ -353,17 +349,17 @@
         </mat-card-header>
         <mat-card-content>
           <p> Number of Transactions : <strong>{{ warehouse.transactions.length }}</strong> </p>
-          <p> Value of Transactions : <strong> {{ getInputTransactions(warehouse.transactions).value + getOutputTransactions(warehouse.transactions).valueCashed + getOutputTransactions(warehouse.transactions).valueUncashed }} / {{ warehouse.currency.name }}</strong> </p>
+          <p> Value of Transactions : <strong> {{ getTotalValueOfTransactions(warehouse.transactions)[1] }} / {{ warehouse.currency.name }}</strong> </p>
           <p> Number of Input Transactions : <strong>{{ getInputTransactions(warehouse.transactions).length }}</strong> </p>
-          <p> Value of Input Transactions : <strong> {{ getInputTransactions(warehouse.transactions).value }} / {{ warehouse.currency.name }}</strong> </p>
+          <p> Value of Input Transactions : <strong> {{ getInputTransactions(warehouse.transactions).value[1] }} / {{ warehouse.currency.name }}</strong> </p>
           <p> Number of Output Transactions : <strong>{{ warehouse.transactions.length - getInputTransactions(warehouse.transactions).length }}</strong> </p>
-          <p> Value of Output Transactions : <strong> {{ getOutputTransactions(warehouse.transactions).valueCashed + getOutputTransactions(warehouse.transactions).valueUncashed }} / {{ warehouse.currency.name }}</strong> </p>
+          <p> Value of Output Transactions : <strong> {{ getMoneyFormat(getOutputTransactions(warehouse.transactions).valueCashed[0] + getOutputTransactions(warehouse.transactions).valueUncashed[0]) }} / {{ warehouse.currency.name }}</strong> </p>
           <p> Number of Output Transactions (Cashed) : <strong>{{ getOutputTransactions(warehouse.transactions).cashed }}</strong> </p>
-          <p> Value of Output Transactions (Cashed) : <strong> {{ getOutputTransactions(warehouse.transactions).valueCashed }} / {{ warehouse.currency.name }}</strong> </p>
+          <p> Value of Output Transactions (Cashed) : <strong> {{ getOutputTransactions(warehouse.transactions).valueCashed[1] }} / {{ warehouse.currency.name }}</strong> </p>
           <p> Number of Output Transactions (Uncashed) : <strong>{{ getOutputTransactions(warehouse.transactions).uncashed }}</strong> </p>
-          <p> Value of Output Transactions (Uncashed) : <strong> {{ getOutputTransactions(warehouse.transactions).valueUncashed }} / {{ warehouse.currency.name }}</strong> </p>
-          <p> Revenue : <strong>{{ getRevenue(warehouse.transactions, getProducts(warehouse.transactions)) }} / {{ warehouse.currency.name }} </strong> </p>
-          <p> Actual Status : <strong>{{ getOverallIncome(warehouse) }} / {{ warehouse.currency.name }} </strong> </p>
+          <p> Value of Output Transactions (Uncashed) : <strong> {{ getOutputTransactions(warehouse.transactions).valueUncashed[1] }} / {{ warehouse.currency.name }}</strong> </p>
+          <p> Revenue : <strong>{{ getRevenue(warehouse.transactions, getProducts(warehouse.transactions))[1] }} / {{ warehouse.currency.name }} </strong> </p>
+          <p> Actual Status : <strong>{{ getOverallIncome(warehouse)[1] }} / {{ warehouse.currency.name }} </strong> </p>
           <p> Products : </p>
           <div *ngFor="let product of getProducts(warehouse.transactions)">
             <mat-accordion>
@@ -374,13 +370,13 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <p> Quantity Bought : <strong>{{ getBoughtQuantity(warehouse.transactions, product) }} / {{ product.unit }}</strong> </p>
-                <p> Value Bought : <strong>{{ getValueBought(warehouse.transactions, product) }} / {{ warehouse.currency.name }}</strong> </p>
-                <p> Average Price (Income) : <strong>{{ getAveragePrice(warehouse.transactions, product) }} / {{ warehouse.currency.name }} / {{ product.unit }}</strong> </p>
+                <p> Value Bought : <strong>{{ getValueBought(warehouse.transactions, product)[1] }} / {{ warehouse.currency.name }}</strong> </p>
+                <p> Average Price (Income) : <strong>{{ getAveragePrice(warehouse.transactions, product)[1] }} / {{ warehouse.currency.name }} / {{ product.unit }}</strong> </p>
                 <p> Quantity Sold : <strong>{{ getSoldQuantity(warehouse.transactions, product) }} / {{ product.unit }}</strong> </p>
-                <p> Value Sold : <strong>{{ getValueSold(warehouse.transactions, product) }} / {{ warehouse.currency.name }}</strong> </p>
+                <p> Value Sold : <strong>{{ getValueSold(warehouse.transactions, product)[1] }} / {{ warehouse.currency.name }}</strong> </p>
                 <p> Remaining Stock : <strong> {{ product.stockQuantity }} / {{ product.unit }} </strong> </p>
-                <p> Value Of The Remaining Stock : <strong> {{ getValueOfStock(product) }} / {{ warehouse.currency.name }} </strong> </p>
-                <p> Revenue : <strong>{{ getRevenueByProduct(product, warehouse.transactions) }} / {{ warehouse.currency.name }}</strong> </p>
+                <p> Value Of The Remaining Stock : <strong> {{ getValueOfStock(product)[1] }} / {{ warehouse.currency.name }} </strong> </p>
+                <p> Revenue : <strong>{{ getRevenueByProduct(product, warehouse.transactions)[1] }} / {{ warehouse.currency.name }}</strong> </p>
               </mat-expansion-panel>
             </mat-accordion>
           </div>
@@ -401,15 +397,13 @@
           <mat-card-subtitle> {{ agent.email }} </mat-card-subtitle>
         </mat-card-header>
         <mat-card-content>
-          <p> Number of Transactions : <strong>{{ agent.transactions.length }}</strong> </p>
-          <p> Value of Transactions : <strong> {{ getInputTransactions(agent.transactions).value + getOutputTransactions(agent.transactions).valueCashed + getOutputTransactions(agent.transactions).valueUncashed }} / FCFA</strong> </p>
           <p> Number of Output Transactions : <strong>{{ agent.transactions.length - getInputTransactions(agent.transactions).length }}</strong> </p>
-          <p> Value of Output Transactions : <strong> {{ getOutputTransactions(agent.transactions).valueCashed + getOutputTransactions(agent.transactions).valueUncashed }} / FCFA</strong> </p>
+          <p> Value of Output Transactions : <strong> {{ getMoneyFormat(getOutputTransactions(agent.transactions).valueCashed[0] + getOutputTransactions(agent.transactions).valueUncashed[0]) }} / FCFA</strong> </p>
           <p> Number of Output Transactions (Cashed) : <strong>{{ getOutputTransactions(agent.transactions).cashed }}</strong> </p>
-          <p> Value of Output Transactions (Cashed) : <strong> {{ getOutputTransactions(agent.transactions).valueCashed }} / FCFA</strong> </p>
+          <p> Value of Output Transactions (Cashed) : <strong> {{ getOutputTransactions(agent.transactions).valueCashed[1] }} / FCFA</strong> </p>
           <p> Number of Output Transactions (Uncashed) : <strong>{{ getOutputTransactions(agent.transactions).uncashed }}</strong> </p>
-          <p> Value of Output Transactions (Uncashed) : <strong> {{ getOutputTransactions(agent.transactions).valueUncashed }} / FCFA</strong> </p>
-          <p> Revenue : <strong>{{ getRevenue(agent.transactions, getProducts(agent.transactions)) }} / FCFA </strong> </p>
+          <p> Value of Output Transactions (Uncashed) : <strong> {{ getOutputTransactions(agent.transactions).valueUncashed[1] }} / FCFA</strong> </p>
+          <p> Revenue : <strong>{{ getRevenue(agent.transactions, getProducts(agent.transactions))[1] }} / FCFA </strong> </p>
           <p> Products : </p>
           <div *ngFor="let product of getProducts(agent.transactions)">
             <mat-accordion>
@@ -420,8 +414,8 @@
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <p> Quantity Sold : <strong>{{ getSoldQuantity(agent.transactions, product) }} / {{ product.unit }}</strong> </p>
-                <p> Value Sold : <strong>{{ getValueSold(agent.transactions, product) }} / FCFA</strong> </p>
-                <p> Revenue : <strong>{{ getRevenueByProduct(product, agent.transactions) }} / FCFA</strong> </p>
+                <p> Value Sold : <strong>{{ getValueSold(agent.transactions, product)[1] }} / FCFA</strong> </p>
+                <p> Revenue : <strong>{{ getRevenueByProduct(product, agent.transactions)[1] }} / FCFA</strong> </p>
               </mat-expansion-panel>
             </mat-accordion>
           </div>

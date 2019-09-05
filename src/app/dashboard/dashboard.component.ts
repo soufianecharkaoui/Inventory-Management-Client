@@ -1,12 +1,9 @@
 import { Currency } from './../types';
-import { GET_AGENTS } from './../services/agents.graphql';
 import { Component, OnInit } from '@angular/core';
 import { Warehouse, Transaction, Product, Agent } from 'app/types';
 import { map, take } from 'rxjs/operators';
 import { Apollo } from 'apollo-angular';
-import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 import { GET_CURRENCIES } from 'app/services/currencies.graphql';
-import { GET_TRANSACTIONS } from 'app/services/transactions.graphql';
 import { GET_PRODUCTS, REFRESH_PRODUCTS } from 'app/services/products.graphql';
 import {MatDatepicker} from '@angular/material/datepicker';
 import * as _moment from 'moment';
@@ -104,6 +101,24 @@ export class DashboardComponent implements OnInit {
     this.getGlobalStats();
   }
 
+  getMoneyFormat(number) {
+
+    // Nine Zeroes for Billions
+    return Math.abs(Number(number)) >= 1.0e+9
+
+    ? Number((number / 1.0e+9).toFixed(2)) + "B"
+    // Six Zeroes for Millions 
+    : Math.abs(Number(number)) >= 1.0e+6
+
+    ? Number((number / 1.0e+6).toFixed(2)) + "M"
+    // Three Zeroes for Thousands
+    : Math.abs(Number(number)) >= 1.0e+3
+
+    ? Number((number / 1.0e+3).toFixed(2)) + "K"
+
+    : Number(number.toFixed(2));
+  }
+
   getGlobalStats() {
     if (this.isGlobal) {
       this.agents = this.$agents;
@@ -113,17 +128,17 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.apollo.mutate({
+      mutation: REFRESH_PRODUCTS, 
+      refetchQueries: ['getTransactions', 'getProducts', 'getWarehouses', 'getAgents']
+    })
+    .subscribe();
+
     this.apollo.watchQuery({
       query: GET_PRODUCTS
     })
     .valueChanges.pipe(map((result: any) => this.products = result.data.getProducts))
     .subscribe(data => this.products = data);
-
-    this.apollo.mutate({
-      mutation: REFRESH_PRODUCTS, 
-      refetchQueries: ['getProducts']
-    })
-    .subscribe();
 
     this.apollo.watchQuery({
       query: GET_CURRENCIES
@@ -131,26 +146,12 @@ export class DashboardComponent implements OnInit {
     .valueChanges.pipe(map((result: any) => {this.currencies = result.data.getCurrencies}), take(1))
   }
 
-  getBestSellingProduct(transactions: Transaction[]) {
-    let $products = [];
-    if (this.products) {
-      this.products.map(product => {
-        $products.push({product: product, soldQuantity: this.getSoldQuantity(transactions, product)});
-      });
-      $products.sort((a, b) => {return b.soldQuantity - a.soldQuantity});
-    }
-    return $products[0];
-  }
-
-  getLessSellingProduct(transactions: Transaction[]) {
-    let $products = [];
-    if (this.products) {
-      this.products.map(product => {
-        $products.push({product: product, soldQuantity: this.getSoldQuantity(transactions, product)});
-      });
-      $products.sort((a, b) => {return a.soldQuantity - b.soldQuantity});
-    }
-    return $products[0];
+  getTotalValueOfTransactions(transactions: Transaction[]) {
+    let value = 0;
+    transactions.map(transaction => {
+      value += transaction.amount; 
+    });
+    return [value, this.getMoneyFormat(value)];
   }
 
   getTop10ProductsBySoldQuantity(transactions: Transaction[]) {
@@ -164,48 +165,24 @@ export class DashboardComponent implements OnInit {
     return $products.slice(0,10);
   }
 
-  getBottom10ProductsBySoldQuantity(transactions: Transaction[]) {
+  getTop10ProductsByRevenue(transactions: Transaction[]) {
     let $products = [];
     if (this.products) {
       this.products.map(product => {
-        $products.push({product: product, soldQuantity: this.getSoldQuantity(transactions, product)});
+        $products.push({product: product, revenue: this.getRevenueByProduct(product, transactions)[0]});
       });
-      $products.sort((a, b) => {return a.soldQuantity - b.soldQuantity});
+      $products.sort((a, b) => {return b.revenue - a.revenue});
     }
     return $products.slice(0,10);
   }
 
-  getTop10ProductsByOverallIncome(transactions: Transaction[]) {
-    let $products = [];
-    if (this.products) {
-      this.products.map(product => {
-        $products.push({product: product, overallIncome: this.getOverallIncomeByProduct(product, transactions)});
-      });
-      $products.sort((a, b) => {return b.overallIncome - a.overallIncome});
-    }
-    return $products.slice(0,10);
-  }
-
-  getBottom10ProductsByOverallIncome(transactions: Transaction[]) {
-    let $products = [];
-    if (this.products) {
-      this.products.map(product => {
-        $products.push({product: product, overallIncome: this.getOverallIncomeByProduct(product, transactions)});
-      });
-      $products.sort((a, b) => {return a.overallIncome - b.overallIncome});
-    }
-    return $products.slice(0,10);
-  }
-
-  count = 0;
   getRevenue(transactions: Transaction[], products: Product[]) {
     let revenue = 0;
     products.map(product => {
-      const rev = this.getRevenueByProduct(product, transactions);
+      const rev = this.getRevenueByProduct(product, transactions)[0];
       revenue += rev;
     });
-    revenue = Number(revenue.toFixed(2));
-    return isNaN(revenue) ? 0 : revenue;
+    return isNaN(revenue) ? 0 : [revenue, this.getMoneyFormat(revenue)];;
   }
 
   getRevenueByProduct(product: Product, transactions: Transaction[]) {
@@ -215,9 +192,8 @@ export class DashboardComponent implements OnInit {
     $transactions.map(transaction => {
       sumSoldAmount += transaction.amount;
     });
-    this.revenue = sumSoldAmount - ((isNaN(this.getAveragePrice(transactions, product)) ? 0 : this.getAveragePrice(transactions, product)) * this.getSoldQuantity($transactions, product));
-    this.revenue = Number(this.revenue.toFixed(2));
-    return isNaN(this.revenue) ? 0 : this.revenue;
+    this.revenue = sumSoldAmount - ((isNaN(this.getAveragePrice(transactions, product)[0]) ? 0 : this.getAveragePrice(transactions, product)[0]) * this.getSoldQuantity($transactions, product));
+    return isNaN(this.revenue) ? 0 : [this.revenue, this.getMoneyFormat(this.revenue)];
   }
 
   getOverallIncome(warehouse: Warehouse) {
@@ -225,7 +201,7 @@ export class DashboardComponent implements OnInit {
     warehouse.transactions.map(transaction => {
       transaction.input ? overallIncome -= transaction.amount : overallIncome += transaction.amount;
     });
-    return overallIncome;
+    return [overallIncome, this.getMoneyFormat(overallIncome)];
   }
 
   getOverallIncomeByProduct(product: Product, transactions: Transaction[]) {
@@ -234,7 +210,7 @@ export class DashboardComponent implements OnInit {
     transactions.map(transaction => {
       transaction.input ? overallIncome -= transaction.amount : overallIncome += transaction.amount;
     });
-    return overallIncome;
+    return [overallIncome, this.getMoneyFormat(overallIncome)];
   }
 
   getInputTransactions(transactions: Transaction[]) {
@@ -243,7 +219,7 @@ export class DashboardComponent implements OnInit {
     inputTransactions.map(transaction => {
       value += transaction.amount;
     });
-    return { length: inputTransactions.length, value: value };
+    return { length: inputTransactions.length, value: [value, this.getMoneyFormat(value)] };
   }
 
   getOutputTransactions(transactions: Transaction[]) {
@@ -257,12 +233,18 @@ export class DashboardComponent implements OnInit {
     outputTransactionsUncashed.map(transaction => {
       valueUncashed += transaction.amount;
     });
-    return { cashed: outputTransactionsCashed.length, valueCashed: valueCashed, uncashed: outputTransactionsUncashed.length, valueUncashed: valueUncashed };
+    return { cashed: outputTransactionsCashed.length, valueCashed: [valueCashed, this.getMoneyFormat(valueCashed)], uncashed: outputTransactionsUncashed.length, valueUncashed: [valueUncashed, this.getMoneyFormat(valueUncashed)] };
   }
 
   getProducts(transactions: Transaction[]) {
     let $products = new Set(transactions.map(transaction => transaction.product));
     let products = Array.from($products);
+    products.map(product => {
+      if (this.products) {
+        let _product = this.products.find($product => $product.id === product.id);
+        product.stockQuantity = _product.stockQuantity;
+      } else {}
+    })
     return products;
   }
 
@@ -294,7 +276,7 @@ export class DashboardComponent implements OnInit {
     transactions.map(transaction => {
       valueSold += transaction.amount;
     });
-    return valueSold;
+    return [valueSold, this.getMoneyFormat(valueSold)];
   }
 
   getBoughtQuantity(transactions: Transaction[], product: Product) {
@@ -312,7 +294,7 @@ export class DashboardComponent implements OnInit {
     transactions.map(transaction => {
       valueBought += transaction.amount;
     });
-    return valueBought;
+    return [valueBought, this.getMoneyFormat(valueBought)];
   }
 
   getAveragePrice(transactions: Transaction[], product: Product) {
@@ -324,10 +306,11 @@ export class DashboardComponent implements OnInit {
       sumQuantities += transaction.transactionQuantity;
     });
     product.averagePrice = Number(((sumPrices / sumQuantities).toFixed(2)));
-    return isNaN(product.averagePrice) ? 0 : product.averagePrice;
+    return isNaN(product.averagePrice) ? 0 : [product.averagePrice, this.getMoneyFormat(product.averagePrice)];
   }
 
   getValueOfStock(product: Product) {
-    return this.transactions ? (this.getAveragePrice(this.transactions, product) * product.stockQuantity).toFixed(2) : 0.00;
+    let value = this.transactions ? (this.getAveragePrice(this.transactions, product)[0] * product.stockQuantity) : 0;
+    return [value, this.getMoneyFormat(value)];
   }
 }

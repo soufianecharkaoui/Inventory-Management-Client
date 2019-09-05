@@ -30,6 +30,12 @@
                                 <p>Transactions</p>
                             </button>
                         </mat-expansion-panel-header>
+                        <button mat-button>
+                            <a routerLink="/make-transaction">
+                                <i class="material-icons">add_shopping_cart</i>
+                                <p>Make a Transaction</p>
+                            </a>
+                        </button>
                         <button *ngIf="user.isAdmin" mat-button>
                             <a routerLink="/all-transactions">
                                 <i class="material-icons">list</i>
@@ -40,12 +46,6 @@
                             <a routerLink="/my-transactions">
                                 <i class="material-icons">list</i>
                                 <p>My Transactions</p>
-                            </a>
-                        </button>
-                        <button mat-button>
-                            <a routerLink="/make-transaction">
-                                <i class="material-icons">add_shopping_cart</i>
-                                <p>Make a Transaction</p>
                             </a>
                         </button>
                     </mat-expansion-panel>

@@ -6,6 +6,7 @@ import { GET_AGENTS } from 'app/services/agents.graphql';
 import { map, take } from 'rxjs/operators';
 import { GET_TRANSACTIONS } from 'app/services/transactions.graphql';
 import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
+import { GET_PRODUCTS } from 'app/services/products.graphql';
 
 @Injectable() 
 
