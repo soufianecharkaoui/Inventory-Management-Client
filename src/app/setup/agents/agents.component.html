@@ -2,22 +2,35 @@
     <p style="margin-top: 10px;">
         <button mat-raised-button color="primary" (click)="openDialog()">Add an Agent</button>
     </p>
-
   
     <div class="mat-elevation-z8">
         <table mat-table [dataSource]="dataSource" matSort>
             
             <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Full Name
-                    <mat-form-field>
-                        <input matInput class="form-field" [formControl]="nameFilter" placeholder="Name Filter">
-                    </mat-form-field> 
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> 
+                    <div fxLayout="column" fxLayoutAlign="center center">
+                        <div style="margin-top: 10px">Full Name</div>
+                        <div>
+                            <mat-form-field>
+                                <input matInput class="form-field" [formControl]="nameFilter" placeholder="Name Filter">
+                            </mat-form-field> 
+                        </div>
+                    </div>
                 </th>
                 <td mat-cell *matCellDef="let row"> {{row.name}} </td>
             </ng-container>
     
             <ng-container matColumnDef="email">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Email </th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> 
+                    <div fxLayout="column" fxLayoutAlign="center center">
+                        <div style="margin-top: 10px">Email</div>
+                        <div>
+                            <mat-form-field>
+                                <input matInput class="form-field" [formControl]="emailFilter" placeholder="Email Filter">
+                            </mat-form-field> 
+                        </div>
+                    </div>
+                </th>
                 <td mat-cell *matCellDef="let row"> {{row.email}} </td>
             </ng-container>
     

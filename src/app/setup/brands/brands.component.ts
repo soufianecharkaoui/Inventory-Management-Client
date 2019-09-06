@@ -7,7 +7,7 @@ import { Apollo } from 'apollo-angular';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GET_BRANDS, REVOKE_BRAND, DELETE_BRAND, UPDATE_BRAND, ADD_BRAND } from 'app/services/brands.graphql';
 import { map } from 'rxjs/operators';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-brands',
@@ -19,6 +19,13 @@ export class BrandsComponent implements OnInit {
   brands: Brand[];
   brand: Brand;
   
+  nameFilter = new FormControl();
+  
+  filteredValues =
+  {
+    name: ''
+  };
+
   displayedColumns: string[] = ['name', 'status', 'edit', 'changeStatus'];
   dataSource: MatTableDataSource<Brand>;
 
@@ -28,6 +35,7 @@ export class BrandsComponent implements OnInit {
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.brands);
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     }
 
   ngOnInit() {
@@ -40,7 +48,26 @@ export class BrandsComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.brands);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      this.nameFilter.valueChanges.subscribe((nameFilterValue) => {
+        this.filteredValues['name'] = nameFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     });
+  }
+
+  customFilterPredicate()
+  {
+    const myFilterPredicate = function(data: Brand, filter: string): boolean
+    {
+      let searchString = JSON.parse(filter);
+
+      return data.name.toString().trim().indexOf(searchString.name) !== -1;
+    }
+
+    return myFilterPredicate;
   }
 
   applyFilter(filterValue: string) {

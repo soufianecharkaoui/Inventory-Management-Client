@@ -7,7 +7,7 @@ import { Apollo } from 'apollo-angular';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GET_PRODUCT_CATEGORIES, REVOKE_PRODUCT_CATEGORY, DELETE_PRODUCT_CATEGORY, UPDATE_PRODUCT_CATEGORY, ADD_PRODUCT_CATEGORY } from 'app/services/product-categories.graphql';
 import { map } from 'rxjs/operators';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { GET_BRANDS } from 'app/services/brands.graphql';
 
 @Component({
@@ -23,12 +23,22 @@ export class ProductCategoriesComponent implements OnInit {
   displayedColumns: string[] = ['name', 'brands', 'status', 'edit', 'changeStatus'];
   dataSource: MatTableDataSource<ProductCategory>;
 
+  nameFilter = new FormControl();
+  brandsFilter = new FormControl();
+  
+  filteredValues =
+  {
+    name: '',
+    brands: ''
+  };
+
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.productCategories);
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     }
 
   ngOnInit() {
@@ -41,7 +51,32 @@ export class ProductCategoriesComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.productCategories);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      this.nameFilter.valueChanges.subscribe((nameFilterValue) => {
+        this.filteredValues['name'] = nameFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.brandsFilter.valueChanges.subscribe((brandsFilterValue) => {
+        this.filteredValues['brands'] = brandsFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     });
+  }
+
+  customFilterPredicate()
+  {
+    const myFilterPredicate = function(data: ProductCategory, filter: string): boolean
+    {
+      let searchString = JSON.parse(filter);
+
+      return data.name.toString().trim().indexOf(searchString.name) !== -1 || 
+        data.brands.map(brand => brand.name.toString().trim()).indexOf(searchString.brands) !== -1
+    }
+
+    return myFilterPredicate;
   }
 
   applyFilter(filterValue: string) {

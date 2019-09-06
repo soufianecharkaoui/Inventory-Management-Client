@@ -6,7 +6,7 @@ import { MatSort } from '@angular/material/sort';
 import { Apollo } from 'apollo-angular';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { map } from 'rxjs/operators';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { GET_CURRENCIES, REVOKE_CURRENCY, DELETE_CURRENCY, UPDATE_CURRENCY, ADD_CURRENCY } from 'app/services/currencies.graphql';
 
 @Component({
@@ -18,6 +18,13 @@ export class CurrenciesComponent implements OnInit {
 
   currencies: Currency[];
   currency: Currency;
+
+  nameFilter = new FormControl();
+  
+  filteredValues =
+  {
+    name: ''
+  };
   
   displayedColumns: string[] = ['name', 'status', 'edit', 'changeStatus'];
   dataSource: MatTableDataSource<Currency>;
@@ -28,6 +35,7 @@ export class CurrenciesComponent implements OnInit {
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.currencies);
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     }
 
   ngOnInit() {
@@ -40,7 +48,26 @@ export class CurrenciesComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.currencies);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      this.nameFilter.valueChanges.subscribe((nameFilterValue) => {
+        this.filteredValues['name'] = nameFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     });
+  }
+
+  customFilterPredicate()
+  {
+    const myFilterPredicate = function(data: Currency, filter: string): boolean
+    {
+      let searchString = JSON.parse(filter);
+
+      return data.name.toString().trim().indexOf(searchString.name) !== -1;
+    }
+
+    return myFilterPredicate;
   }
 
   applyFilter(filterValue: string) {

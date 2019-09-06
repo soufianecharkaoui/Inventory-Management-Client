@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { PaymentMethod } from 'app/types';
 import { REVOKE_PAYMENT_METHOD, DELETE_PAYMENT_METHOD, UPDATE_PAYMENT_METHOD, ADD_PAYMENT_METHOD, GET_PAYMENT_METHODS } from 'app/services/payment-methods.graphql';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Apollo } from 'apollo-angular';
 import { MatTableDataSource } from '@angular/material/table';
@@ -22,12 +22,20 @@ export class PaymentMethodsComponent implements OnInit {
   displayedColumns: string[] = ['name', 'status', 'edit', 'changeStatus'];
   dataSource: MatTableDataSource<PaymentMethod>;
 
+  nameFilter = new FormControl();
+  
+  filteredValues =
+  {
+    name: ''
+  };
+
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.paymentMethods);
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     }
 
   ngOnInit() {
@@ -40,7 +48,26 @@ export class PaymentMethodsComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.paymentMethods);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      this.nameFilter.valueChanges.subscribe((nameFilterValue) => {
+        this.filteredValues['name'] = nameFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     });
+  }
+
+  customFilterPredicate()
+  {
+    const myFilterPredicate = function(data: PaymentMethod, filter: string): boolean
+    {
+      let searchString = JSON.parse(filter);
+
+      return data.name.toString().trim().indexOf(searchString.name) !== -1;
+    }
+
+    return myFilterPredicate;
   }
 
   applyFilter(filterValue: string) {

@@ -1,91 +1,197 @@
-<div *ngIf="transaction">
-  <div>
-    <section>
+<div class="component-container">
+    <div class="header">
+        <a target="_blank" href="https://www.waystocap.com/">
+            <img class="logo" src='https://www.waystocap.com/new-landingpages/img/icons/svg/logo.svg'>
+        </a>
+    </div>
+    
+    <table *ngIf="transaction" class="container">
+      <tr>
+        <td>
+          <table class="client">
+            <tr>
+              <th style="padding-left: 3px;" colspan="2">CLIENT</th>
+            </tr>
+            <tr>
+              <td>Name :</td>
+              <td>{{transaction.clientName}}</td>
+            </tr>
+            <tr>
+              <td>Email :</td>
+              <td>{{transaction.clientEmail}}</td>
+            </tr>
+            <tr>
+              <td>Address :</td>
+              <td>{{transaction.clientAddress}}</td>
+            </tr>
+          </table>
+          <table class="transaction">
+            <tr>
+              <td>#{{transaction.code}} </td>
+            </tr>
+            <tr>
+              <td>{{transaction.createdAt | date: 'shortDate'}}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    
+      <tr>
+        <td>
+          <table style="width: 100%;border: 0;height: 100px">
+            <tr>
+              <td style="font-size: 16px; font-weight: bold; text-align: center; font-size: 22px;">
+                BON DE COMMANDE
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    
+      <tbody class="content">
+        <tr>
+          <td class="content-cell"> 
+            <table style="width: 100%">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Product</th>
+                  <th>Quantity/Unit</th>
+                  <th>Price/Currency</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td> {{transaction.product.code}} </td>
+                  <td> {{transaction.product.productCategory.name}} - {{transaction.product.brand.name}} - {{transaction.product.specs}} </td>
+                  <td> {{transaction.transactionQuantity}} / {{transaction.product.unit}} </td>
+                  <td> {{transaction.sellingPrice}} / {{transaction.warehouse.currency.name}} </td>
+                  <td> {{transaction.amount}} / {{transaction.warehouse.currency.name}} </td>
+                </tr>
+              </tbody>
+            </table>
+            <table class="bold-td" style="width:30%; float : right; margin:0">
+              <tr>
+                <td>TOTAL</td>
+                <td>
+                    {{transaction.amount}}
+                </td>
+              </tr>
+              <tr>
+                <td>Currency</td>
+                <td>{{transaction.warehouse.currency.name}}</td>
+              </tr>
+            </table>
+            <table style="width:60%">
+              <tr>
+                <th colspan="2">Payment Method</th>
+              </tr>
+              <tr>
+                <td>
+                    {{transaction.paymentMethod === '' ? transaction.otherPaymentMethod : transaction.paymentMethod}}
+                </td>
+              </tr>
+            </table>
+            <div class="footer">
+                <p> {{transaction.warehouse.address}} </p>
+                <p> {{transaction.warehouse.phone}} </p>
+                <p> {{transaction.warehouse.email}} </p>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+</div>
+
+
+<!-- <div *ngIf="transaction" class="container">
+  <section>
+    <div fxLayout="row" fxLayoutAlign="space-around center">
       <div>
-        <div>
-            <img src="https://www.waystocap.com/new-landingpages/img/icons/svg/logo.svg">
-        </div>
-        <br>
+          <img src="https://www.waystocap.com/new-landingpages/img/icons/svg/logo.svg" width="100">
+      </div>
+      <div>
         <span> {{transaction.warehouse.address}} </span>
         <br>
         <span> {{transaction.phone}} </span>
         <br>
         <span> {{transaction.email}} </span>
       </div>
-    </section>
-
-    <section>
-
-      <div>
-        <span> {{transaction.createdAt | date: 'shortDate'}} </span> <span> #{{transaction.code}} </span>
-      </div>
-    
-      <div>BON DE COMMANDE</div>
-      
-    </section>
-
-    <section>
-      <span>CLIENT</span>
-      <div class="client-name">
-        <span> {{transaction.clientName}} </span>
-      </div>
-      
-      <div>
-        <span> {{transaction.clientAddress}} </span>
-      </div>
-      
-      <div>
-        <span> {{transaction.clientEmail}} </span>
-      </div>
-    </section>
-    
-    <div class="clearfix"></div>
-    
-    <div class="clearfix"></div>
-    
-    <section id="items">
-      
-      <table cellpadding="0" cellspacing="0">
-      
-        <tr>
-          <th>Code</th>
-          <th>Product</th>
-          <th>Quantity/Unit</th>
-          <th>Price/Currency</th>
-          <th>Amount</th>
-        </tr>
-        
-        <tr>
-          <td> {{transaction.product.code}} </td>
-          <td> {{transaction.product.productCategory.name}} - {{transaction.product.brand.name}} - {{transaction.product.specs}} </td>
-          <td> {{transaction.transactionQuantity}} / {{transaction.product.unit}} </td>
-          <td> {{transaction.sellingPrice}} / {{transaction.warehouse.currency.name}} </td>
-          <td> {{transaction.amount}} / {{transaction.warehouse.currency.name}} </td>
-        </tr>
-        
-      </table>
-      
-    </section>
-    
-    <section id="sums">
-      <div class="amount-total">
-        <p> {{transaction.amount}} / {{transaction.warehouse.currency.name}} </p>
-      </div>
-    </section>
-    
-    <div class="clearfix"></div>
-    
-    <section id="terms">
-    
-      <span>TERMS</span>
-      <div>Thank you very much. We really appreciate your business.</div>
-      
-    </section>
-
-    <div class="payment-info">
-      <div>PAYMENTS</div>
-      <div> {{transaction.paymentMethod}} </div>
     </div>
+  </section>
+
+  <section>
+
+    <div>
+      <span> {{transaction.createdAt | date: 'shortDate'}} </span> <span> #{{transaction.code}} </span>
+    </div>
+  
+    <div>BON DE COMMANDE</div>
+    
+  </section>
+
+  <section>
+    <span>CLIENT</span>
+    <div class="client-name">
+      <span> {{transaction.clientName}} </span>
+    </div>
+    
+    <div>
+      <span> {{transaction.clientAddress}} </span>
+    </div>
+    
+    <div>
+      <span> {{transaction.clientEmail}} </span>
+    </div>
+  </section>
+  
+  <div class="clearfix"></div>
+  
+  <div class="clearfix"></div>
+  
+  <section id="items">
+    
+    <table cellpadding="0" cellspacing="0">
+    
+      <tr>
+        <th>Code</th>
+        <th>Product</th>
+        <th>Quantity/Unit</th>
+        <th>Price/Currency</th>
+        <th>Amount</th>
+      </tr>
+      
+      <tr>
+        <td> {{transaction.product.code}} </td>
+        <td> {{transaction.product.productCategory.name}} - {{transaction.product.brand.name}} - {{transaction.product.specs}} </td>
+        <td> {{transaction.transactionQuantity}} / {{transaction.product.unit}} </td>
+        <td> {{transaction.sellingPrice}} / {{transaction.warehouse.currency.name}} </td>
+        <td> {{transaction.amount}} / {{transaction.warehouse.currency.name}} </td>
+      </tr>
+      
+    </table>
+    
+  </section>
+  
+  <section id="sums">
+    <div class="amount-total">
+      <p> {{transaction.amount}} / {{transaction.warehouse.currency.name}} </p>
+    </div>
+  </section>
+  
+  <div class="clearfix"></div>
+  
+  <section id="terms">
+  
+    <span>TERMS</span>
+    <div>Thank you very much. We really appreciate your business.</div>
+    
+  </section>
+
+  <div class="payment-info">
+    <div>PAYMENTS</div>
+    <div> {{transaction.paymentMethod}} </div>
   </div>
-</div>-->
+</div> -->
       

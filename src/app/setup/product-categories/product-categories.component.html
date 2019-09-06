@@ -11,12 +11,30 @@
         <table mat-table [dataSource]="dataSource" matSort>
             
             <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Product Categories </th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00">
+                    <div fxLayout="column" fxLayoutAlign="center center">
+                        <div style="margin-top: 10px">Product Category</div>
+                        <div>
+                            <mat-form-field>
+                                <input matInput class="form-field" [formControl]="nameFilter" placeholder="Name Filter">
+                            </mat-form-field> 
+                        </div>
+                    </div>
+                </th>
                 <td mat-cell *matCellDef="let row"> {{row.name}} </td>
             </ng-container>
 
             <ng-container matColumnDef="brands">
-                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00"> Brands </th>
+                <th mat-header-cell *matHeaderCellDef mat-sort-header style="color: #FF6D00">
+                    <div fxLayout="column" fxLayoutAlign="center center">
+                        <div style="margin-top: 10px">Brands</div>
+                        <div>
+                            <mat-form-field>
+                                <input matInput class="form-field" [formControl]="brandsFilter" placeholder="Brands Filter">
+                            </mat-form-field> 
+                        </div>
+                    </div>
+                </th>
                 <td mat-cell *matCellDef="let row">
                     <mat-list *ngFor="let brand of row.brands">
                         <mat-list-item> {{brand.name}} </mat-list-item>

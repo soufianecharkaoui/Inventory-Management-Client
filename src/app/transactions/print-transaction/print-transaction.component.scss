@@ -1,0 +1,143 @@
+
+
+:host .component-container {
+    all: initial !important;
+    all: unset !important;
+    font-size: 1.05mm !important;
+    font-family: Arial, sans-serif !important;
+    margin: 8rem 8rem 0rem 8rem !important;
+    font-family: Arial, sans-serif !important;
+}
+
+  .header .logo {
+    width: 65rem;
+  }
+  
+  .client {
+    float: right;
+    width: 40%;
+  }
+  
+  .client th {
+    background: none;
+    color: black;
+    font-size: 6rem;
+  }
+
+  
+  
+  th {
+    /* color: #717171; */
+    color: white;
+    background-color: rgb(166, 28, 0);
+    border-bottom: .6rem solid #f0f1f3;
+  
+    text-align: left;
+    padding: 2rem 2rem;
+    border: .5rem solid black;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: black;
+    background-color: rgb(243, 243, 243);
+  }
+  
+  img {
+    vertical-align: middle;
+    max-width: 100%;
+  }
+  
+  td {
+    font-size: 3.5rem;
+    font-weight: 700;
+    padding: 1rem 1rem;
+    border: .5rem solid black;
+    white-space:pre-line;
+  }
+  
+  table {
+    border-collapse: collapse;
+    border: .5rem solid black;
+    margin: 4rem 0;
+  }
+  
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  
+  
+  .container,
+  .container>tbody>tr>td,
+  .header td,
+  .footer td,
+  .transaction,
+  .transaction td,
+  .payableto td {
+    border: none;
+    background: none;
+  }
+  
+  
+  .client,
+  .client td,
+  .client th {
+    border: none;
+  }
+  
+  .payableto td {
+    font-weight: normal;
+  }
+  
+  .transaction td {
+    padding: 1rem 2rem;
+    font-weight: normal;
+    font-size: 4rem;
+  
+  }
+  
+  .transaction {
+    border: .3mm solid black !important;
+    width: 50%;
+    border-collapse: initial;
+    float: left;
+  }
+  
+  .rfq {
+    float: left;
+    margin: 6.5rem 21rem;
+    font-weight: normal;
+  }
+  
+  .bank,
+  .bank td {
+    border-collapse: collapse;
+    border: none;
+    margin: 0;
+    padding: 0;
+    font-size: 3rem;
+  }
+  
+  table.container {
+    width: 720px;
+  }
+  
+  .content{
+    width: 100%;
+  }
+  
+  .signature {
+    width: 200px;
+  }
+  
+  .signature img {
+    width: 200px;
+  }
+  
+  table td {
+    font-weight: 400;
+  }
+  
+  table.bold-td td {
+    font-weight: 700;
+  }

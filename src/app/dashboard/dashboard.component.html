@@ -116,7 +116,7 @@
     <hr>
     <mat-card style="width: 100%;">
       <mat-card-content>
-        <table mat-table [dataSource]="warehouses" class="mat-elevation-z8">
+        <table mat-table [dataSource]="warehouses" class="example-container mat-elevation-z8">
 
           <ng-container matColumnDef="warehouse">
             <th mat-header-cell *matHeaderCellDef  style="color: #FF6D00"> Warehouse </th>
@@ -211,7 +211,7 @@
             </td>
           </ng-container>
         
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsWarehouses"></tr>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsWarehouses; sticky: true"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsWarehouses;"></tr> -->
         </table>
       </mat-card-content>
@@ -225,7 +225,7 @@
     <hr>
     <mat-card style="width: 100%;">
     <mat-card-content>
-      <table mat-table [dataSource]="agents" class="mat-elevation-z8">
+      <table mat-table [dataSource]="agents" class="example-container mat-elevation-z8">
 
           <ng-container matColumnDef="agent">
             <th mat-header-cell *matHeaderCellDef  style="color: #FF6D00"> Agent </th>
@@ -287,7 +287,7 @@
             </td>
           </ng-container>
         
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsAgents"></tr>
+          <tr mat-header-row *matHeaderRowDef="displayedColumnsAgents; sticky: true"></tr>
           <tr mat-row *matRowDef="let row; columns: displayedColumnsAgents;"></tr>
         </table>
       </mat-card-content>
@@ -410,7 +410,7 @@
               <mat-expansion-panel>
                 <mat-expansion-panel-header>
                   <mat-panel-title>
-                    {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }} - Remaining Stock : <strong> {{ product.stockQuantity }} / {{ product.unit }} </strong>
+                    {{ product.productCategory.name }} - {{ product.brand.name }} - {{ product.specs }}
                   </mat-panel-title>
                 </mat-expansion-panel-header>
                 <p> Quantity Sold : <strong>{{ getSoldQuantity(agent.transactions, product) }} / {{ product.unit }}</strong> </p>

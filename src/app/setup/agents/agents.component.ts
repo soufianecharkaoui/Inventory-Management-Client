@@ -23,10 +23,12 @@ export class AgentsComponent implements OnInit {
   dataSource: MatTableDataSource<Agent>;
 
   nameFilter = new FormControl();
+  emailFilter = new FormControl();
 
   filteredValues =
   {
-    name: ''
+    name: '',
+    email: ''
   };
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
@@ -48,13 +50,18 @@ export class AgentsComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.agents);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
-      this.nameFilter.valueChanges.subscribe((nameFilterValue) =>
-        {
+
+      this.nameFilter.valueChanges.subscribe((nameFilterValue) => {
           this.filteredValues['name'] = nameFilterValue;
           this.dataSource.filter = JSON.stringify(this.filteredValues);
-        });
+      });
 
-        this.dataSource.filterPredicate = this.customFilterPredicate();
+      this.emailFilter.valueChanges.subscribe((emailFilterValue) => {
+        this.filteredValues['email'] = emailFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+      
+      this.dataSource.filterPredicate = this.customFilterPredicate();
       });
   }
 
@@ -64,7 +71,8 @@ export class AgentsComponent implements OnInit {
     {
       let searchString = JSON.parse(filter);
 
-      return data.name.toString().trim().indexOf(searchString.name) !== -1;
+      return data.name.toString().trim().indexOf(searchString.name) !== -1 &&
+        data.email.toString().trim().indexOf(searchString.email) !== -1;
     }
 
     return myFilterPredicate;
