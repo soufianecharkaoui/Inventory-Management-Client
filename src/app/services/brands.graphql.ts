@@ -8,10 +8,6 @@ export const GET_BRANDS = gql`
             productCategories {
                 id
                 name
-                brands {
-                    id 
-                    name
-                }
             }
             isDeleted
             createdAt

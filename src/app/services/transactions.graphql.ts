@@ -34,10 +34,6 @@ export const GET_TRANSACTIONS = gql`
                 productCategory {
                     id
                     name
-                    brands {
-                        id
-                        name
-                    }
                 }
                 brand {
                     id
@@ -117,10 +113,6 @@ export const GET_TRANSACTION = gql`
                 productCategory {
                     id
                     name
-                    brands {
-                        id
-                        name
-                    }
                 }
                 brand {
                     id
@@ -169,8 +161,8 @@ export const GET_TRANSACTION = gql`
 export const ADD_TRANSACTION = gql`
     mutation addTransaction($input: Boolean!, $userId: ID!, $warehouseId: ID!, $type: String, 
             $clientName: String, $hasClientEmail: Boolean!, $clientEmail: String, $clientPhone: String, 
-            $clientAddress: String, $productId: ID!, $transactionQuantity: Int!, $buyingPrice: Int,
-            $sellingPrice: Int, $amount: Int!, $packaging: String, $currency: String!, $paymentMethod: String, 
+            $clientAddress: String, $productId: ID!, $transactionQuantity: Int!, $buyingPrice: Float,
+            $sellingPrice: Float, $amount: Float!, $packaging: String, $currency: String!, $paymentMethod: String, 
             $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!) {
         addTransaction(input: $input, userId: $userId, warehouseId: $warehouseId, type: $type, 
             clientName: $clientName, hasClientEmail: $hasClientEmail, clientEmail: $clientEmail, 
@@ -209,10 +201,6 @@ export const ADD_TRANSACTION = gql`
                 productCategory {
                     id
                     name
-                    brands {
-                        id
-                        name
-                    }
                 }
                 brand {
                     id
@@ -261,8 +249,8 @@ export const ADD_TRANSACTION = gql`
 export const UPDATE_TRANSACTION = gql`
     mutation updateTransaction($id: ID!, $input: Boolean!, $userId: ID!, $warehouseId: ID!, $type: String, 
             $clientName: String, $hasClientEmail: Boolean!, $clientEmail: String, $clientPhone: String, 
-            $clientAddress: String, $productId: ID!, $transactionQuantity: Int!, $buyingPrice: Int,
-            $sellingPrice: Int, $amount: Int!,, $packaging: String, $currency: String!, $paymentMethod: String, 
+            $clientAddress: String, $productId: ID!, $transactionQuantity: Int!, $buyingPrice: Float,
+            $sellingPrice: Float, $amount: Float!,, $packaging: String, $currency: String!, $paymentMethod: String, 
             $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!) {
         updateTransaction(id: $id, input: $input, userId: $userId, warehouseId: $warehouseId, type: $type, 
             clientName: $clientName, hasClientEmail: $hasClientEmail, clientEmail: $clientEmail, 
@@ -301,10 +289,6 @@ export const UPDATE_TRANSACTION = gql`
                 productCategory {
                     id
                     name
-                    brands {
-                        id
-                        name
-                    }
                 }
                 brand {
                     id

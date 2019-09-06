@@ -36,10 +36,6 @@ export const GET_WAREHOUSES = gql`
                     productCategory {
                         id
                         name
-                        brands {
-                            id
-                            name
-                        }
                     }
                     brand {
                         id

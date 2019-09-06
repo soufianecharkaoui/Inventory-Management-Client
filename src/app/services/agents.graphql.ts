@@ -41,10 +41,6 @@ export const GET_AGENTS = gql`
                     productCategory {
                         id
                         name
-                        brands {
-                            id
-                            name
-                        }
                     }
                     brand {
                         id
