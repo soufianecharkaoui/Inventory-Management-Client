@@ -2,6 +2,28 @@
 
     <mat-step [stepControl]="firstTransactionForm">
         <form #t1form="ngForm" [formGroup]="firstTransactionForm">
+            <mat-form-field class="example-full-width">
+                <mat-label>Sales Agent</mat-label>
+                <mat-select formControlName="agentId" single>
+                    <div *ngFor="let agent of agents">
+                        <mat-option *ngIf="!agent.isDeleted" [value]="agent.id">
+                            {{ agent.name }}
+                        </mat-option>
+                    </div>
+                </mat-select>
+                <mat-error *ngIf="agentId.invalid && (agentId.dirty || agentId.touched)">
+                    <mat-error *ngIf="agentId.errors.required">Sales Agent is required.</mat-error>
+                </mat-error>
+            </mat-form-field>
+
+            <mat-form-field class="example-full-width">
+                <input matInput formControlName="rfq" type="text" placeholder="RFQ Number" />
+            </mat-form-field>
+    
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="bl" type="text" placeholder="BL Number" />
+            </mat-form-field>
+
             <label id="input">Select a Choice</label>
             <mat-radio-group aria-labelledby="input" class="example-radio-group" formControlName="input">
                 <mat-radio-button class="example-radio-button" [value]="true">
@@ -202,20 +224,6 @@
                 <input matInput formControlName="otherPaymentMethod" type="text" placeholder="Other Payment Method">
             </mat-form-field>
         
-            <mat-form-field class="example-full-width">
-                <mat-label>Sales Agent</mat-label>
-                <mat-select formControlName="agentId" single>
-                    <div *ngFor="let agent of agents">
-                        <mat-option *ngIf="!agent.isDeleted" [value]="agent.id">
-                            {{ agent.name }}
-                        </mat-option>
-                    </div>
-                </mat-select>
-                <mat-error *ngIf="agentId.invalid && (agentId.dirty || agentId.touched)">
-                    <mat-error *ngIf="agentId.errors.required">Sales Agent is required.</mat-error>
-                </mat-error>
-            </mat-form-field>
-        
             <label *ngIf="!firstTransactionForm.value.input" id="cashed">Cashed</label>
             <mat-radio-group *ngIf="!firstTransactionForm.value.input" aria-labelledby="cashed" class="example-radio-group" formControlName="cashed">
                 <mat-radio-button class="example-radio-button" [value]="true">
@@ -225,6 +233,137 @@
                     No
                 </mat-radio-button>
             </mat-radio-group>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input">
+                <input matInput [matDatepicker]="picker" placeholder="Date de chargement" formControlName="chargementDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field *ngIf="firstTransactionForm.value.input">
+                <input
+                    matInput
+                    [matDatepicker]="picker"
+                    placeholder="Date de déchargement"
+                    formControlName="dechargementDate"
+                />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field *ngIf="firstTransactionForm.value.input">
+                <input
+                    matInput
+                    [matDatepicker]="picker"
+                    placeholder="Date Réception dépôt"
+                    formControlName="warehouseReceiveDate"
+                />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field *ngIf="firstTransactionForm.value.input">
+                <input matInput [matDatepicker]="picker" placeholder="Date début vente" formControlName="sellingDate" />
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="numberCountainers" type="number" placeholder="Nombre de conteneur" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="packagingPlanned" type="number" placeholder="Nombre d'emballages prévu " />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="packagingReceived" type="number" placeholder="Nombre d'emballage reçu" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="packagingDecharged" type="number" placeholder="Nombre d'emballage déchargé" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="missingPackaging" type="number" placeholder="Nombre d'emballage manquant" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="damagedPackaging" type="number" placeholder="Nombre d'emballage endommagé" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="emptyUnits" type="number" placeholder="Nombre d'unité vide" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input
+                matInput
+                formControlName="emptyRepackablePackaging"
+                type="number"
+                placeholder="Nombre d'emballage reconditionnable vide"
+            />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input
+                matInput
+                formControlName="damagedPackagingReconditionnable"
+                type="number"
+                placeholder="Nombre d'emballage endommagé reconditionnable"
+            />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <mat-label>Devise</mat-label>
+                <mat-select formControlName="deviseId" single>
+                    <div *ngFor="let currency of currencies">
+                    <mat-option *ngIf="!currency.isDeleted" [value]="currency.id">
+                        {{ currency.name }}
+                    </mat-option>
+                    </div>
+                </mat-select>
+            </mat-form-field>
+    
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="dechargement" type="text" placeholder="Déchargement" />
+            </mat-form-field>
+
+            <label *ngIf="firstTransactionForm.value.input" id="refundable">Remboursable par le transitaire ?</label>
+            <mat-radio-group
+                *ngIf="firstTransactionForm.value.input"
+                aria-labelledby="refundable"
+                class="example-radio-group"
+                formControlName="refundable"
+            >
+            <mat-radio-button class="example-radio-button" [value]="true">
+                Yes
+            </mat-radio-button>
+            <mat-radio-button class="example-radio-button" [value]="false">
+                No
+            </mat-radio-button>
+            <mat-error *ngIf="input.invalid && (input.dirty || input.touched)">
+                <mat-error *ngIf="input.errors.required">Select a Choice</mat-error>
+            </mat-error>
+            </mat-radio-group>
+    
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="security" type="text" placeholder="Sécurité" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="penality" type="text" placeholder="Pénalité" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="bonus" type="text" placeholder="Bonus" />
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+            <textarea matInput formControlName="comment" placeholder="Comments"></textarea>
+            </mat-form-field>
+
+            <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
+                <input matInput formControlName="cost" type="number" placeholder="Coût de revient" />
+            </mat-form-field>
+
         </form>
         <div>
             <button mat-button color="primary" matStepperPrevious>Back</button>

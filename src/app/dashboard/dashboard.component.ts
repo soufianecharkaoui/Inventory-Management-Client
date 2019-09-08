@@ -1,3 +1,4 @@
+import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { Currency } from './../types';
 import { Component, OnInit } from '@angular/core';
 import { Warehouse, Transaction, Product, Agent } from 'app/types';
@@ -11,6 +12,7 @@ import {default as _rollupMoment, Moment} from 'moment';
 const moment = _rollupMoment || _moment;
 import { FormControl } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
 
 export const MY_FORMATS = {
   parse: {
@@ -27,7 +29,13 @@ export const MY_FORMATS = {
 @Component({
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
-  styleUrls: ['./dashboard.component.scss']
+  styleUrls: ['./dashboard.component.scss'],
+  providers: [
+    
+    {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+
+    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS}
+  ]
 })
 export class DashboardComponent implements OnInit {
 

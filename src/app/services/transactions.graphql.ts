@@ -72,6 +72,32 @@ export const GET_TRANSACTIONS = gql`
             }
             cashed
             code
+            rfq
+            bl
+            chargementDate
+            dechargementDate
+            warehouseReceiveDate
+            sellingDate
+            numberCountainers
+            packagingPlanned
+            packagingReceived
+            packagingDecharged
+            missingPackaging
+            damagedPackaging
+            emptyUnits
+            emptyRepackablePackaging
+            damagedPackagingReconditionnable
+            devise {
+                id
+                name
+            }
+            dechargement
+            refundable
+            security
+            penality
+            bonus
+            comment
+            cost
             isDeleted
             createdAt
             updatedAt
@@ -151,6 +177,32 @@ export const GET_TRANSACTION = gql`
             }
             cashed
             code
+            rfq
+            bl
+            chargementDate
+            dechargementDate
+            warehouseReceiveDate
+            sellingDate
+            numberCountainers
+            packagingPlanned
+            packagingReceived
+            packagingDecharged
+            missingPackaging
+            damagedPackaging
+            emptyUnits
+            emptyRepackablePackaging
+            damagedPackagingReconditionnable
+            devise {
+                id
+                name
+            }
+            dechargement
+            refundable
+            security
+            penality
+            bonus
+            comment
+            cost
             isDeleted
             createdAt
             updatedAt
@@ -163,13 +215,24 @@ export const ADD_TRANSACTION = gql`
             $clientName: String, $hasClientEmail: Boolean!, $clientEmail: String, $clientPhone: String, 
             $clientAddress: String, $productId: ID!, $transactionQuantity: Int!, $buyingPrice: Float,
             $sellingPrice: Float, $amount: Float!, $packaging: String, $currency: String!, $paymentMethod: String, 
-            $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!) {
+            $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!, $rfq: String, $bl: String,
+            $chargementDate: String, $dechargementDate: String, $warehouseReceiveDate: String, $sellingDate: String, 
+            $numberCountainers: Int, $packagingPlanned: Int, $packagingReceived: Int, $packagingDecharged: Int, 
+            $missingPackaging: Int, $damagedPackaging: Int, $emptyUnits: Int, $emptyRepackablePackaging: Int, 
+            $damagedPackagingReconditionnable: Int, $deviseId: ID!, $dechargement: String, $refundable: Boolean, $security: String, 
+            $penality: String, $bonus: String, $comment: String, $cost: Float) {
         addTransaction(input: $input, userId: $userId, warehouseId: $warehouseId, type: $type, 
             clientName: $clientName, hasClientEmail: $hasClientEmail, clientEmail: $clientEmail, 
             clientPhone: $clientPhone, clientAddress: $clientAddress, productId: $productId,
             transactionQuantity: $transactionQuantity, buyingPrice: $buyingPrice, sellingPrice: $sellingPrice,
             amount: $amount, packaging: $packaging, currency: $currency, paymentMethod: $paymentMethod, 
-            otherPaymentMethod: $otherPaymentMethod, agentId: $agentId, cashed: $cashed, code: $code) {
+            otherPaymentMethod: $otherPaymentMethod, agentId: $agentId, cashed: $cashed, code: $code, rfq: $rfq, bl: $bl, 
+            chargementDate: $chargementDate, dechargementDate: $dechargementDate, warehouseReceiveDate: $warehouseReceiveDate, sellingDate: $sellingDate,
+            numberCountainers: $numberCountainers, packagingPlanned: $packagingPlanned, packagingReceived: $packagingReceived, 
+            packagingDecharged: $packagingDecharged, missingPackaging: $missingPackaging, damagedPackaging: $damagedPackaging, 
+            emptyUnits: $emptyUnits, emptyRepackablePackaging: $emptyRepackablePackaging, damagedPackagingReconditionnable: $damagedPackagingReconditionnable, 
+            deviseId: $deviseId, dechargement: $dechargement, refundable: $refundable, security: $security, penality: $penality, bonus: $bonus, 
+            comment: $comment, cost: $cost) {
             id
             input
             user {
@@ -239,6 +302,32 @@ export const ADD_TRANSACTION = gql`
             }
             cashed
             code
+            rfq
+            bl
+            chargementDate
+            dechargementDate
+            warehouseReceiveDate
+            sellingDate
+            numberCountainers
+            packagingPlanned
+            packagingReceived
+            packagingDecharged
+            missingPackaging
+            damagedPackaging
+            emptyUnits
+            emptyRepackablePackaging
+            damagedPackagingReconditionnable
+            devise {
+                id
+                name
+            }
+            dechargement
+            refundable
+            security
+            penality
+            bonus
+            comment
+            cost
             isDeleted
             createdAt
             updatedAt
@@ -251,13 +340,24 @@ export const UPDATE_TRANSACTION = gql`
             $clientName: String, $hasClientEmail: Boolean!, $clientEmail: String, $clientPhone: String, 
             $clientAddress: String, $productId: ID!, $transactionQuantity: Int!, $buyingPrice: Float,
             $sellingPrice: Float, $amount: Float!,, $packaging: String, $currency: String!, $paymentMethod: String, 
-            $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!) {
+            $otherPaymentMethod: String, $agentId: ID!, $cashed: Boolean, $code: String!, $rfq: String, $bl: String,
+            $chargementDate: String, $dechargementDate: String, $warehouseReceiveDate: String, $sellingDate: String, 
+            $numberCountainers: Int, $packagingPlanned: Int, $packagingReceived: Int, $packagingDecharged: Int, 
+            $missingPackaging: Int, $damagedPackaging: Int, $emptyUnits: Int, $emptyRepackablePackaging: Int, 
+            $damagedPackagingReconditionnable: Int, $deviseId: ID!, $dechargement: String, $refundable: Boolean, $security: String, 
+            $penality: String, $bonus: String, $comment: String, $cost: Float) {
         updateTransaction(id: $id, input: $input, userId: $userId, warehouseId: $warehouseId, type: $type, 
             clientName: $clientName, hasClientEmail: $hasClientEmail, clientEmail: $clientEmail, 
             clientPhone: $clientPhone, clientAddress: $clientAddress, productId: $productId,
             transactionQuantity: $transactionQuantity, buyingPrice: $buyingPrice, sellingPrice: $sellingPrice,
             amount: $amount, packaging: $packaging, currency: $currency, paymentMethod: $paymentMethod, 
-            otherPaymentMethod: $otherPaymentMethod, agentId: $agentId, cashed: $cashed, code: $code) {
+            otherPaymentMethod: $otherPaymentMethod, agentId: $agentId, cashed: $cashed, code: $code, rfq: $rfq, bl: $bl, 
+            chargementDate: $chargementDate, dechargementDate: $dechargementDate, warehouseReceiveDate: $warehouseReceiveDate, sellingDate: $sellingDate,
+            numberCountainers: $numberCountainers, packagingPlanned: $packagingPlanned, packagingReceived: $packagingReceived, 
+            packagingDecharged: $packagingDecharged, missingPackaging: $missingPackaging, damagedPackaging: $damagedPackaging, 
+            emptyUnits: $emptyUnits, emptyRepackablePackaging: $emptyRepackablePackaging, damagedPackagingReconditionnable: $damagedPackagingReconditionnable, 
+            deviseId: $deviseId, dechargement: $dechargement, refundable: $refundable, security: $security, penality: $penality, bonus: $bonus, 
+            comment: $comment, cost: $cost) {
             id
             input
             user {
@@ -327,6 +427,32 @@ export const UPDATE_TRANSACTION = gql`
             }
             cashed
             code
+            rfq
+            bl
+            chargementDate
+            dechargementDate
+            warehouseReceiveDate
+            sellingDate
+            numberCountainers
+            packagingPlanned
+            packagingReceived
+            packagingDecharged
+            missingPackaging
+            damagedPackaging
+            emptyUnits
+            emptyRepackablePackaging
+            damagedPackagingReconditionnable
+            devise {
+                id
+                name
+            }
+            dechargement
+            refundable
+            security
+            penality
+            bonus
+            comment
+            cost
             isDeleted
             createdAt
             updatedAt

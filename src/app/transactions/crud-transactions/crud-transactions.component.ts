@@ -1,6 +1,7 @@
+import { MAT_DATE_FORMATS, DateAdapter, MAT_DATE_LOCALE } from '@angular/material/core';
 import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { Warehouse, PaymentMethod, Product, Transaction, Agent } from 'app/types';
+import { Warehouse, PaymentMethod, Product, Transaction, Agent, Currency } from 'app/types';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Apollo } from 'apollo-angular';
 import { AuthService } from 'app/login/auth.service';
@@ -10,11 +11,31 @@ import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 import { GET_PAYMENT_METHODS } from 'app/services/payment-methods.graphql';
 import { GET_AGENTS } from 'app/services/agents.graphql';
 import { GET_PRODUCTS_BY_WAREHOUSE, REFRESH_PRODUCT } from 'app/services/products.graphql';
+import { GET_CURRENCIES } from 'app/services/currencies.graphql';
+import { MomentDateAdapter } from '@angular/material-moment-adapter';
+
+export const CRUDTRANSACTION_FORMATS = {
+  parse: {
+    dateInput: 'DD/MM/YYYY',
+  },
+  display: {
+    dateInput: 'DD/MM/YYYY',
+    monthYearLabel: 'MMM YYYY',
+    dateA11yLabel: 'LL',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @Component({
   selector: 'app-crud-transactions',
   templateUrl: './crud-transactions.component.html',
-  styleUrls: ['./crud-transactions.component.scss']
+  styleUrls: ['./crud-transactions.component.scss'],
+  providers: [
+    
+    {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
+
+    {provide: MAT_DATE_FORMATS, useValue: CRUDTRANSACTION_FORMATS}
+  ]
 })
 export class CRUDTransactionsComponent implements OnInit {
 
@@ -25,6 +46,7 @@ export class CRUDTransactionsComponent implements OnInit {
   warehouses: Warehouse[];
   paymentMethods: PaymentMethod[];
   agents: Agent[];
+  currencies: Currency[];
   products: Product[];
   selectedProduct: Product;
   transactionQuantity = 0;
@@ -45,6 +67,9 @@ export class CRUDTransactionsComponent implements OnInit {
 
   createForm() {
     this.transactionForm = this.fb.group({
+      agentId: [this.data ? this.data.agent.id : '', Validators.required],
+      rfq: [''],
+      bl: [''],
       input: [this.data ? this.data.input : '', Validators.required],
       warehouseId: [this.data ? this.data.warehouse.id : '', Validators.required],
       type: [this.data ? this.data.type : ''],
@@ -59,8 +84,28 @@ export class CRUDTransactionsComponent implements OnInit {
       sellingPrice: [this.data ? this.data.sellingPrice : ''],
       paymentMethod: [this.data ? this.data.paymentMethod : ''],
       otherPaymentMethod: [this.data ? this.data.otherPaymentMethod : ''],
-      agentId: [this.data ? this.data.agent.id : '', Validators.required],
-      cashed: [this.data ? this.data.cashed : false]
+      cashed: [this.data ? this.data.cashed : false],
+      chargementDate: [this.data ? new Date(Number(this.data.chargementDate)).toISOString() : ''],
+      dechargementDate: [this.data ? new Date(Number(this.data.dechargementDate)).toISOString() : ''],
+      warehouseReceiveDate: [this.data ? new Date(Number(this.data.warehouseReceiveDate)).toISOString() : ''],
+      sellingDate: [this.data ? new Date(Number(this.data.sellingDate)).toISOString() : ''],
+      numberCountainers: [this.data ? this.data.numberCountainers : ''],
+      packagingPlanned: [this.data ? this.data.packagingPlanned : ''],
+      packagingReceived: [this.data ? this.data.packagingReceived : ''],
+      packagingDecharged: [this.data ? this.data.packagingDecharged : ''],
+      missingPackaging: [this.data ? this.data.missingPackaging : ''],
+      damagedPackaging: [this.data ? this.data.damagedPackaging : ''],
+      emptyUnits: [this.data ? this.data.emptyUnits : ''],
+      emptyRepackablePackaging: [this.data ? this.data.emptyRepackablePackaging : ''],
+      damagedPackagingReconditionnable: [this.data ? this.data.damagedPackagingReconditionnable : ''],
+      deviseId: [this.data ? this.data.devise.id : ''],
+      dechargement: [this.data ? this.data.dechargement : ''],
+      refundable: [this.data ? this.data.refundable : false],
+      security: [this.data ? this.data.security : ''],
+      penality: [this.data ? this.data.penality : ''],
+      bonus: [this.data ? this.data.bonus : ''],
+      comment: [this.data ? this.data.comment : ''],
+      cost: [this.data ? this.data.cost : '']
     });
   }
 
@@ -80,6 +125,29 @@ export class CRUDTransactionsComponent implements OnInit {
   get otherPaymentMethod() { return this.transactionForm.get('otherPaymentMethod'); }
   get agentId() { return this.transactionForm.get('agentId'); }
   get cashed() { return this.transactionForm.get('cashed'); }
+  get rfq() { return this.transactionForm.get('rfq'); }
+  get bl() { return this.transactionForm.get('bl'); }
+  get chargementDate() { return this.transactionForm.get('chargementDate'); }
+  get dechargementDate() { return this.transactionForm.get('dechargementDate'); }
+  get warehouseReceiveDate() { return this.transactionForm.get('warehouseReceiveDate'); }
+  get sellingDate() { return this.transactionForm.get('sellingDate'); }
+  get numberCountainers() { return this.transactionForm.get('numberCountainers'); }
+  get packagingPlanned() { return this.transactionForm.get('packagingPlanned'); }
+  get packagingReceived() { return this.transactionForm.get('packagingReceived'); }
+  get packagingDecharged() { return this.transactionForm.get('packagingDecharged'); }
+  get missingPackaging() { return this.transactionForm.get('missingPackaging'); }
+  get damagedPackaging() { return this.transactionForm.get('damagedPackaging'); }
+  get emptyUnits() { return this.transactionForm.get('emptyUnits'); }
+  get emptyRepackablePackaging() { return this.transactionForm.get('emptyRepackablePackaging'); }
+  get damagedPackagingReconditionnable() { return this.transactionForm.get('damagedPackagingReconditionnable'); }
+  get deviseId() { return this.transactionForm.get('deviseId'); }
+  get dechargement() { return this.transactionForm.get('dechargement'); }
+  get refundable() { return this.transactionForm.get('refundable'); }
+  get security() { return this.transactionForm.get('security'); }
+  get penality() { return this.transactionForm.get('penality'); }
+  get bonus() { return this.transactionForm.get('bonus'); }
+  get comment() { return this.transactionForm.get('comment'); }
+  get cost() { return this.transactionForm.get('cost'); }
 
   ngOnInit() {
     this.createForm();
@@ -107,6 +175,12 @@ export class CRUDTransactionsComponent implements OnInit {
     })
     .valueChanges.pipe(map((result: any) => result.data.getAgents))
     .subscribe(data => this.agents = data);
+
+    this.apollo.watchQuery({
+      query: GET_CURRENCIES
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getCurrencies))
+    .subscribe(data => this.currencies = data);
   }
 
   selectProduct(product: Product) {
@@ -170,7 +244,7 @@ export class CRUDTransactionsComponent implements OnInit {
       mutation: REFRESH_PRODUCT,
       variables: {
         id: this.selectedProduct.id,
-      }, refetchQueries: ['getTransactions', 'getProducts']
+      }, refetchQueries: ['getTransactions', 'getProducts', 'getAgents', 'getWarehouses']
     })
     .subscribe();
     
@@ -198,8 +272,31 @@ export class CRUDTransactionsComponent implements OnInit {
         otherPaymentMethod: this.transactionForm.value.otherPaymentMethod ? this.transactionForm.value.otherPaymentMethod : '',
         agentId: this.transactionForm.value.agentId,
         cashed: !this.transactionForm.value.input ? this.transactionForm.value.cashed : false,
-        code: this.data.code
-      }, refetchQueries: ['getTransactions', 'getProducts']
+        code: this.data.code,
+        rfq: this.transactionForm.value.rfq ? this.transactionForm.value.rfq : '',
+        bl: this.transactionForm.value.bl ? this.transactionForm.value.bl : '',
+        chargementDate: this.transactionForm.value.chargementDate ? this.transactionForm.value.chargementDate : '',
+        dechargementDate: this.transactionForm.value.dechargementDate ? this.transactionForm.value.dechargementDate : '',
+        warehouseReceiveDate: this.transactionForm.value.warehouseReceiveDate ? this.transactionForm.value.warehouseReceiveDate : '',
+        sellingDate: this.transactionForm.value.sellingDate ? this.transactionForm.value.sellingDate : '',
+        numberCountainers: this.transactionForm.value.numberCountainers ? this.transactionForm.value.numberCountainers : 0,
+        packagingPlanned: this.transactionForm.value.packagingPlanned ? this.transactionForm.value.packagingPlanned : 0,
+        packagingReceived: this.transactionForm.value.packagingReceived ? this.transactionForm.value.packagingReceived : 0,
+        packagingDecharged: this.transactionForm.value.packagingDecharged ? this.transactionForm.value.packagingDecharged : 0,
+        missingPackaging: this.transactionForm.value.missingPackaging ? this.transactionForm.value.missingPackaging : 0,
+        damagedPackaging: this.transactionForm.value.damagedPackaging ? this.transactionForm.value.damagedPackaging : 0,
+        emptyUnits: this.transactionForm.value.emptyUnits ? this.transactionForm.value.emptyUnits : 0,
+        emptyRepackablePackaging: this.transactionForm.value.emptyRepackablePackaging ? this.transactionForm.value.emptyRepackablePackaging : 0,
+        damagedPackagingReconditionnable: this.transactionForm.value.damagedPackagingReconditionnable ? this.transactionForm.value.damagedPackagingReconditionnable : 0,
+        deviseId: this.transactionForm.value.deviseId ? this.transactionForm.value.deviseId : '//paste FCFA id here',
+        dechargement: this.transactionForm.value.dechargement ? this.transactionForm.value.dechargement : '',
+        refundable: this.transactionForm.value.Refundable ? this.transactionForm.value.refundable : false,
+        security: this.transactionForm.value.security ? this.transactionForm.value.security : '',
+        penality: this.transactionForm.value.penality ? this.transactionForm.value.penality : '',
+        bonus: this.transactionForm.value.bonus ? this.transactionForm.value.bonus : '',
+        comment: this.transactionForm.value.comment ? this.transactionForm.value.comment : '',
+        cost: this.transactionForm.value.cost ? this.transactionForm.value.cost : 0
+      }, refetchQueries: ['getTransactions', 'getProducts', 'getAgents', 'getWarehouses']
     })
     .subscribe();
 

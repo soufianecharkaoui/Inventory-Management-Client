@@ -61,9 +61,6 @@ import { MY_FORMATS } from './dashboard/dashboard.component';
     AuthService,
     AuthGuardService,
     ProcessHttpmsgService,
-    {provide: DateAdapter, useClass: MomentDateAdapter, deps: [MAT_DATE_LOCALE]},
-
-    {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS}
   ],
   bootstrap: [AppComponent]
 })
