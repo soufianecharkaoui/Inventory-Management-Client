@@ -7,7 +7,7 @@ import { Apollo } from 'apollo-angular';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GET_USERS, REVOKE_USER, DELETE_USER, UPDATE_USER, ADD_USER } from 'app/services/users.graphql';
 import { map } from 'rxjs/operators';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-users',
@@ -22,12 +22,22 @@ export class UsersComponent implements OnInit {
   displayedColumns: string[] = ['name', 'email', 'isAdmin', 'status', 'edit', 'changeStatus'];
   dataSource: MatTableDataSource<User>;
 
+  nameFilter = new FormControl();
+  emailFilter = new FormControl();
+
+  filteredValues =
+  {
+    name: '',
+    email: ''
+  };
+
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.users);
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     }
 
   ngOnInit() {
@@ -37,11 +47,35 @@ export class UsersComponent implements OnInit {
     .valueChanges.pipe(map((result: any) => result.data.getUsers))
     .subscribe(data => {
       this.users = data;
-      this.users.map(user => console.log(user));
       this.dataSource = new MatTableDataSource(this.users);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      this.nameFilter.valueChanges.subscribe((nameFilterValue) => {
+          this.filteredValues['name'] = nameFilterValue;
+          this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.emailFilter.valueChanges.subscribe((emailFilterValue) => {
+        this.filteredValues['email'] = emailFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+      
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     });
+  }
+
+  customFilterPredicate()
+  {
+    const myFilterPredicate = function(data: User, filter: string): boolean
+    {
+      let searchString = JSON.parse(filter);
+
+      return data.name.toString().trim().indexOf(searchString.name) !== -1 &&
+        data.email.toString().trim().indexOf(searchString.email) !== -1;
+    }
+
+    return myFilterPredicate;
   }
 
   applyFilter(filterValue: string) {

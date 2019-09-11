@@ -12,6 +12,18 @@ export const GET_CURRENCIES = gql`
     }
 `;
 
+export const GET_FCFA = gql`
+    query getFCFA {
+        getFCFA {
+            id
+            name
+            isDeleted
+            createdAt
+            updatedAt
+        }
+    }
+`;
+
 export const ADD_CURRENCY = gql`
     mutation addCurrency($name: String!) {
         addCurrency(name: $name) {

@@ -9,6 +9,7 @@ import { GET_TRANSACTIONS, DELETE_TRANSACTION, REVOKE_TRANSACTION, UPDATE_TRANSA
 import { map } from 'rxjs/operators';
 import { CRUDTransactionsComponent } from '../crud-transactions/crud-transactions.component';
 import { ngxCsv } from 'ngx-csv/ngx-csv';
+import { FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-all-transactions',
@@ -73,12 +74,28 @@ export class AllTransactionsComponent implements OnInit {
   displayedColumns: string[] = ['code', 'type', 'owner', 'agent', 'office', 'client', 'products', 'quantity_unit', 'price_unit', 'amount', 'edit', 'changeStatus', 'print', 'cashed'];
   dataSource: MatTableDataSource<Transaction>;
 
+  codeFilter = new FormControl();
+  ownerFilter = new FormControl();
+  agentFilter = new FormControl();
+  warehouseFilter = new FormControl();
+  productFilter = new FormControl();
+  
+  filteredValues =
+  {
+    code: '',
+    owner: '',
+    agent: '',
+    warehouse: '',
+    product: ''
+  };
+
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
 
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.transactions);
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     }
 
   ngOnInit() {
@@ -91,7 +108,50 @@ export class AllTransactionsComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.transactions);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      this.codeFilter.valueChanges.subscribe((codeFilterValue) => {
+        this.filteredValues['code'] = codeFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.ownerFilter.valueChanges.subscribe((ownerFilterValue) => {
+        this.filteredValues['owner'] = ownerFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.agentFilter.valueChanges.subscribe((agentFilterValue) => {
+        this.filteredValues['agent'] = agentFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.productFilter.valueChanges.subscribe((productFilterValue) => {
+        this.filteredValues['product'] = productFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.warehouseFilter.valueChanges.subscribe((warehouseFilterValue) => {
+        this.filteredValues['warehouse'] = warehouseFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     });
+  }
+
+  customFilterPredicate()
+  {
+    const myFilterPredicate = function(data: Transaction, filter: string): boolean
+    {
+      let searchString = JSON.parse(filter);
+
+      return data.code.toString().trim().indexOf(searchString.code) !== -1
+        && data.user.name.toString().trim().indexOf(searchString.owner) !== -1
+        && data.agent.name.toString().trim().indexOf(searchString.agent) !== -1
+        && (data.warehouse.name.toString().trim().indexOf(searchString.product) !== -1 || data.warehouse.city.toString().trim().indexOf(searchString.product) !== -1 || data.warehouse.country.toString().trim().indexOf(searchString.product) !== -1)
+        && (data.product.productCategory.name.toString().trim().indexOf(searchString.product) !== -1 || data.product.brand.name.toString().trim().indexOf(searchString.product) !== -1 || data.product.specs.toString().trim().indexOf(searchString.product) !== -1)
+    }
+
+    return myFilterPredicate;
   }
 
   applyFilter(filterValue: string) {

@@ -11,7 +11,7 @@ import { GET_AGENTS } from 'app/services/agents.graphql';
 import { GET_PRODUCTS_BY_WAREHOUSE, UPDATE_PRODUCT, REFRESH_PRODUCT } from 'app/services/products.graphql';
 import { AuthService } from 'app/login/auth.service';
 import { Router } from '@angular/router';
-import { GET_CURRENCIES } from 'app/services/currencies.graphql';
+import { GET_CURRENCIES, GET_FCFA } from 'app/services/currencies.graphql';
 import { DateAdapter, MAT_DATE_LOCALE, MAT_DATE_FORMATS } from '@angular/material/core';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 
@@ -48,6 +48,7 @@ export class MakeTransactionComponent implements OnInit {
   paymentMethods: PaymentMethod[];
   agents: Agent[];
   currencies: Currency[];
+  fcfa: Currency;
   firstTransactionForm: FormGroup;
   secondTransactionForm: FormGroup;
   thirdTransactionForm: FormGroup;
@@ -194,6 +195,12 @@ export class MakeTransactionComponent implements OnInit {
     })
     .valueChanges.pipe(map((result: any) => result.data.getCurrencies))
     .subscribe(data => this.currencies = data);
+
+    this.apollo.watchQuery({
+      query: GET_FCFA
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getFCFA))
+    .subscribe(data => this.fcfa = data);
   }
 
   selectProduct(product: Product) {
@@ -313,9 +320,9 @@ export class MakeTransactionComponent implements OnInit {
         emptyUnits: this.fourthTransactionForm.value.emptyUnits ? this.fourthTransactionForm.value.emptyUnits : 0,
         emptyRepackablePackaging: this.fourthTransactionForm.value.emptyRepackablePackaging ? this.fourthTransactionForm.value.emptyRepackablePackaging : 0,
         damagedPackagingReconditionnable: this.fourthTransactionForm.value.damagedPackagingReconditionnable ? this.fourthTransactionForm.value.damagedPackagingReconditionnable : 0,
-        deviseId: this.fourthTransactionForm.value.deviseId ? this.fourthTransactionForm.value.deviseId : '//paste FCFA id here',
+        deviseId: this.fourthTransactionForm.value.deviseId ? this.fourthTransactionForm.value.deviseId : this.fcfa.id,
         dechargement: this.fourthTransactionForm.value.dechargement ? this.fourthTransactionForm.value.dechargement : '',
-        refundable: this.fourthTransactionForm.value.Refundable ? this.fourthTransactionForm.value.refundable : false,
+        refundable: this.fourthTransactionForm.value.refundable ? this.fourthTransactionForm.value.refundable : false,
         security: this.fourthTransactionForm.value.security ? this.fourthTransactionForm.value.security : '',
         penality: this.fourthTransactionForm.value.penality ? this.fourthTransactionForm.value.penality : '',
         bonus: this.fourthTransactionForm.value.bonus ? this.fourthTransactionForm.value.bonus : '',

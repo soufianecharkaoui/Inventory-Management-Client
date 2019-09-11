@@ -11,7 +11,7 @@ import { GET_WAREHOUSES } from 'app/services/warehouses.graphql';
 import { GET_PAYMENT_METHODS } from 'app/services/payment-methods.graphql';
 import { GET_AGENTS } from 'app/services/agents.graphql';
 import { GET_PRODUCTS_BY_WAREHOUSE, REFRESH_PRODUCT } from 'app/services/products.graphql';
-import { GET_CURRENCIES } from 'app/services/currencies.graphql';
+import { GET_CURRENCIES, GET_FCFA } from 'app/services/currencies.graphql';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 
 export const CRUDTRANSACTION_FORMATS = {
@@ -47,6 +47,7 @@ export class CRUDTransactionsComponent implements OnInit {
   paymentMethods: PaymentMethod[];
   agents: Agent[];
   currencies: Currency[];
+  fcfa: Currency;
   products: Product[];
   selectedProduct: Product;
   transactionQuantity = 0;
@@ -85,7 +86,7 @@ export class CRUDTransactionsComponent implements OnInit {
       paymentMethod: [this.data ? this.data.paymentMethod : ''],
       otherPaymentMethod: [this.data ? this.data.otherPaymentMethod : ''],
       cashed: [this.data ? this.data.cashed : false],
-      chargementDate: [this.data ? new Date(Number(this.data.chargementDate)).toISOString() : ''],
+      chargementDate: [this.data.chargementDate ? new Date(Number(this.data.chargementDate)).toISOString() : ''],
       dechargementDate: [this.data ? new Date(Number(this.data.dechargementDate)).toISOString() : ''],
       warehouseReceiveDate: [this.data ? new Date(Number(this.data.warehouseReceiveDate)).toISOString() : ''],
       sellingDate: [this.data ? new Date(Number(this.data.sellingDate)).toISOString() : ''],
@@ -100,7 +101,7 @@ export class CRUDTransactionsComponent implements OnInit {
       damagedPackagingReconditionnable: [this.data ? this.data.damagedPackagingReconditionnable : ''],
       deviseId: [this.data ? this.data.devise.id : ''],
       dechargement: [this.data ? this.data.dechargement : ''],
-      refundable: [this.data ? this.data.refundable : false],
+      refundable: [this.data ? this.data.refundable : ''],
       security: [this.data ? this.data.security : ''],
       penality: [this.data ? this.data.penality : ''],
       bonus: [this.data ? this.data.bonus : ''],
@@ -181,6 +182,12 @@ export class CRUDTransactionsComponent implements OnInit {
     })
     .valueChanges.pipe(map((result: any) => result.data.getCurrencies))
     .subscribe(data => this.currencies = data);
+
+    this.apollo.watchQuery({
+      query: GET_FCFA
+    })
+    .valueChanges.pipe(map((result: any) => result.data.getFCFA))
+    .subscribe(data => this.fcfa = data);
   }
 
   selectProduct(product: Product) {
@@ -288,9 +295,9 @@ export class CRUDTransactionsComponent implements OnInit {
         emptyUnits: this.transactionForm.value.emptyUnits ? this.transactionForm.value.emptyUnits : 0,
         emptyRepackablePackaging: this.transactionForm.value.emptyRepackablePackaging ? this.transactionForm.value.emptyRepackablePackaging : 0,
         damagedPackagingReconditionnable: this.transactionForm.value.damagedPackagingReconditionnable ? this.transactionForm.value.damagedPackagingReconditionnable : 0,
-        deviseId: this.transactionForm.value.deviseId ? this.transactionForm.value.deviseId : '//paste FCFA id here',
+        deviseId: this.transactionForm.value.deviseId ? this.transactionForm.value.deviseId : this.fcfa.id,
         dechargement: this.transactionForm.value.dechargement ? this.transactionForm.value.dechargement : '',
-        refundable: this.transactionForm.value.Refundable ? this.transactionForm.value.refundable : false,
+        refundable: this.transactionForm.value.refundable ? this.transactionForm.value.refundable : false,
         security: this.transactionForm.value.security ? this.transactionForm.value.security : '',
         penality: this.transactionForm.value.penality ? this.transactionForm.value.penality : '',
         bonus: this.transactionForm.value.bonus ? this.transactionForm.value.bonus : '',

@@ -5,6 +5,7 @@ import { Apollo } from 'apollo-angular';
 import { GET_TRANSACTION } from 'app/services/transactions.graphql';
 import { Transaction } from 'app/types';
 import * as jsPDF from "jspdf";
+import * as html2canvas from "html2canvas";
 
 @Component({
   selector: 'app-print-transaction',
@@ -32,10 +33,10 @@ export class PrintTransactionComponent implements OnInit {
       .subscribe(data => this.transaction = data);
     });
     setTimeout(() => {
-      let doc = new jsPDF();
-      doc.addHTML(document.getElementById("component-container"), function() {
-         doc.save("transaction.pdf");
-      });
+      // let doc = new jsPDF();
+      // doc.addHTML(document.getElementById("component-container"), function() {
+      //    doc.save("transaction.pdf");
+      // });
     }, 2000);
     /*window.onafterprint = () => {
       window.close();

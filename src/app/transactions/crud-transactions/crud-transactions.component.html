@@ -291,21 +291,13 @@
         </mat-form-field>
 
         <label *ngIf="transactionForm.value.input" id="refundable">Remboursable par le transitaire ?</label>
-        <mat-radio-group
-            *ngIf="transactionForm.value.input"
-            aria-labelledby="refundable"
-            class="example-radio-group"
-            formControlName="refundable"
-        >
-        <mat-radio-button class="example-radio-button" [value]="true">
-            Yes
-        </mat-radio-button>
-        <mat-radio-button class="example-radio-button" [value]="false">
-            No
-        </mat-radio-button>
-        <mat-error *ngIf="input.invalid && (input.dirty || input.touched)">
-            <mat-error *ngIf="input.errors.required">Select a Choice</mat-error>
-        </mat-error>
+        <mat-radio-group *ngIf="transactionForm.value.input" aria-labelledby="refundable" class="example-radio-group" formControlName="refundable">
+            <mat-radio-button class="example-radio-button" [value]="true">
+                Yes
+            </mat-radio-button>
+            <mat-radio-button class="example-radio-button" [value]="false">
+                No
+            </mat-radio-button>
         </mat-radio-group>
 
         <mat-form-field *ngIf="transactionForm.value.input" class="example-full-width">

@@ -7,7 +7,7 @@ import { Apollo } from 'apollo-angular';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { GET_PRODUCTS, REVOKE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT, ADD_PRODUCT, REFRESH_PRODUCT, REFRESH_PRODUCTS } from 'app/services/products.graphql';
 import { map } from 'rxjs/operators';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { GET_PRODUCT_CATEGORIES, GET_PRODUCT_CATEGORY } from 'app/services/product-categories.graphql';
 import { GET_WAREHOUSES, GET_WAREHOUSE } from 'app/services/warehouses.graphql';
 
@@ -24,6 +24,17 @@ export class ProductsComponent implements OnInit {
   
   displayedColumns: string[] = ['code', 'name', 'warehouse', 'unit', 'stockQuantity', 'status', 'edit', 'changeStatus', 'refresh'];
   dataSource: MatTableDataSource<Product>;
+  
+  codeFilter = new FormControl();
+  productFilter = new FormControl();
+  warehouseFilter = new FormControl();
+
+  filteredValues =
+  {
+    code: '',
+    product: '',
+    warehouse: ''
+  };
 
   @ViewChild(MatPaginator, {static: true}) paginator: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort: MatSort;
@@ -31,6 +42,7 @@ export class ProductsComponent implements OnInit {
   constructor(private apollo: Apollo,
     public dialog: MatDialog) { 
       this.dataSource = new MatTableDataSource(this.products);
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     }
 
   ngOnInit() {
@@ -43,6 +55,23 @@ export class ProductsComponent implements OnInit {
       this.dataSource = new MatTableDataSource(this.products);
       this.dataSource.paginator = this.paginator;
       this.dataSource.sort = this.sort;
+
+      this.codeFilter.valueChanges.subscribe((codeFilterValue) => {
+        this.filteredValues['code'] = codeFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.productFilter.valueChanges.subscribe((productFilterValue) => {
+        this.filteredValues['product'] = productFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.warehouseFilter.valueChanges.subscribe((warehouseFilterValue) => {
+        this.filteredValues['warehouse'] = warehouseFilterValue;
+        this.dataSource.filter = JSON.stringify(this.filteredValues);
+      });
+
+      this.dataSource.filterPredicate = this.customFilterPredicate();
     });
 
     this.apollo.mutate({
@@ -50,6 +79,20 @@ export class ProductsComponent implements OnInit {
       refetchQueries: ['getProducts']
     })
     .subscribe();
+  }
+
+  customFilterPredicate()
+  {
+    const myFilterPredicate = function(data: Product, filter: string): boolean
+    {
+      let searchString = JSON.parse(filter);
+
+      return data.code.toString().trim().indexOf(searchString.code) !== -1
+        && (data.productCategory.name.toString().trim().indexOf(searchString.product) !== -1 || data.brand.name.toString().trim().indexOf(searchString.product) !== -1 || data.specs.toString().trim().indexOf(searchString.product) !== -1)
+        && data.warehouse.name.toString().trim().indexOf(searchString.warehouse) !== -1
+    }
+
+    return myFilterPredicate;
   }
 
   applyFilter(filterValue: string) {

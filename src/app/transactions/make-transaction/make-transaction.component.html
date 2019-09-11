@@ -339,9 +339,6 @@
             <mat-radio-button class="example-radio-button" [value]="false">
                 No
             </mat-radio-button>
-            <mat-error *ngIf="input.invalid && (input.dirty || input.touched)">
-                <mat-error *ngIf="input.errors.required">Select a Choice</mat-error>
-            </mat-error>
             </mat-radio-group>
     
             <mat-form-field *ngIf="firstTransactionForm.value.input" class="example-full-width">
